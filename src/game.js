@@ -10,8 +10,17 @@ var Game = function(init)
   var self = this;
   doMapInitDefaults(init,init,default_init);
 
+  //Shared Game State
+  self.player = new Player();
+
   var stage = new Stage({width:init.width,height:init.height,container:init.container});
-  var scenes = [new NullScene(self, stage), new LoadingScene(self, stage), new TestScene(self, stage), new GamePlayScene(self, stage)];
+  var scenes = [
+    new NullScene(self, stage),
+    new LoadingScene(self, stage),
+    new GamePlayScene(self, stage),
+    new RockScene(self, stage),
+    new RaceScene(self, stage),
+  ];
   var cur_scene = 0;
   var old_cur_scene = -1;
 

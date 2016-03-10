@@ -1,4 +1,4 @@
-var GamePlayScene = function(game, stage)
+var RaceScene = function(game, stage)
 {
   var self = this;
 
@@ -16,7 +16,7 @@ var GamePlayScene = function(game, stage)
     var context = stage.drawCanv.context;
 
     context.fillStyle = "#000000";
-    context.fillText("Gameplay",20,50);
+    context.fillText("Race Scene",20,50);
   };
 
   self.cleanup = function()
