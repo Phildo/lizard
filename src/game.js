@@ -15,11 +15,11 @@ var Game = function(init)
 
   var stage = new Stage({width:init.width,height:init.height,container:init.container});
   var scenes = [
-    new NullScene(self, stage),
-    new LoadingScene(self, stage),
-    new GamePlayScene(self, stage),
-    new RockScene(self, stage),
-    new RaceScene(self, stage),
+    /* 0 */ new NullScene(self, stage),
+    /* 1 */ new LoadingScene(self, stage),
+    /* 2 */ new GamePlayScene(self, stage),
+    /* 3 */ new RockScene(self, stage),
+    /* 4 */ new RaceScene(self, stage),
   ];
   var cur_scene = 0;
   var old_cur_scene = -1;
@@ -43,11 +43,16 @@ var Game = function(init)
     old_cur_scene = cur_scene;
   };
 
-  self.nextScene = function()
+  self.setScene = function(scene)
   {
     scenes[cur_scene].cleanup();
-    cur_scene++;
+    cur_scene = scene;
     scenes[cur_scene].ready();
+  }
+
+  self.nextScene = function()
+  {
+    self.setScene(cur_scene+1);
   };
 };
 
