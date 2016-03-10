@@ -275,6 +275,14 @@ var screenSpace = function(cam, canv, obj)
   obj.y = ((((-obj.wy-obj.wh/2)+cam.wy)+(cam.wh/2))/cam.wh)*canv.height;
 }
 
+var toScene = function normalizedCoordsToScreenSpaceCoords(obj,canv)
+{
+  obj.x = obj.wx*canv.width;
+  obj.y = obj.wy*canv.height;
+  obj.w = obj.ww*canv.width;
+  obj.h = obj.wh*canv.height;
+}
+
 function dist(a,b)
 {
   var x = b.x-a.x;

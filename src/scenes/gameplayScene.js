@@ -7,6 +7,7 @@ var GamePlayScene = function(game, stage)
   self.rock_btn;
   self.race_btn;
 
+  var t;
   self.ready = function()
   {
     self.clicker = new Clicker({source:stage.dispCanv.canvas});
@@ -16,6 +17,8 @@ var GamePlayScene = function(game, stage)
 
     self.clicker.register(self.rock_btn);
     self.clicker.register(self.race_btn);
+
+    t = new Terrarium();
   };
 
   self.tick = function()
@@ -35,6 +38,9 @@ var GamePlayScene = function(game, stage)
 
     self.rock_btn.draw(canv);
     self.race_btn.draw(canv);
+
+    toScene(t,canv);
+    t.draw(context);
   };
 
   self.cleanup = function()
@@ -42,6 +48,33 @@ var GamePlayScene = function(game, stage)
     self.clicker.detach();
     self.clicker = undefined;
   };
+
+
+  var list = function()
+  {
+    var self = this;
+  }
+
+  var Terrarium = function()
+  {
+    var self = this;
+
+    self.x = 0;
+    self.y = 0;
+    self.w = 0;
+    self.h = 0;
+
+    self.wx = 0.5;
+    self.wy = 0.5;
+    self.ww = 0.2;
+    self.wh = 0.2;
+
+    self.draw = function(context)
+    {
+      context.fillStyle = "#FF0000";
+      context.fillRect(self.x,self.y,self.w,self.h);
+    }
+  }
 
 };
 
