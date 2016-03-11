@@ -24,6 +24,11 @@ var GamePlayScene = function(game, stage)
   var bg_img = new Image();
   bg_img.src = "assets/environmental/penforlizard2.png";
 
+  var frames = [];
+  var i = 0;
+  frames[i] = new Image(); frames[i].src = "assets/lizards/darkblueiso.png"; i++;
+  frames[i] = new Image(); frames[i].src = "assets/lizards/darkblueisorun.png"; i++;
+
   self.ready = function()
   {
     clicker = new Clicker({source:stage.dispCanv.canvas});
@@ -67,8 +72,8 @@ var GamePlayScene = function(game, stage)
     {
       tlizard = new TerrariLizard();
       tlizard.i = i;
-      tlizard.ww = 0.05;
-      tlizard.wh = 0.05;
+      tlizard.ww = 0.1;
+      tlizard.wh = 0.1;
       tlizard.wx = randR(terrarium.wx,terrarium.wx+terrarium.ww-tlizard.ww);
       tlizard.wy = randR(terrarium.wy,terrarium.wy+terrarium.wh-tlizard.wh);
       tlizard.to_wx = tlizard.wx;
@@ -305,6 +310,9 @@ var GamePlayScene = function(game, stage)
 
     self.agitation = 0;
 
+    self.framefloat = 0;
+    self.frame = 0;
+
     self.click = function()
     {
       if(game.player.lizards.length > self.i)
@@ -325,15 +333,23 @@ var GamePlayScene = function(game, stage)
       tliz.to_wy = randR(terrarium.wy,terrarium.wy+terrarium.wh-tliz.wh);
     }
 
-    tliz.wx = lerp(tliz.wx,tliz.to_wx,0.01);
-    tliz.wy = lerp(tliz.wy,tliz.to_wy,0.01);
+    var newx = lerp(tliz.wx,tliz.to_wx,0.01);
+    var newy = lerp(tliz.wy,tliz.to_wy,0.01);
+    tliz.framefloat += (Math.abs(newx-tliz.wx)+Math.abs(newy-tliz.wy))*40;
+    while(tliz.framefloat > frames.length) tliz.framefloat -= frames.length;
+    tliz.frame = Math.floor(tliz.framefloat)
+    tliz.wx = newx;
+    tliz.wy = newy;
     toScene(tliz,canv);
   }
   var drawTerrariLizard = function(tliz)
   {
-    if(selected_i == tliz.i) context.fillStyle = "#FFFFFF";
-    else                     context.fillStyle = "#FFFF00";
-    context.fillRect(tliz.x,tliz.y,tliz.w,tliz.h);
+    if(selected_i == tliz.i)
+    {
+      context.fillStyle = "#FFFFFF";
+      context.strokeRect(tliz.x,tliz.y,tliz.w,tliz.h);
+    }
+    context.drawImage(frames[tliz.frame],tliz.x,tliz.y,tliz.w,tliz.h);
   }
 
   var StatsDisp = function()
