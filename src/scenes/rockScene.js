@@ -53,19 +53,79 @@ var RockScene = function(game, stage)
 
     rocks = [];
     var rock;
-    for(var i = 0; i < 3; i++)
-    {
-      rock = new Rock();
-      rocks[i] = rock;
-    }
+
+    rock = new Rock();
+    rock.name = "Bad Rock";
+    rock.img = RIcon1;
+    rock.wx = 0.3;
+    rock.wy = 0.3;
+    rock.ww = 0.4;
+    rock.wh = 0.4;
+    toScene(rock,canv);
+    rocks.push(rock);
+
+    rock = new Rock();
+    rock.name = "OK Rock";
+    rock.img = RIcon2;
+    rock.wx = 0.3;
+    rock.wy = 0.3;
+    rock.ww = 0.4;
+    rock.wh = 0.4;
+    toScene(rock,canv);
+    rocks.push(rock);
+
+    rock = new Rock();
+    rock.name = "Good Rock";
+    rock.img = RIcon3;
+    rock.wx = 0.3;
+    rock.wy = 0.3;
+    rock.ww = 0.4;
+    rock.wh = 0.4;
+    toScene(rock,canv);
+    rocks.push(rock);
 
     baits = [];
     var bait;
-    for(var i = 0; i < 4; i++)
-    {
-      bait = new Bait();
-      baits[i] = bait;
-    }
+
+    bait = new Bait();
+    bait.name = "No Bait";
+    bait.img = BIcon1;
+    bait.wx = 0.45;
+    bait.wy = 0.45;
+    bait.ww = 0.1;
+    bait.wh = 0.1;
+    toScene(bait,canv);
+    baits.push(bait);
+
+    bait = new Bait();
+    bait.name = "Bad Bait";
+    bait.img = BIcon2;
+    bait.wx = 0.45;
+    bait.wy = 0.45;
+    bait.ww = 0.1;
+    bait.wh = 0.1;
+    toScene(bait,canv);
+    baits.push(bait);
+
+    bait = new Bait();
+    bait.name = "OK Bait";
+    bait.img = BIcon3;
+    bait.wx = 0.45;
+    bait.wy = 0.45;
+    bait.ww = 0.1;
+    bait.wh = 0.1;
+    toScene(bait,canv);
+    baits.push(bait);
+
+    bait = new Bait();
+    bait.name = "Good Bait";
+    bait.img = BIcon4;
+    bait.wx = 0.45;
+    bait.wy = 0.45;
+    bait.ww = 0.1;
+    bait.wh = 0.1;
+    toScene(bait,canv);
+    baits.push(bait);
 
     rock_selects = [];
     var select;
@@ -168,6 +228,11 @@ var RockScene = function(game, stage)
       context.fillStyle = "#000000";
       context.fillText("Ready",ready_btn.x,ready_btn.y-10);
       ready_btn.draw(canv);
+
+      if(rock_selected_i != -1)
+        context.drawImage(rocks[rock_selected_i].img,rocks[rock_selected_i].x,rocks[rock_selected_i].y,rocks[rock_selected_i].w,rocks[rock_selected_i].h);
+      if(bait_selected_i != -1)
+        context.drawImage(baits[bait_selected_i].img,baits[bait_selected_i].x,baits[bait_selected_i].y,baits[bait_selected_i].w,baits[bait_selected_i].h);
     }
     else if(mode == MODE_HUNTING)
     {
@@ -329,13 +394,62 @@ var RockScene = function(game, stage)
   {
     var self = this;
     self.name = "rock";
+    self.img;
+
+    self.wx;
+    self.wy;
+    self.ww;
+    self.wh;
+
+    self.x;
+    self.y;
+    self.w;
+    self.h;
   }
 
   var Bait = function()
   {
     var self = this;
     self.name = "bait";
+    self.img;
+
+    self.wx;
+    self.wy;
+    self.ww;
+    self.wh;
+
+    self.x;
+    self.y;
+    self.w;
+    self.h;
   }
 
+  var RIcon1 = GenIcon();
+  RIcon1.context.fillStyle = "#FA8B2D";
+  RIcon1.context.fillRect(0,0,RIcon1.width,RIcon1.height);
+
+  var RIcon2 = GenIcon();
+  RIcon2.context.fillStyle = "#2A7BAD";
+  RIcon2.context.fillRect(0,0,RIcon2.width,RIcon2.height);
+
+  var RIcon3 = GenIcon();
+  RIcon3.context.fillStyle = "#1A1B9D";
+  RIcon3.context.fillRect(0,0,RIcon3.width,RIcon3.height);
+
+  var BIcon1 = GenIcon();
+  BIcon1.context.fillStyle = "#FA6BDD";
+  BIcon1.context.fillRect(0,0,BIcon1.width,BIcon1.height);
+
+  var BIcon2 = GenIcon();
+  BIcon2.context.fillStyle = "#4ADB1D";
+  BIcon2.context.fillRect(0,0,BIcon2.width,BIcon2.height);
+
+  var BIcon3 = GenIcon();
+  BIcon3.context.fillStyle = "#3A4B1D";
+  BIcon3.context.fillRect(0,0,BIcon3.width,BIcon3.height);
+
+  var BIcon4 = GenIcon();
+  BIcon4.context.fillStyle = "#8A8B8D";
+  BIcon4.context.fillRect(0,0,BIcon4.width,BIcon4.height);
 };
 
