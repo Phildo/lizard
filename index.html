@@ -40,7 +40,7 @@ var d;
 function begin()
 {
   d = new Debugger({source:document.getElementById("debug_div")});
-  g = new Game({width:640,height:320,container:"stage_container"});
+  g = new Game({width:900,height:675,container:"stage_container"});
   g.begin();
 }
 window.addEventListener('touchstart', function(e){ e.preventDefault() }); //prevent browser from doing anything funny
