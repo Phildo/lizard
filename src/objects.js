@@ -21,6 +21,7 @@ var Lizard = function()
   self.gender = LIZARD_GENDER_NA;
   self.speed = 1;
   self.base_endurance = randIntBelow(300);
+  self.wins = 0;
 
   self.x = 0;
   self.y = 0;

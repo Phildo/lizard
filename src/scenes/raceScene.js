@@ -5,8 +5,11 @@ var RaceScene = function(game, stage)
   var canvas = canv.canvas;
   var ctx = canv.context;
 
+  var DELTA = 0.0001;
+
   self.clicker;
   self.back_btn;
+  self.race_btn;
   self.track;
 
   self.ready = function()
@@ -37,11 +40,19 @@ var RaceScene = function(game, stage)
     pLiz.lane = lizards.length;
     lizards.push(pLiz);
 
-
     // Set up button to go back to Terrarium
     self.clicker = new Clicker({source:stage.dispCanv.canvas});
     self.back_btn = new ButtonBox(10,10,10,10,function(){ game.setScene(2); });
     self.clicker.register(self.back_btn);
+
+    // Set up button to start race
+    self.race_btn = new ButtonBox(0,0,0,0, function() { self.track.state = RACE_RUNNING; });
+    self.race_btn.wx = 0.5;
+    self.race_btn.wy = 0.2;
+    self.race_btn.ww = 0.1;
+    self.race_btn.wh = 0.1;
+    toScene(self.race_btn, canv);
+    self.clicker.register(self.race_btn);
 
     // Initialize the track
     self.track = new Track(lizards);
@@ -53,20 +64,15 @@ var RaceScene = function(game, stage)
     // Flush clicker queue and call events
     self.clicker.flush();
 
-    if (self.track.state === RACE_READY) {
-      if (self.track.timeout === null) {
-        self.track.timeout = setTimeout(function() {
-          self.track.state = RACE_RUNNING;
-        }, 1000); 
-      }
-    } else if(self.track.state === RACE_RUNNING) {
+    if(self.track.state === RACE_RUNNING) {
       self.track.update();
     } else if(self.track.state === RACE_FINISH) {
       var winner = self.track.runners[self.track.winner];
       var playerLiz = game.player.lizards[game.racing_lizard_index];
       if (winner.ref === playerLiz) {
         game.player.money += 100;
-      };
+        winner.ref.wins++;
+      }
 
       self.track.state = RACE_DONE;
     }
@@ -78,6 +84,11 @@ var RaceScene = function(game, stage)
     ctx.fillStyle = "#000000";
     ctx.fillText("Race Scene",20,50);
     self.back_btn.draw(canv);
+
+    if (self.track.state === RACE_READY) {
+      ctx.fillText("Start Race", self.race_btn.x, self.race_btn.y);
+      self.race_btn.draw(canv);
+    }
 
     self.track.draw(ctx);
 
@@ -105,7 +116,7 @@ var RaceScene = function(game, stage)
   var tickRunner = function(liz) {
     liz.energy--;
 
-    if (liz.energy < 0) {
+    if (liz.energy < 0 || (liz.to_pos - liz.track_pos) < DELTA) {
       liz.energy = randIntBelow(liz.ref.base_endurance);
       liz.to_pos = liz.track_pos + (liz.ref.speed * liz.energy * 0.01);
     }
@@ -176,8 +187,6 @@ var RaceScene = function(game, stage)
 
     self.state = RACE_READY;
     self.length = 20;
-
-    self.timeout = null;
 
     self.runners = contestants;
     self.winner = null;
