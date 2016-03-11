@@ -26,7 +26,7 @@ var Lizard = function(gender, speed, endurance)
 {
   var self = this;
 
-  self.name = "liz";
+  self.name = randName();
   self.gender = gender || LIZARD_GENDER_NA;
   self.speed = speed || 0.3;
   self.base_endurance = endurance || Math.random();
