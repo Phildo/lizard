@@ -13,7 +13,12 @@ var GamePlayScene = function(game, stage)
 
   var terrarium;
   var selects;
+  var tlizards;
+  var stats;
+
   var selected_i;
+
+  var MAXIMUM_CAPACITY = 5;
 
   self.ready = function()
   {
@@ -27,7 +32,7 @@ var GamePlayScene = function(game, stage)
     rock_btn.wh = 0.1;
     toScene(rock_btn,canv);
 
-    race_btn = new ButtonBox(0,0,0,0,function(){ game.setScene(4); });
+    race_btn = new ButtonBox(0,0,0,0,function(){ if(selected_i == -1) return; game.setScene(4); });
     race_btn.wx = 0.8;
     race_btn.wy = 0.3;
     race_btn.ww = 0.1;
@@ -43,7 +48,7 @@ var GamePlayScene = function(game, stage)
 
     selects = [];
     var select;
-    for(var i = 0; i < 5; i++)
+    for(var i = 0; i < MAXIMUM_CAPACITY; i++)
     {
       select = new LizSelect();
       select.i = i;
@@ -57,6 +62,27 @@ var GamePlayScene = function(game, stage)
       selects[i] = select;
     }
 
+    tlizards = [];
+    var tlizard;
+    for(var i = 0; i < MAXIMUM_CAPACITY; i++)
+    {
+      tlizard = new TerrariLizard();
+      tlizard.i = i;
+      tlizard.ww = 0.05;
+      tlizard.wh = 0.05;
+      tlizard.wx = randR(terrarium.wx,terrarium.wx+terrarium.ww-tlizard.ww);
+      tlizard.wy = randR(terrarium.wy,terrarium.wy+terrarium.wh-tlizard.wh);
+      toScene(tlizard,canv);
+      tlizards[i] = tlizard;
+    }
+
+    stats = new StatsDisp();
+    stats.wx = 0.2;
+    stats.wy = 0.6;
+    stats.ww = 0.6;
+    stats.wh = 0.2;
+    toScene(stats,canv);
+
     clicker.register(rock_btn);
     clicker.register(race_btn);
 
@@ -64,7 +90,7 @@ var GamePlayScene = function(game, stage)
 
     //stub hack
     game.player.lizards = [];
-    for(var i = 0; i <= 3; i++)
+    for(var i = 0; i < 3; i++)
       game.player.lizards[i] = new Lizard();
   };
 
@@ -72,25 +98,35 @@ var GamePlayScene = function(game, stage)
   {
     hoverer.flush();
     clicker.flush();
+
+    for(var i = 0; i < tlizards.length; i++)
+      tickTerrariLizard(tlizards[i]);
   };
 
   self.draw = function()
   {
     context.fillStyle = "#000000";
-    context.fillText("Gameplay",20,50);
-
-    context.fillStyle = "#000000";
     context.fillText("To Rock",rock_btn.x,rock_btn.y);
     rock_btn.draw(canv);
-    context.fillStyle = "#000000";
-    context.fillText("To Race",race_btn.x,race_btn.y);
-    race_btn.draw(canv);
+
+    if(selected_i != -1)
+    {
+      context.fillStyle = "#000000";
+      context.fillText("To Race",race_btn.x,race_btn.y);
+      race_btn.draw(canv);
+    }
 
     drawTerrarium(context);
     context.fillStyle = "#000000";
     context.fillText("My Lizards",10,20);
     for(var i = 0; i < selects.length; i++)
       drawSelect(selects[i]);
+
+    for(var i = 0; i < game.player.lizards.length; i++)
+      drawTerrariLizard(tlizards[i]);
+
+    if(selected_i != -1)
+      drawStatsDisp();
   };
 
   self.cleanup = function()
@@ -100,7 +136,6 @@ var GamePlayScene = function(game, stage)
     hoverer.detach();
     hoverer = undefined;
   };
-
 
   var LizSelect = function()
   {
@@ -120,7 +155,7 @@ var GamePlayScene = function(game, stage)
 
     self.click = function()
     {
-      if(game.player.lizards.length-1 > self.i)
+      if(game.player.lizards.length > self.i)
       {
         if(selected_i == self.i) selected_i = -1;
         else                     selected_i = self.i;
@@ -139,7 +174,7 @@ var GamePlayScene = function(game, stage)
   }
   var drawSelect = function(select)
   {
-    if(game.player.lizards.length-1 > select.i)
+    if(game.player.lizards.length > select.i)
     {
       if(selected_i == select.i)
       {
@@ -182,6 +217,63 @@ var GamePlayScene = function(game, stage)
   {
     context.fillStyle = "#FF0000";
     context.fillRect(terrarium.x,terrarium.y,terrarium.w,terrarium.h);
+  }
+
+  var TerrariLizard = function()
+  {
+    var self = this;
+
+    self.x = 0;
+    self.y = 0;
+    self.w = 0;
+    self.h = 0;
+
+    self.wx = 0.;
+    self.wy = 0.;
+    self.ww = 0.;
+    self.wh = 0.;
+
+    self.i;
+  }
+  var tickTerrariLizard = function(tliz)
+  {
+
+  }
+  var drawTerrariLizard = function(tliz)
+  {
+    if(selected_i == tliz.i) context.fillStyle = "#FFFFFF";
+    else                     context.fillStyle = "#FFFF00";
+    context.fillRect(tliz.x,tliz.y,tliz.w,tliz.h);
+  }
+
+  var StatsDisp = function()
+  {
+    var self = this;
+
+    self.x = 0;
+    self.y = 0;
+    self.w = 0;
+    self.h = 0;
+
+    self.wx = 0.;
+    self.wy = 0.;
+    self.ww = 0.;
+    self.wh = 0.;
+  }
+  var drawStatsDisp = function()
+  {
+    var liz = game.player.lizards[selected_i];
+
+    context.fillStyle = "rgba(255,255,255,0.5)";
+    context.fillRect(stats.x,stats.y,stats.w,stats.h);
+    context.strokeStyle = "#000000";
+    context.strokeRect(stats.x,stats.y,stats.w,stats.h);
+
+    context.fillStyle = "#FFFF00";
+    context.fillRect(stats.x+10,stats.y+10,stats.h-20,stats.h-20);
+    context.fillStyle = "#000000";
+    context.fillText(liz.name,stats.x+stats.h,stats.y+20);
+    context.fillText("Speed",stats.x+stats.h,stats.y+30);
   }
 
 };
