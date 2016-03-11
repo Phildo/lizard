@@ -82,7 +82,6 @@ var RaceScene = function(game, stage)
   {
     // Draw button to go back to Terrarium
     ctx.fillStyle = "#000000";
-    ctx.fillText("Race Scene",20,50);
     self.back_btn.draw(canv);
 
     if (self.track.state === RACE_READY) {
@@ -122,7 +121,6 @@ var RaceScene = function(game, stage)
     }
 
     liz.track_pos = lerp(liz.track_pos, liz.to_pos, 0.01);
-    console.log(liz.track_pos);
   };
 
   var trackToWorld = function(liz, track) {
@@ -225,7 +223,4 @@ var RaceScene = function(game, stage)
       }
     };
   };
-
-
-
 };
