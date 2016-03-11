@@ -284,6 +284,122 @@ var RaceScene = function(game, stage)
     };
   };
 
+  var MoneyDisp = function()
+  {
+    var self = this;
+
+    self.x = 0;
+    self.y = 0;
+    self.w = 0;
+    self.h = 0;
+
+    self.wx = 0.;
+    self.wy = 0.;
+    self.ww = 0.;
+    self.wh = 0.;
+  };
+
+  var LizSelect = function()
+  {
+    var self = this;
+
+    self.x = 0;
+    self.y = 0;
+    self.w = 0;
+    self.h = 0;
+
+    self.wx = 0.;
+    self.wy = 0.;
+    self.ww = 0.;
+    self.wh = 0.;
+
+    self.i;
+
+    self.click = function()
+    {
+      if(game.player.lizards.length > self.i)
+      {
+        if(selected_i == self.i) selected_i = -1;
+        else                     selected_i = self.i;
+      }
+    }
+
+    self.hovering = false;
+    self.hover = function()
+    {
+      self.hovering = true;
+    }
+    self.unhover = function()
+    {
+      self.hovering = false;
+    }
+  }
+  var drawSelect = function(select)
+  {
+    if(game.player.lizards.length > select.i)
+    {
+      var liz = game.player.lizards[select.i];
+
+      if(selected_i == select.i)
+      {
+        if(select.hovering) context.fillStyle = "rgba(255,255,255,0.9)";
+        else                context.fillStyle = "rgba(255,255,255,0.8)";
+        context.fillRect(select.x,select.y,select.w,select.h);
+        context.fillStyle = "#000000";
+        context.fillText(liz.name,select.x+10,select.y+20);
+
+        context.fillStyle = "#000000";
+        context.fillText("SPD:",select.x+10,select.y+40);
+        for(var i = 0; i < 10; i++)
+        {
+          if(liz.speed >= i/10) context.fillStyle = "#000000";
+          else                  context.fillStyle = "#666666";
+          context.fillRect(select.x+52+10*i,select.y+32,8,8);
+        }
+        context.fillStyle = "#000000";
+        context.fillText("END:",select.x+10,select.y+55);
+        for(var i = 0; i < 10; i++)
+        {
+          if(liz.endurance >= i/10) context.fillStyle = "#000000";
+          else                      context.fillStyle = "#666666";
+          context.fillRect(select.x+52+10*i,select.y+46,8,8);
+        }
+      }
+      else
+      {
+        if(select.hovering) context.fillStyle = "rgba(0,0,0,0.9)";
+        else                context.fillStyle = "rgba(0,0,0,0.8)";
+        context.fillRect(select.x,select.y,select.w,select.h);
+        context.fillStyle = "#FFFFFF";
+        context.fillText(liz.name,select.x+10,select.y+20);
+
+        context.fillStyle = "#FFFFFF";
+        context.fillText("SPD:",select.x+10,select.y+40);
+        for(var i = 0; i < 10; i++)
+        {
+          if(liz.speed >= i/10) context.fillStyle = "#FFFFFF";
+          else                  context.fillStyle = "#999999";
+          context.fillRect(select.x+52+10*i,select.y+32,8,8);
+        }
+        context.fillStyle = "#FFFFFF";
+        context.fillText("END:",select.x+10,select.y+55);
+        for(var i = 0; i < 10; i++)
+        {
+          if(liz.endurance >= i/10) context.fillStyle = "#FFFFFF";
+          else                      context.fillStyle = "#999999";
+          context.fillRect(select.x+52+10*i,select.y+46,8,8);
+        }
+      }
+    }
+    else
+    {
+      context.fillStyle = "rgba(0,0,0,0.8)";
+      context.fillRect(select.x,select.y,select.w,select.h);
+      context.fillStyle = "#555555";
+      context.fillText("NO LIZARD",select.x+10,select.y+20);
+    }
+  }
+
   var opponents = [
     [ // RANK_BRONZE
       new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.30), randR(0.01, 0.30)),
