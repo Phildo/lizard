@@ -95,9 +95,9 @@ var RockScene = function(game, stage)
     rock = new Rock();
     rock.name = "Simple Rock";
     rock.img = rock_bg_img;
-    rock.wx = 0.3;
-    rock.wy = 0.3;
-    rock.ww = 0.4;
+    rock.wx = 0.2;
+    rock.wy = 0.5;
+    rock.ww = 0.6;
     rock.wh = 0.4;
     toScene(rock,canv);
     rocks.push(rock);
@@ -105,9 +105,9 @@ var RockScene = function(game, stage)
     rock = new Rock();
     rock.name = "Tinfoil";
     rock.img = rock_tin_bg_img;
-    rock.wx = 0.3;
-    rock.wy = 0.3;
-    rock.ww = 0.4;
+    rock.wx = 0.2;
+    rock.wy = 0.5;
+    rock.ww = 0.6;
     rock.wh = 0.4;
     toScene(rock,canv);
     rocks.push(rock);
@@ -115,9 +115,9 @@ var RockScene = function(game, stage)
     rock = new Rock();
     rock.name = "Cactus";
     rock.img = rock_cactus_bg_img;
-    rock.wx = 0.3;
-    rock.wy = 0.3;
-    rock.ww = 0.4;
+    rock.wx = 0.2;
+    rock.wy = 0.5;
+    rock.ww = 0.6;
     rock.wh = 0.4;
     toScene(rock,canv);
     rocks.push(rock);
@@ -311,10 +311,9 @@ var RockScene = function(game, stage)
   {
     if(mode == MODE_CHOOSING)
     {
-      if(rock_selected_i != -1)
-        context.drawImage(rocks[rock_selected_i].img,0,0,canv.width,canv.height);
-      if(bait_selected_i != -1)
-        context.drawImage(baits[bait_selected_i].img,baits[bait_selected_i].x,baits[bait_selected_i].y,baits[bait_selected_i].w,baits[bait_selected_i].h);
+      context.drawImage(rocks[rock_selected_i].img,0,0,canv.width,canv.height);
+      //context.drawImage(rocks[rock_selected_i].img,rocks[rock_selected_i].x,rocks[rock_selected_i].y,rocks[rock_selected_i].w,rocks[rock_selected_i].h);
+      context.drawImage(baits[bait_selected_i].img,baits[bait_selected_i].x,baits[bait_selected_i].y,baits[bait_selected_i].w,baits[bait_selected_i].h);
 
       context.fillStyle = "#000000";
       context.fillText("Back",back_btn.x,back_btn.y-10);
