@@ -15,14 +15,17 @@ Lizard Pen DONE
 Stretch:
 Lizards DONE
 three types of bait: bad, ok, gr8b8 DONE
-Rock grandstand
-jumbotron
-Lizard Anims
-Title Screen :'[
+Lizard Anims DONE
 Better Pen DONE
+Uprezzed Lizards DONE
 Uprezzed environments DONE
 Uprezzed b8 DONE (not worm.. no diea where file went ;-;)
+
 ortho lizards
+Title Screen :'[
+Rock grandstand
+jumbotron
+
 
 Lizard Colors: (damn material properties didn't save ;-;)
 Orange: FF7D53
