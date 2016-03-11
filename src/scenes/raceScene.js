@@ -6,6 +6,8 @@ var RaceScene = function(game, stage)
   var ctx = canv.context;
 
   var DELTA = 0.0001;
+  self.stats;
+  self.moneydisp;
 
   self.clicker;
   self.back_btn;
@@ -34,7 +36,7 @@ var RaceScene = function(game, stage)
 
     // Set up button to go back to Terrarium
     self.clicker = new Clicker({source:stage.dispCanv.canvas});
-    self.back_btn = new ButtonBox(10,10,10,10,function(){ game.setScene(2); });
+    self.back_btn = new ButtonBox(600,10,10,10,function(){ game.setScene(2); });
     self.clicker.register(self.back_btn);
 
     // Set up button to start race
@@ -67,6 +69,30 @@ var RaceScene = function(game, stage)
     self.again_btn.wh = 0.1;
     toScene(self.again_btn, canv);
     self.clicker.register(self.again_btn);
+
+    // Set up the stats
+    self.stats = [];
+
+    contestants.forEach(function(lizard, index) {
+      var select = new LizSelect();
+      select.i = index;
+      select.wh = 0.16
+      select.ww = 0.2;
+      select.wx = 0;
+      select.wy = 0.1+(select.wh*index);
+      toScene(select, canv);
+      select.y = Math.round(select.y);
+      select.h = Math.round(select.h);
+      self.stats.push(select);
+    });
+    self.stats[self.stats.length - 1].player = true;
+
+    // Set up money display
+    self.moneydisp = new MoneyDisp();
+    self.moneydisp.wx = 0;
+    self.moneydisp.wy = 0.02;
+    self.moneydisp.ww = 0.1;
+    self.moneydisp.wh = 0.06;
 
     // Initialize the track
     self.track = new Track(contestants, rank);
@@ -112,13 +138,16 @@ var RaceScene = function(game, stage)
     // Draw button to go back to Terrarium
     ctx.fillStyle = "#000000";
     self.back_btn.draw(canv);
+    self.moneydisp.draw(ctx);
+    self.track.draw(ctx);
 
     if (self.track.state === RACE_READY) {
       ctx.fillText("Start Race", self.race_btn.x, self.race_btn.y);
       self.race_btn.draw(canv);
+      self.stats.forEach(function(select) {
+        drawSelect(select);
+      });
     }
-
-    self.track.draw(ctx);
 
     if (self.track.state === RACE_DONE) {
       var winner = self.track.runners[self.track.winner];
@@ -297,6 +326,14 @@ var RaceScene = function(game, stage)
     self.wy = 0.;
     self.ww = 0.;
     self.wh = 0.;
+
+    self.draw = function(ctx) {
+      toScene(self,canv);
+      ctx.fillStyle = "rgba(0,0,0,0.8)";
+      ctx.fillRect(self.x,self.y,self.w,self.h);
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillText("$"+game.player.money,self.x+10,self.y+20);
+    }
   };
 
   var LizSelect = function()
@@ -314,89 +351,59 @@ var RaceScene = function(game, stage)
     self.wh = 0.;
 
     self.i;
-
-    self.click = function()
-    {
-      if(game.player.lizards.length > self.i)
-      {
-        if(selected_i == self.i) selected_i = -1;
-        else                     selected_i = self.i;
-      }
-    }
-
-    self.hovering = false;
-    self.hover = function()
-    {
-      self.hovering = true;
-    }
-    self.unhover = function()
-    {
-      self.hovering = false;
-    }
   }
   var drawSelect = function(select)
   {
-    if(game.player.lizards.length > select.i)
+    var runner = self.track.runners[select.i];
+    var liz = runner.ref;
+
+    if(select.player)
     {
-      var liz = game.player.lizards[select.i];
+      ctx.fillStyle = "rgba(255,255,255,0.8)";
+      ctx.fillRect(select.x,select.y,select.w,select.h);
+      ctx.fillStyle = "#000000";
+      ctx.fillText(liz.name,select.x+10,select.y+20);
 
-      if(selected_i == select.i)
+      ctx.fillStyle = "#000000";
+      ctx.fillText("SPD:",select.x+10,select.y+40);
+      for(var i = 0; i < 10; i++)
       {
-        if(select.hovering) context.fillStyle = "rgba(255,255,255,0.9)";
-        else                context.fillStyle = "rgba(255,255,255,0.8)";
-        context.fillRect(select.x,select.y,select.w,select.h);
-        context.fillStyle = "#000000";
-        context.fillText(liz.name,select.x+10,select.y+20);
-
-        context.fillStyle = "#000000";
-        context.fillText("SPD:",select.x+10,select.y+40);
-        for(var i = 0; i < 10; i++)
-        {
-          if(liz.speed >= i/10) context.fillStyle = "#000000";
-          else                  context.fillStyle = "#666666";
-          context.fillRect(select.x+52+10*i,select.y+32,8,8);
-        }
-        context.fillStyle = "#000000";
-        context.fillText("END:",select.x+10,select.y+55);
-        for(var i = 0; i < 10; i++)
-        {
-          if(liz.endurance >= i/10) context.fillStyle = "#000000";
-          else                      context.fillStyle = "#666666";
-          context.fillRect(select.x+52+10*i,select.y+46,8,8);
-        }
+        if(liz.speed >= i/10) ctx.fillStyle = "#000000";
+        else                  ctx.fillStyle = "#666666";
+        ctx.fillRect(select.x+52+10*i,select.y+32,8,8);
       }
-      else
+      ctx.fillStyle = "#000000";
+      ctx.fillText("END:",select.x+10,select.y+55);
+      for(var i = 0; i < 10; i++)
       {
-        if(select.hovering) context.fillStyle = "rgba(0,0,0,0.9)";
-        else                context.fillStyle = "rgba(0,0,0,0.8)";
-        context.fillRect(select.x,select.y,select.w,select.h);
-        context.fillStyle = "#FFFFFF";
-        context.fillText(liz.name,select.x+10,select.y+20);
-
-        context.fillStyle = "#FFFFFF";
-        context.fillText("SPD:",select.x+10,select.y+40);
-        for(var i = 0; i < 10; i++)
-        {
-          if(liz.speed >= i/10) context.fillStyle = "#FFFFFF";
-          else                  context.fillStyle = "#999999";
-          context.fillRect(select.x+52+10*i,select.y+32,8,8);
-        }
-        context.fillStyle = "#FFFFFF";
-        context.fillText("END:",select.x+10,select.y+55);
-        for(var i = 0; i < 10; i++)
-        {
-          if(liz.endurance >= i/10) context.fillStyle = "#FFFFFF";
-          else                      context.fillStyle = "#999999";
-          context.fillRect(select.x+52+10*i,select.y+46,8,8);
-        }
+        if(liz.endurance >= i/10) ctx.fillStyle = "#000000";
+        else                      ctx.fillStyle = "#666666";
+        ctx.fillRect(select.x+52+10*i,select.y+46,8,8);
       }
     }
     else
     {
-      context.fillStyle = "rgba(0,0,0,0.8)";
-      context.fillRect(select.x,select.y,select.w,select.h);
-      context.fillStyle = "#555555";
-      context.fillText("NO LIZARD",select.x+10,select.y+20);
+      ctx.fillStyle = "rgba(0,0,0,0.8)";
+      ctx.fillRect(select.x,select.y,select.w,select.h);
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillText(liz.name,select.x+10,select.y+20);
+
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillText("SPD:",select.x+10,select.y+40);
+      for(var i = 0; i < 10; i++)
+      {
+        if(liz.speed >= i/10) ctx.fillStyle = "#FFFFFF";
+        else                  ctx.fillStyle = "#999999";
+        ctx.fillRect(select.x+52+10*i,select.y+32,8,8);
+      }
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillText("END:",select.x+10,select.y+55);
+      for(var i = 0; i < 10; i++)
+      {
+        if(liz.endurance >= i/10) ctx.fillStyle = "#FFFFFF";
+        else                      ctx.fillStyle = "#999999";
+        ctx.fillRect(select.x+52+10*i,select.y+46,8,8);
+      }
     }
   }
 
