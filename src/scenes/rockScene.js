@@ -192,7 +192,7 @@ var RockScene = function(game, stage)
     ready_btn.wh = 0.1;
     toScene(ready_btn,canv);
 
-    keep_btn = new ButtonBox(0,0,0,0,function(){ if(mode != MODE_CAUGHT || game.player.lizards.length > MAXIMUM_CAPACITY) return; game.player.lizards.push(catchable_lizard); catchable_lizard = undefined; mode = MODE_CHOOSING; });
+    keep_btn = new ButtonBox(0,0,0,0,function(){ if(mode != MODE_CAUGHT || game.player.lizards.length >= MAXIMUM_CAPACITY) return; game.player.lizards.push(catchable_lizard); catchable_lizard = undefined; mode = MODE_CHOOSING; });
     keep_btn.wx = 0.8;
     keep_btn.wy = 0.6;
     keep_btn.ww = 0.1;
