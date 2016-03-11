@@ -402,8 +402,8 @@ var RockScene = function(game, stage)
           catchable_lizard = new RockLizard();
           catchable_lizard.speed = randR(rock_liz_speed_min[rock_selected_i],rock_liz_speed_max[rock_selected_i]);
           catchable_lizard.endurance = randR(0.1,1);
-          catchable_lizard.ww = 0.7;
-          catchable_lizard.wh = 0.7;
+          catchable_lizard.ww = 0.07;
+          catchable_lizard.wh = 0.07;
           var t = Math.random()*Math.PI*2;
           catchable_lizard.wx = (r.wx+r.ww/2)+Math.cos(t)*r.ww - catchable_lizard.ww/2;
           catchable_lizard.wy = (r.wy+r.wh/2)+Math.sin(t)*r.wh - catchable_lizard.wh/2;
@@ -411,10 +411,8 @@ var RockScene = function(game, stage)
           catchable_lizard.to_wx = (r.wx+r.ww/2)+Math.cos(t)*r.ww - catchable_lizard.ww/2;
           catchable_lizard.to_wy = (r.wy+r.wh/2)+Math.sin(t)*r.wh - catchable_lizard.wh/2;
           catchable_lizard.theta = Math.atan2(catchable_lizard.to_wy-catchable_lizard.wy,catchable_lizard.to_wx-catchable_lizard.wx);
-          console.log('b');
           while(catchable_lizard.theta < 0)         catchable_lizard.theta += Math.PI*2;
           while(catchable_lizard.theta > Math.PI*2) catchable_lizard.theta -= Math.PI*2;
-          console.log('e');
           clicker.register(catchable_lizard);
         }
 
@@ -477,7 +475,6 @@ var RockScene = function(game, stage)
 
       if(catchable_lizard)
       {
-        console.log('oho');
         drawCatchableLizard();
       }
     }
@@ -846,7 +843,6 @@ var RockScene = function(game, stage)
   }
   var tickCatchableLizard = function()
   {
-    console.log('tick');
     catchable_lizard.wx = lerp(catchable_lizard.wx,catchable_lizard.to_wx,0.01);
     catchable_lizard.wy = lerp(catchable_lizard.wy,catchable_lizard.to_wy,0.01);
 
@@ -860,7 +856,6 @@ var RockScene = function(game, stage)
   }
   var drawCatchableLizard = function()
   {
-    console.log('draw');
     toScene(catchable_lizard,canv);
     context.save();
     context.translate(catchable_lizard.x+catchable_lizard.w/2,catchable_lizard.y+catchable_lizard.h/2);
