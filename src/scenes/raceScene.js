@@ -14,13 +14,16 @@ var RaceScene = function(game, stage)
   self.track;
 
   var bg_img = new Image();
-  bg_img.src = "assets/environmental/racetrack.png";
+  bg_img.src = "assets/environmental/racetrack2.png";
 
   self.ready = function()
   {
     var selectedLizard = game.player.lizards[game.racing_lizard_index];
     var rank = game.player.rank;
     var contestants = [];
+
+    var fee = rank * 50;
+    game.player.money -= fee;
 
     opponents[rank].forEach(function(lizard, index) {
       contestants.push(new LizRunner(lizard, index));
@@ -48,6 +51,9 @@ var RaceScene = function(game, stage)
     // set up the race again button
     self.again_btn = new ButtonBox(0,0,0,0, function() { 
       if (self.track.state === RACE_DONE) {
+        var fee = game.player.rank * 50;
+        if (game.player.money < fee)
+          return;
         self.cleanup();
         self.ready();
       }
