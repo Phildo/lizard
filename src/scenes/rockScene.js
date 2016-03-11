@@ -31,6 +31,8 @@ var RockScene = function(game, stage)
   var liz_selects;
   var stats;
 
+  var ready_btn;
+
   var rock_selected_i;
   var bait_selected_i;
   var liz_selected_i;
@@ -51,7 +53,7 @@ var RockScene = function(game, stage)
 
     rocks = [];
     var rock;
-    for(var i = 0; i < 5; i++)
+    for(var i = 0; i < 3; i++)
     {
       rock = new Rock();
       rocks[i] = rock;
@@ -59,7 +61,7 @@ var RockScene = function(game, stage)
 
     baits = [];
     var bait;
-    for(var i = 0; i < 5; i++)
+    for(var i = 0; i < 4; i++)
     {
       bait = new Bait();
       baits[i] = bait;
@@ -116,6 +118,13 @@ var RockScene = function(game, stage)
       liz_selects[i] = select;
     }
 
+    ready_btn = new ButtonBox(0,0,0,0,function(){ if(mode != MODE_CHOOSING) return; if(rock_selected_i == -1) { console.log("select rock!"); return; } if(bait_selected_i == -1) { console.log("select bait!"); return; } });
+    ready_btn.wx = 0.8;
+    ready_btn.wy = 0.8;
+    ready_btn.ww = 0.1;
+    ready_btn.wh = 0.1;
+    toScene(ready_btn,canv);
+
     stats = new StatsDisp();
     stats.wx = 0.2;
     stats.wy = 0.6;
@@ -123,6 +132,7 @@ var RockScene = function(game, stage)
     stats.wh = 0.2;
     toScene(stats,canv);
 
+    clicker.register(ready_btn);
     clicker.register(back_btn);
 
     rock_selected_i = -1;
@@ -143,18 +153,26 @@ var RockScene = function(game, stage)
     if(mode == MODE_CHOOSING)
     {
       context.fillStyle = "#000000";
-      context.fillText("Back",back_btn.x,back_btn.y);
+      context.fillText("Back",back_btn.x,back_btn.y-10);
       back_btn.draw(canv);
 
+      context.fillStyle = "#000000";
+      context.fillText("Rocks",rock_selects[0].x,rock_selects[0].y-10);
       for(var i = 0; i < rock_selects.length; i++)
         drawSelect(rock_selects[i]);
+      context.fillStyle = "#000000";
+      context.fillText("Bait",bait_selects[0].x,bait_selects[0].y-10);
       for(var i = 0; i < bait_selects.length; i++)
         drawSelect(bait_selects[i]);
+
+      context.fillStyle = "#000000";
+      context.fillText("Ready",ready_btn.x,ready_btn.y-10);
+      ready_btn.draw(canv);
     }
     else if(mode == MODE_HUNTING)
     {
       context.fillStyle = "#000000";
-      context.fillText("Back",back_btn.x,back_btn.y);
+      context.fillText("Back",back_btn.x,back_btn.y-10);
       back_btn.draw(canv);
     }
     else if(mode == MODE_CAUGHT)
