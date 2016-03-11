@@ -20,6 +20,9 @@ var GamePlayScene = function(game, stage)
 
   var MAXIMUM_CAPACITY = 5;
 
+  var bg_img = new Image();
+  bg_img.src = "assets/penforlizard.png";
+
   self.ready = function()
   {
     clicker = new Clicker({source:stage.dispCanv.canvas});
@@ -40,10 +43,10 @@ var GamePlayScene = function(game, stage)
     toScene(race_btn,canv);
 
     terrarium = new Terrarium();
-    terrarium.wx = 0.3;
-    terrarium.wy = 0.3;
-    terrarium.ww = 0.4;
-    terrarium.wh = 0.4;
+    terrarium.wx = 0.25;
+    terrarium.wy = 0.2;
+    terrarium.ww = 0.45;
+    terrarium.wh = 0.5;
     toScene(terrarium,canv);
 
     selects = [];
@@ -104,6 +107,8 @@ var GamePlayScene = function(game, stage)
 
   self.draw = function()
   {
+    context.drawImage(bg_img, 0, 0, canv.width, canv.height);
+
     context.fillStyle = "#000000";
     context.fillText("To Rock",rock_btn.x,rock_btn.y);
     rock_btn.draw(canv);
@@ -115,7 +120,7 @@ var GamePlayScene = function(game, stage)
       race_btn.draw(canv);
     }
 
-    drawTerrarium(context);
+    //drawTerrarium(context);
     context.fillStyle = "#000000";
     context.fillText("My Lizards",10,20);
     for(var i = 0; i < selects.length; i++)

@@ -24,9 +24,11 @@ var LoadingScene = function(game, stage)
     canv.context.fillText(".",0,0);// funky way to encourage any custom font to load
 
     //put strings in 'img_srcs' as separate array to get "static" count
-    /*
-    img_srcs.push("assets/man.png");
-    */
+    img_srcs.push("assets/penforlizard.png");
+    img_srcs.push("assets/racetrack.png");
+    img_srcs.push("assets/rock.png");
+    img_srcs.push("assets/rockcactus.png");
+    img_srcs.push("assets/rockcactustinfoil.png");
     for(var i = 0; i < img_srcs.length; i++)
     {
       images[i] = new Image();
@@ -38,8 +40,8 @@ var LoadingScene = function(game, stage)
 
   self.tick = function()
   {
-    if(progress <= imagesloaded/(img_srcs.length+1)) progress += 100;//0.01;
-    if(progress >= 1.0) game.nextScene();
+    if(progress <= imagesloaded/(img_srcs.length+1)) progress += 0.01;
+    if(progress >= 1.0 || imagesloaded/(img_srcs.length+1) >= 1.) game.nextScene();
   };
 
   self.draw = function()
