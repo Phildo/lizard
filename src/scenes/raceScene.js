@@ -10,15 +10,16 @@ var RaceScene = function(game, stage)
   self.clicker;
   self.back_btn;
   self.race_btn;
+  self.again_btn;
   self.track;
 
   var bg_img = new Image();
-  bg_img.src = "assets/racetrack.png";
+  bg_img.src = "assets/environmental/racetrack.png";
 
   self.ready = function()
   {
     var selectedLizard = game.player.lizards[game.racing_lizard_index];
-    var rank = selectedLizard.rank;
+    var rank = game.player.rank;
     var contestants = [];
 
     opponents[rank].forEach(function(lizard, index) {
@@ -32,13 +33,32 @@ var RaceScene = function(game, stage)
     self.clicker.register(self.back_btn);
 
     // Set up button to start race
-    self.race_btn = new ButtonBox(0,0,0,0, function() { self.track.state = RACE_RUNNING; });
+    self.race_btn = new ButtonBox(0,0,0,0, function() { 
+      if (self.track.state === RACE_READY) {
+        self.track.state = RACE_RUNNING;
+      }
+    });
     self.race_btn.wx = 0.5;
     self.race_btn.wy = 0.2;
     self.race_btn.ww = 0.1;
     self.race_btn.wh = 0.1;
     toScene(self.race_btn, canv);
     self.clicker.register(self.race_btn);
+
+    // set up the race again button
+    self.again_btn = new ButtonBox(0,0,0,0, function() { 
+      if (self.track.state === RACE_DONE) {
+        self.cleanup();
+        self.ready();
+      }
+    });
+
+    self.again_btn.wx = 0.5;
+    self.again_btn.wy = 0.2;
+    self.again_btn.ww = 0.1;
+    self.again_btn.wh = 0.1;
+    toScene(self.again_btn, canv);
+    self.clicker.register(self.again_btn);
 
     // Initialize the track
     self.track = new Track(contestants, rank);
@@ -56,20 +76,20 @@ var RaceScene = function(game, stage)
     else if(self.track.state === RACE_FINISH) {
       var winner = self.track.runners[self.track.winner];
       var playerLiz = game.player.lizards[game.racing_lizard_index];
+      playerLiz.total_races++;
+      game.player.total_races++;
 
       if (winner.ref === playerLiz) {
         game.player.money += self.track.winnings;
         winner.ref.wins++;
+        game.player.wins++;
 
         // Check for promotion
         
-        console.log(winner.ref.rank);
-        var newRank = Math.floor(winner.ref.wins / 5);
-        console.log(newRank);
-        if (newRank > winner.ref.rank) {
+        var newRank = Math.floor(game.player.wins / 5);
+        if (newRank > game.player.rank) {
           // PROMOTION!
-          winner.ref.rank = Math.min(newRank, RANK_CHALLENGER);
-          console.log(winner.ref.rank);
+          game.player.rank = Math.min(newRank, RANK_CHALLENGER);
         }
       }
 
@@ -102,6 +122,9 @@ var RaceScene = function(game, stage)
       } else {
         ctx.fillText("Sorry! You lost this race. Better luck next time!", 300, 50);
       }
+
+      ctx.fillText("Race Again", self.again_btn.x, self.again_btn.y);
+      self.again_btn.draw(canv);
     }
   };
 
@@ -110,7 +133,6 @@ var RaceScene = function(game, stage)
     // Cleanup clicker
     self.clicker.detach();
     self.clicker = undefined;
-    game.racing_lizard_index = -1;
   };
 
   var tickRunner = function(liz) {
