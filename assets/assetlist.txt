@@ -24,5 +24,11 @@ Uprezzed environments DONE
 Uprezzed b8 DONE (not worm.. no diea where file went ;-;)
 ortho lizards
 
-904C1C
-DFB989
+Lizard Colors: (damn material properties didn't save ;-;)
+Orange: FF7D53
+Pink: FF2CA1
+Light Green: 8BFF5E
+Light Blue: 58FFF5
+Purple: E539FF
+Blue: 5980FF
+White: FFF1F1
