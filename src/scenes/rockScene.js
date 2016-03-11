@@ -46,6 +46,13 @@ var RockScene = function(game, stage)
   var time_til_lizard;
   var catchable_lizard;
 
+  var rock_bg_img = new Image();
+  rock_bg_img.src = "assets/rock.png";
+  var rock_tin_bg_img = new Image();
+  rock_tin_bg_img.src = "assets/rocktinfoil.png";
+  var rock_cactus_bg_img = new Image();
+  rock_cactus_bg_img.src = "assets/rockcactustinfoil.png";
+
   self.ready = function()
   {
     clicker = new Clicker({source:stage.dispCanv.canvas});
@@ -62,8 +69,8 @@ var RockScene = function(game, stage)
     var rock;
 
     rock = new Rock();
-    rock.name = "Bad Rock";
-    rock.img = RIcon1;
+    rock.name = "Simple Rock";
+    rock.img = rock_bg_img;
     rock.wx = 0.3;
     rock.wy = 0.3;
     rock.ww = 0.4;
@@ -72,8 +79,8 @@ var RockScene = function(game, stage)
     rocks.push(rock);
 
     rock = new Rock();
-    rock.name = "OK Rock";
-    rock.img = RIcon2;
+    rock.name = "Tinfoil";
+    rock.img = rock_tin_bg_img;
     rock.wx = 0.3;
     rock.wy = 0.3;
     rock.ww = 0.4;
@@ -82,8 +89,8 @@ var RockScene = function(game, stage)
     rocks.push(rock);
 
     rock = new Rock();
-    rock.name = "Good Rock";
-    rock.img = RIcon3;
+    rock.name = "Cactus";
+    rock.img = rock_cactus_bg_img;
     rock.wx = 0.3;
     rock.wy = 0.3;
     rock.ww = 0.4;
@@ -273,6 +280,11 @@ var RockScene = function(game, stage)
   {
     if(mode == MODE_CHOOSING)
     {
+      if(rock_selected_i != -1)
+        context.drawImage(rocks[rock_selected_i].img,0,0,canv.width,canv.height);
+      if(bait_selected_i != -1)
+        context.drawImage(baits[bait_selected_i].img,baits[bait_selected_i].x,baits[bait_selected_i].y,baits[bait_selected_i].w,baits[bait_selected_i].h);
+
       context.fillStyle = "#000000";
       context.fillText("Back",back_btn.x,back_btn.y-10);
       back_btn.draw(canv);
@@ -289,20 +301,15 @@ var RockScene = function(game, stage)
       context.fillStyle = "#000000";
       context.fillText("Ready",ready_btn.x,ready_btn.y-10);
       ready_btn.draw(canv);
-
-      if(rock_selected_i != -1)
-        context.drawImage(rocks[rock_selected_i].img,rocks[rock_selected_i].x,rocks[rock_selected_i].y,rocks[rock_selected_i].w,rocks[rock_selected_i].h);
-      if(bait_selected_i != -1)
-        context.drawImage(baits[bait_selected_i].img,baits[bait_selected_i].x,baits[bait_selected_i].y,baits[bait_selected_i].w,baits[bait_selected_i].h);
     }
     else if(mode == MODE_HUNTING)
     {
+      context.drawImage(rocks[rock_selected_i].img,0,0,canv.width,canv.height);
+      context.drawImage(baits[bait_selected_i].img,baits[bait_selected_i].x,baits[bait_selected_i].y,baits[bait_selected_i].w,baits[bait_selected_i].h);
+
       context.fillStyle = "#000000";
       context.fillText("Back",back_btn.x,back_btn.y-10);
       back_btn.draw(canv);
-
-      context.drawImage(rocks[rock_selected_i].img,rocks[rock_selected_i].x,rocks[rock_selected_i].y,rocks[rock_selected_i].w,rocks[rock_selected_i].h);
-      context.drawImage(baits[bait_selected_i].img,baits[bait_selected_i].x,baits[bait_selected_i].y,baits[bait_selected_i].w,baits[bait_selected_i].h);
 
       if(catchable_lizard)
       {
@@ -313,13 +320,13 @@ var RockScene = function(game, stage)
     }
     else if(mode == MODE_CAUGHT)
     {
+      context.drawImage(rocks[rock_selected_i].img,0,0,canv.width,canv.height);
+      context.drawImage(baits[bait_selected_i].img,baits[bait_selected_i].x,baits[bait_selected_i].y,baits[bait_selected_i].w,baits[bait_selected_i].h);
+
       context.fillStyle = "#000000";
       context.fillText("My Lizards",10,20);
       for(var i = 0; i < liz_selects.length; i++)
         drawSelect(liz_selects[i]);
-
-      context.drawImage(rocks[rock_selected_i].img,rocks[rock_selected_i].x,rocks[rock_selected_i].y,rocks[rock_selected_i].w,rocks[rock_selected_i].h);
-      context.drawImage(baits[bait_selected_i].img,baits[bait_selected_i].x,baits[bait_selected_i].y,baits[bait_selected_i].w,baits[bait_selected_i].h);
 
       if(liz_selected_i != -1)
         drawStatsDisp(my_stats,game.player.lizards[liz_selected_i]);
