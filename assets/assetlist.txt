@@ -20,6 +20,9 @@ jumbotron
 Lizard Anims
 Title Screen :'[
 Better Pen DONE
+Uprezzed environments DONE
+Uprezzed b8 DONE (not worm.. no diea where file went ;-;)
+ortho lizards
 
 904C1C
 DFB989
