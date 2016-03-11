@@ -15,14 +15,30 @@ Lizard Pen DONE
 Stretch:
 Lizards DONE
 three types of bait: bad, ok, gr8b8 DONE
-Rock grandstand
-jumbotron
-Lizard Anims
-Title Screen :'[
+Lizard Anims DONE
 Better Pen DONE
+Uprezzed Lizards DONE
 Uprezzed environments DONE
 Uprezzed b8 DONE (not worm.. no diea where file went ;-;)
-ortho lizards
+Lizards with Tongues DONE
+Remove Transparency from Lizards DONE
 
-904C1C
-DFB989
+ortho lizards
+Title Screen :'[
+Rock grandstand
+jumbotron
+
+
+Lizard Colors: (damn material properties didn't save ;-;)
+Orange: FF7D53
+Pink: FF2CA1
+Light Green: 8BFF5E
+Light Blue: 58FFF5
+Purple: E539FF
+Blue: 5980FF
+White: FFF1F1
+
+
+For removing transparency in lizards:
+Move Tongue and TongueAnim and others to: x:=-250 y:=-180
+With canvas size: x:=1255 y:=800
