@@ -223,4 +223,22 @@ var RaceScene = function(game, stage)
       }
     };
   };
+
+  var oponents = {
+    RANK_BRONZE:      [
+                        new Lizard("Charles", LIZARD_GENDER_MALE, )
+                      ],
+    RANK_SILVER:      [
+                      ],
+    RANK_GOLD:        [
+                      ],
+    RANK_PLATINUM:    [
+                      ],
+    RANK_DIAMOND:     [
+                      ],
+    RANK_MASTER:      [
+                      ],
+    RANK_CHALLENGER:  [
+                      ]
+  };
 };

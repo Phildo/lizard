@@ -13,15 +13,24 @@ var LIZARD_GENDER_NA     = ENUM; ENUM++;
 var LIZARD_GENDER_MALE   = ENUM; ENUM++;
 var LIZARD_GENDER_FEMALE = ENUM; ENUM++;
 
-var Lizard = function()
+var RANK_BRONZE       = ENUM; ENUM++;
+var RANK_SILVER       = ENUM; ENUM++;
+var RANK_GOLD         = ENUM; ENUM++;
+var RANK_PLATINUM     = ENUM; ENUM++;
+var RANK_DIAMOND      = ENUM; ENUM++;
+var RANK_MASTER       = ENUM; ENUM++;
+var RANK_CHALLENGER   = ENUM; ENUM++;
+
+var Lizard = function(name, gender, speed, endurance)
 {
   var self = this;
 
-  self.name = "liz";
-  self.gender = LIZARD_GENDER_NA;
-  self.speed = 1;
-  self.base_endurance = randIntBelow(300);
+  self.name = name || "liz";
+  self.gender = gender || LIZARD_GENDER_NA;
+  self.speed = speed || 0.3;
+  self.base_endurance = endurance || Math.random();
   self.wins = 0;
+  self.rank = RANK_BRONZE;
 
   self.x = 0;
   self.y = 0;
