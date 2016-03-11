@@ -71,11 +71,11 @@ var RockScene = function(game, stage)
   var catchable_lizard;
 
   var rock_bg_img = new Image();
-  rock_bg_img.src = "assets/environmental/rock.png";
+  rock_bg_img.src = "assets/environmental/rock2.png";
   var rock_tin_bg_img = new Image();
-  rock_tin_bg_img.src = "assets/environmental/rocktinfoil.png";
+  rock_tin_bg_img.src = "assets/environmental/rocktinfoil2.png";
   var rock_cactus_bg_img = new Image();
-  rock_cactus_bg_img.src = "assets/environmental/rockcactustinfoil.png";
+  rock_cactus_bg_img.src = "assets/environmental/rockcactustinfoil2.png";
 
   var rock_poor_b8_img = new Image();
   rock_poor_b8_img.src = "assets/b8/flyb8.png";
@@ -696,16 +696,5 @@ var RockScene = function(game, stage)
   //BIcon1.context.fillStyle = "#FA6BDD";
   //BIcon1.context.fillRect(0,0,BIcon1.width,BIcon1.height);
 
-  var BIcon2 = GenIcon();
-  BIcon2.context.fillStyle = "#4ADB1D";
-  BIcon2.context.fillRect(0,0,BIcon2.width,BIcon2.height);
-
-  var BIcon3 = GenIcon();
-  BIcon3.context.fillStyle = "#3A4B1D";
-  BIcon3.context.fillRect(0,0,BIcon3.width,BIcon3.height);
-
-  var BIcon4 = GenIcon();
-  BIcon4.context.fillStyle = "#8A8B8D";
-  BIcon4.context.fillRect(0,0,BIcon4.width,BIcon4.height);
 };
 

@@ -22,7 +22,7 @@ var GamePlayScene = function(game, stage)
   var MAXIMUM_CAPACITY = 5;
 
   var bg_img = new Image();
-  bg_img.src = "assets/environmental/penforlizard.png";
+  bg_img.src = "assets/environmental/penforlizard2.png";
 
   self.ready = function()
   {
