@@ -83,11 +83,11 @@ var RockScene = function(game, stage)
   rock_cactus_bg_img.src = "assets/environmental/rockcactustinfoil2.png";
 
   var rock_poor_b8_img = new Image();
-  rock_poor_b8_img.src = "assets/b8/flyb8.png";
+  rock_poor_b8_img.src = "assets/b8/flyb82.png";
     var rock_good_b8_img = new Image();
   rock_good_b8_img.src = "assets/b8/wormb8.png";
     var rock_gr8_b8_img = new Image();
-  rock_gr8_b8_img.src = "assets/b8/grasshopperb8.png";
+  rock_gr8_b8_img.src = "assets/b8/grasshopperb82.png";
 
   self.ready = function()
   {
