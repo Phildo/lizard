@@ -32,24 +32,9 @@ var GamePlayScene = function(game, stage)
     rock_btn = new ButtonBox(0,0,0,0,function(){ game.setScene(3); });
     rock_btn.wx = 0.8;
     rock_btn.wy = 0.1;
-    rock_btn.ww = 0.1;
+    rock_btn.ww = 0.2;
     rock_btn.wh = 0.1;
     toScene(rock_btn,canv);
-
-    race_btn = new ButtonBox(0,0,0,0,function(){ 
-      if(selected_i == -1) 
-        return;
-      var fee = game.player.rank * 50;
-      if (game.player.money < fee)
-        return;
-      game.racing_lizard_index = selected_i;
-      game.setScene(4);
-    });
-    race_btn.wx = 0.8;
-    race_btn.wy = 0.3;
-    race_btn.ww = 0.1;
-    race_btn.wh = 0.1;
-    toScene(race_btn,canv);
 
     terrarium = new Terrarium();
     terrarium.wx = 0.25;
@@ -101,6 +86,22 @@ var GamePlayScene = function(game, stage)
     stats.wh = 0.3;
     toScene(stats,canv);
 
+    race_btn = new ButtonBox(0,0,0,0,function(){
+      if(selected_i == -1)
+        return;
+      var fee = game.player.rank * 50;
+      if (game.player.money < fee)
+        return;
+      game.racing_lizard_index = selected_i;
+      game.setScene(4);
+    });
+    race_btn.wx = 0.8;
+    race_btn.ww = 0.2;
+    race_btn.wh = 0.1;
+    race_btn.wy = stats.wy-race_btn.wh;
+    toScene(race_btn,canv);
+
+
     moneydisp = new MoneyDisp();
     moneydisp.wx = 0;
     moneydisp.wy = 0.02;
@@ -127,15 +128,17 @@ var GamePlayScene = function(game, stage)
   {
     context.drawImage(bg_img, 0, 0, canv.width, canv.height);
 
-    context.fillStyle = "#000000";
-    context.fillText("To Rock",rock_btn.x,rock_btn.y);
-    rock_btn.draw(canv);
+    context.fillStyle = "rgba(0,0,0,0.8)";
+    context.fillRect(rock_btn.x,rock_btn.y,rock_btn.w,rock_btn.h);
+    context.fillStyle = "#FFFFFF";
+    context.fillText("GO LIZARDIN' ->",rock_btn.x+10,rock_btn.y+25);
 
     if(selected_i != -1)
     {
-      context.fillStyle = "#000000";
-      context.fillText("To Race",race_btn.x,race_btn.y);
-      race_btn.draw(canv);
+      context.fillStyle = "rgba(0,0,0,0.8)";
+      context.fillRect(race_btn.x,race_btn.y,race_btn.w,race_btn.h);
+      context.fillStyle = "#FFFFFF";
+      context.fillText("TO THE RACES ->",race_btn.x+10,race_btn.y+25);
     }
 
     context.fillStyle = "rgba(0,0,0,0.8)";
