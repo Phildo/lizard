@@ -22,6 +22,7 @@ var RockScene = function(game, stage)
   var hoverer;
 
   var back_btn;
+  var buy_btn;
 
   var rocks;
   var baits;
@@ -303,17 +304,37 @@ var RockScene = function(game, stage)
     rockdisp = new RockDisp();
     rockdisp.wx = rock_selects[0].ww+0.1;
     rockdisp.wy = rock_selects[0].wy;
-    rockdisp.ww = 1-rockdisp.wx-0.1;
+    rockdisp.ww = 1-rockdisp.wx-0.2;
     rockdisp.wh = rock_selects[rock_selects.length-1].wy+rock_selects[0].wh-rockdisp.wy;
     toScene(rockdisp,canv);
+
+    buy_btn = new ButtonBox(0,0,0,0,
+      function(){
+        if(mode != MODE_CHOOSING ||
+          rocks[rock_selected_i].owned ||
+          rocks[rock_selected_i].locked ||
+          rocks[rock_selected_i].price > game.player.money)
+          return;
+
+        game.player.money -= rocks[rock_selected_i].price;
+        rocks[rock_selected_i].owned = true;
+        if(rock_selected_i == 1)      game.player.owns_tinfoil = true;
+        else if(rock_selected_i == 2) game.player.owns_cactus  = true;
+      });
+    buy_btn.wx = rockdisp.wx+rockdisp.ww-0.1;
+    buy_btn.wy = rockdisp.wy+rockdisp.wh-0.1;
+    buy_btn.ww = 0.1;
+    buy_btn.wh = 0.1;
+    toScene(buy_btn,canv);
 
     baitdisp = new BaitDisp();
     baitdisp.wx = bait_selects[0].ww+0.1;
     baitdisp.wy = bait_selects[0].wy;
-    baitdisp.ww = 1-baitdisp.wx-0.1;
+    baitdisp.ww = 1-baitdisp.wx-0.3;
     baitdisp.wh = bait_selects[bait_selects.length-1].wy+bait_selects[0].wh-baitdisp.wy;
     toScene(baitdisp,canv);
 
+    clicker.register(buy_btn);
     clicker.register(ready_btn);
     clicker.register(keep_btn);
     clicker.register(release_btn);
@@ -388,6 +409,17 @@ var RockScene = function(game, stage)
         drawSelect(rock_selects[i]);
       for(var i = 0; i < bait_selects.length; i++)
         drawSelect(bait_selects[i]);
+
+      if(
+        !rocks[rock_selected_i].owned &&
+        !rocks[rock_selected_i].locked &&
+        rocks[rock_selected_i].price <= game.player.money
+      )
+      {
+        context.fillStyle = "#000000";
+        context.fillText("Buy",buy_btn.x,buy_btn.y-10);
+        buy_btn.draw(canv);
+      }
 
       context.fillStyle = "#000000";
       context.fillText("Ready",ready_btn.x,ready_btn.y-10);

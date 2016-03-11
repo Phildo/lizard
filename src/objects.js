@@ -11,7 +11,7 @@ var Player = function()
 {
   var self = this;
 
-  self.money = 0;
+  self.money = 0;//10000;
   self.lizards = [];
 
   self.rank = RANK_BRONZE;
