@@ -316,7 +316,7 @@ var RockScene = function(game, stage)
     rockdisp = new RockDisp();
     rockdisp.wx = rock_selects[0].ww+0.1;
     rockdisp.wy = rock_selects[0].wy;
-    rockdisp.ww = 1-rockdisp.wx-0.2;
+    rockdisp.ww = 1-rockdisp.wx-0.3;
     rockdisp.wh = rock_selects[rock_selects.length-1].wy+rock_selects[0].wh-rockdisp.wy;
     toScene(rockdisp,canv);
 
