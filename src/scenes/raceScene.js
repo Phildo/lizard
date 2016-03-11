@@ -36,7 +36,12 @@ var RaceScene = function(game, stage)
 
     // Set up button to go back to Terrarium
     self.clicker = new Clicker({source:stage.dispCanv.canvas});
-    self.back_btn = new ButtonBox(600,10,10,10,function(){ game.setScene(2); });
+    self.back_btn = new ButtonBox(0,0,0,0,function(){ game.setScene(2); });
+    self.back_btn.wx = 0.8;
+    self.back_btn.wy = 0.1;
+    self.back_btn.ww = 0.2;
+    self.back_btn.wh = 0.1;
+    toScene(self.back_btn,canv);
     self.clicker.register(self.back_btn);
 
     // Set up button to start race
@@ -45,9 +50,9 @@ var RaceScene = function(game, stage)
         self.track.state = RACE_RUNNING;
       }
     });
-    self.race_btn.wx = 0.5;
-    self.race_btn.wy = 0.2;
-    self.race_btn.ww = 0.1;
+    self.race_btn.wx = 0.8;
+    self.race_btn.wy = 0.8;
+    self.race_btn.ww = 0.2;
     self.race_btn.wh = 0.1;
     toScene(self.race_btn, canv);
     self.clicker.register(self.race_btn);
@@ -63,9 +68,9 @@ var RaceScene = function(game, stage)
       }
     });
 
-    self.again_btn.wx = 0.5;
-    self.again_btn.wy = 0.2;
-    self.again_btn.ww = 0.1;
+    self.again_btn.wx = 0.8;
+    self.again_btn.wy = 0.8;
+    self.again_btn.ww = 0.2;
     self.again_btn.wh = 0.1;
     toScene(self.again_btn, canv);
     self.clicker.register(self.again_btn);
@@ -136,14 +141,26 @@ var RaceScene = function(game, stage)
     ctx.drawImage(bg_img, 0, 0, canv.width, canv.height);
 
     // Draw button to go back to Terrarium
-    ctx.fillStyle = "#000000";
-    self.back_btn.draw(canv);
+
+    ctx.fillStyle = "rgba(0,0,0,0.8)";
+    ctx.fillRect(self.back_btn.x,self.back_btn.y,self.back_btn.w,self.back_btn.h);
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillText("BACK TO THA PEN",self.back_btn.x+10,self.back_btn.y+25);
+
+    // Draw money display
     self.moneydisp.draw(ctx);
+
+    // Draw the track
     self.track.draw(ctx);
 
     if (self.track.state === RACE_READY) {
-      ctx.fillText("Start Race", self.race_btn.x, self.race_btn.y);
-      self.race_btn.draw(canv);
+      // Draw the start race button
+      ctx.fillStyle = "rgba(0,0,0,0.8)";
+      ctx.fillRect(self.race_btn.x,self.race_btn.y,self.race_btn.w,self.race_btn.h);
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillText("START RACE",self.race_btn.x+10,self.race_btn.y+25);
+
+      // Draw the stats on left
       self.stats.forEach(function(select) {
         drawSelect(select);
       });
@@ -160,8 +177,10 @@ var RaceScene = function(game, stage)
         ctx.fillText("Sorry! You lost this race. Better luck next time!", 300, 50);
       }
 
-      ctx.fillText("Race Again", self.again_btn.x, self.again_btn.y);
-      self.again_btn.draw(canv);
+      ctx.fillStyle = "rgba(0,0,0,0.8)";
+      ctx.fillRect(self.again_btn.x,self.again_btn.y,self.again_btn.w,self.again_btn.h);
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillText("RACE AGAIN",self.again_btn.x+10,self.again_btn.y+25);
     }
   };
 
