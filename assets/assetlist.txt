@@ -21,6 +21,7 @@ Uprezzed Lizards DONE
 Uprezzed environments DONE
 Uprezzed b8 DONE (not worm.. no diea where file went ;-;)
 Lizards with Tongues DONE
+Remove Transparency from Lizards DONE
 
 ortho lizards
 Title Screen :'[
