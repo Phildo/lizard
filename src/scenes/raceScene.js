@@ -14,7 +14,7 @@ var RaceScene = function(game, stage)
   self.track;
 
   var bg_img = new Image();
-  bg_img.src = "assets/racetrack.png";
+  bg_img.src = "assets/environmental/racetrack.png";
 
   self.ready = function()
   {

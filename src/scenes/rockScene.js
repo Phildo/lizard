@@ -71,11 +71,11 @@ var RockScene = function(game, stage)
   var catchable_lizard;
 
   var rock_bg_img = new Image();
-  rock_bg_img.src = "assets/rock.png";
+  rock_bg_img.src = "assets/environmental/rock.png";
   var rock_tin_bg_img = new Image();
-  rock_tin_bg_img.src = "assets/rocktinfoil.png";
+  rock_tin_bg_img.src = "assets/environmental/rocktinfoil.png";
   var rock_cactus_bg_img = new Image();
-  rock_cactus_bg_img.src = "assets/rockcactustinfoil.png";
+  rock_cactus_bg_img.src = "assets/environmental/rockcactustinfoil.png";
 
   self.ready = function()
   {
