@@ -13,9 +13,13 @@ var Player = function()
 
   self.money = 0;
   self.lizards = [];
+
   self.rank = RANK_BRONZE;
   self.wins = 0;
   self.total_races = 0;
+
+  self.owns_tinfoil = false;
+  self.owns_cactus = false;
 }
 
 var ENUM = 0;

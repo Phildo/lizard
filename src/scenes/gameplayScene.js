@@ -15,6 +15,7 @@ var GamePlayScene = function(game, stage)
   var selects;
   var tlizards;
   var stats;
+  var moneydisp;
 
   var selected_i;
 
@@ -100,6 +101,13 @@ var GamePlayScene = function(game, stage)
     stats.wh = 0.3;
     toScene(stats,canv);
 
+    moneydisp = new MoneyDisp();
+    moneydisp.wx = 0;
+    moneydisp.wy = 0.02;
+    moneydisp.ww = 0.1;
+    moneydisp.wh = 0.06;
+    toScene(moneydisp,canv);
+
     clicker.register(rock_btn);
     clicker.register(race_btn);
 
@@ -130,9 +138,10 @@ var GamePlayScene = function(game, stage)
       race_btn.draw(canv);
     }
 
-    //drawTerrarium(context);
-    context.fillStyle = "#000000";
-    context.fillText("My Lizards",10,20);
+    context.fillStyle = "rgba(0,0,0,0.8)";
+    context.fillRect(moneydisp.x,moneydisp.y,moneydisp.w,moneydisp.h);
+    context.fillStyle = "#FFFFFF";
+    context.fillText("$"+game.player.money,moneydisp.x+10,moneydisp.y+20);
     for(var i = 0; i < selects.length; i++)
       drawSelect(selects[i]);
 
@@ -201,7 +210,7 @@ var GamePlayScene = function(game, stage)
         context.fillText(liz.name,select.x+10,select.y+20);
 
         context.fillStyle = "#000000";
-        context.fillText("SPEED:",select.x+10,select.y+40);
+        context.fillText("SPD:",select.x+10,select.y+40);
         for(var i = 0; i < 10; i++)
         {
           if(liz.speed >= i/10) context.fillStyle = "#000000";
@@ -209,7 +218,7 @@ var GamePlayScene = function(game, stage)
           context.fillRect(select.x+52+10*i,select.y+32,8,8);
         }
         context.fillStyle = "#000000";
-        context.fillText("ENDUR:",select.x+10,select.y+55);
+        context.fillText("END:",select.x+10,select.y+55);
         for(var i = 0; i < 10; i++)
         {
           if(liz.endurance >= i/10) context.fillStyle = "#000000";
@@ -226,7 +235,7 @@ var GamePlayScene = function(game, stage)
         context.fillText(liz.name,select.x+10,select.y+20);
 
         context.fillStyle = "#FFFFFF";
-        context.fillText("SPEED:",select.x+10,select.y+40);
+        context.fillText("SPD:",select.x+10,select.y+40);
         for(var i = 0; i < 10; i++)
         {
           if(liz.speed >= i/10) context.fillStyle = "#FFFFFF";
@@ -234,7 +243,7 @@ var GamePlayScene = function(game, stage)
           context.fillRect(select.x+52+10*i,select.y+32,8,8);
         }
         context.fillStyle = "#FFFFFF";
-        context.fillText("ENDUR:",select.x+10,select.y+55);
+        context.fillText("END:",select.x+10,select.y+55);
         for(var i = 0; i < 10; i++)
         {
           if(liz.endurance >= i/10) context.fillStyle = "#FFFFFF";
@@ -366,5 +375,19 @@ var GamePlayScene = function(game, stage)
     }
   }
 
+  var MoneyDisp = function()
+  {
+    var self = this;
+
+    self.x = 0;
+    self.y = 0;
+    self.w = 0;
+    self.h = 0;
+
+    self.wx = 0.;
+    self.wy = 0.;
+    self.ww = 0.;
+    self.wh = 0.;
+  }
 };
 
