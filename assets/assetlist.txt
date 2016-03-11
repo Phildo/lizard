@@ -6,10 +6,10 @@ Rock
 Cactus Upgrade
 Tinfoil Upgrade
 
-Race:
+Race: DONE
 Racebox
 
-Terrarium:
+Terrarium: DONE
 Lizard Pen
 
 Stretch:
@@ -17,3 +17,4 @@ Lizards
 three types of bait: bad, ok, gr8b8
 Rock grandstand
 jumbotron
+Title Screen :'[
