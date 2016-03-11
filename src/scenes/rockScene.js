@@ -6,14 +6,25 @@ var RockScene = function(game, stage)
   var context = canv.context;
 
   var ENUM;
+
   ENUM = 0;
-  var MODE_HUNTING = ENUM; ENUM++;
-  var MODE_CAUGHT  = ENUM; ENUM++;
+  var MODE_CHOOSING = ENUM; ENUM++;
+  var MODE_HUNTING  = ENUM; ENUM++;
+  var MODE_CAUGHT   = ENUM; ENUM++;
+  var mode;
+
+  ENUM = 0;
+  var SELECT_ROCK = ENUM; ENUM++;
+  var SELECT_BAIT = ENUM; ENUM++;
+  var SELECT_LIZ  = ENUM; ENUM++;
 
   var clicker;
   var hoverer;
 
   var back_btn;
+
+  var rocks;
+  var baits;
 
   var rock_selects;
   var bait_selects;
@@ -38,12 +49,63 @@ var RockScene = function(game, stage)
     back_btn.wh = 0.1;
     toScene(back_btn,canv);
 
+    rocks = [];
+    var rock;
+    for(var i = 0; i < 5; i++)
+    {
+      rock = new Rock();
+      rocks[i] = rock;
+    }
+
+    baits = [];
+    var bait;
+    for(var i = 0; i < 5; i++)
+    {
+      bait = new Bait();
+      baits[i] = bait;
+    }
+
+    rock_selects = [];
+    var select;
+    for(var i = 0; i < rocks.length; i++)
+    {
+      select = new Select();
+      select.i = i;
+      select.type = SELECT_ROCK;
+      select.wx = 0;
+      select.wy = 0.1+(0.1*i);
+      select.ww = 0.2;
+      select.wh = 0.1;
+      toScene(select,canv);
+      clicker.register(select);
+      hoverer.register(select);
+      rock_selects[i] = select;
+    }
+
+    bait_selects = [];
+    var select;
+    for(var i = 0; i < baits.length; i++)
+    {
+      select = new Select();
+      select.i = i;
+      select.type = SELECT_BAIT;
+      select.wx = 0;
+      select.wy = 0.1+(0.1*i);
+      select.ww = 0.2;
+      select.wh = 0.1;
+      toScene(select,canv);
+      clicker.register(select);
+      hoverer.register(select);
+      bait_selects[i] = select;
+    }
+
     liz_selects = [];
     var select;
     for(var i = 0; i < MAXIMUM_CAPACITY; i++)
     {
-      select = new LizSelect();
+      select = new Select();
       select.i = i;
+      select.type = SELECT_LIZ;
       select.wx = 0;
       select.wy = 0.1+(0.1*i);
       select.ww = 0.2;
@@ -53,6 +115,7 @@ var RockScene = function(game, stage)
       hoverer.register(select);
       liz_selects[i] = select;
     }
+
 
     stats = new StatsDisp();
     stats.wx = 0.2;
@@ -66,6 +129,8 @@ var RockScene = function(game, stage)
     rock_selected_i = -1;
     bait_selected_i = -1;
     liz_selected_i  = -1;
+
+    mode = MODE_CHOOSING;
   };
 
   self.tick = function()
@@ -76,18 +141,28 @@ var RockScene = function(game, stage)
 
   self.draw = function()
   {
-    context.fillStyle = "#000000";
-    context.fillText("Back",back_btn.x,back_btn.y);
-    back_btn.draw(canv);
+    if(mode == MODE_CHOOSING)
+    {
+      context.fillStyle = "#000000";
+      context.fillText("Back",back_btn.x,back_btn.y);
+      back_btn.draw(canv);
+    }
+    else if(mode == MODE_HUNTING)
+    {
+      context.fillStyle = "#000000";
+      context.fillText("Back",back_btn.x,back_btn.y);
+      back_btn.draw(canv);
 
-    drawTerrarium(context);
-    context.fillStyle = "#000000";
-    context.fillText("My Lizards",10,20);
-    for(var i = 0; i < liz_selects.length; i++)
-      drawSelect(liz_selects[i]);
-
-    if(liz_selected_i != -1)
-      drawStatsDisp();
+    }
+    else if(mode == MODE_CAUGHT)
+    {
+      context.fillStyle = "#000000";
+      context.fillText("My Lizards",10,20);
+      for(var i = 0; i < liz_selects.length; i++)
+        drawSelect(liz_selects[i]);
+      if(liz_selected_i != -1)
+        drawStatsDisp();
+    }
   };
 
   self.cleanup = function()
@@ -98,10 +173,6 @@ var RockScene = function(game, stage)
     hoverer = undefined;
   };
 
-  ENUM = 0;
-  var SELECT_ROCK = ENUM; ENUM++;
-  var SELECT_BAIT = ENUM; ENUM++;
-  var SELECT_LIZ  = ENUM; ENUM++;
   var Select = function()
   {
     var self = this;
@@ -149,6 +220,7 @@ var RockScene = function(game, stage)
   var drawSelect = function(select)
   {
     var selected_i;
+    var length;
     switch(self.type)
     {
       case SELECT_ROCK: selected_i = rock_selected_i; break;
@@ -209,6 +281,16 @@ var RockScene = function(game, stage)
     context.fillStyle = "#000000";
     context.fillText(liz.name,stats.x+stats.h,stats.y+20);
     context.fillText("Speed",stats.x+stats.h,stats.y+30);
+  }
+
+  var Rock = function()
+  {
+    var self = this;
+  }
+
+  var Bait = function()
+  {
+    var self = this;
   }
 
 };
