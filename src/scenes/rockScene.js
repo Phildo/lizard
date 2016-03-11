@@ -29,9 +29,13 @@ var RockScene = function(game, stage)
   var rock_selects;
   var bait_selects;
   var liz_selects;
-  var stats;
+
+  var my_stats;
+  var caught_stats;
 
   var ready_btn;
+  var keep_btn;
+  var release_btn;
 
   var rock_selected_i;
   var bait_selected_i;
@@ -181,25 +185,48 @@ var RockScene = function(game, stage)
       liz_selects[i] = select;
     }
 
-    ready_btn = new ButtonBox(0,0,0,0,function(){ if(mode != MODE_CHOOSING) return; if(rock_selected_i == -1) { console.log("select rock!"); return; } if(bait_selected_i == -1) { console.log("select bait!"); return; } time_til_lizard = randIntBelow(500); mode = MODE_HUNTING; });
+    ready_btn = new ButtonBox(0,0,0,0,function(){ if(mode != MODE_CHOOSING) return; time_til_lizard = randIntBelow(500); mode = MODE_HUNTING; });
     ready_btn.wx = 0.8;
     ready_btn.wy = 0.8;
     ready_btn.ww = 0.1;
     ready_btn.wh = 0.1;
     toScene(ready_btn,canv);
 
-    stats = new StatsDisp();
-    stats.wx = 0.2;
-    stats.wy = 0.6;
-    stats.ww = 0.6;
-    stats.wh = 0.2;
-    toScene(stats,canv);
+    keep_btn = new ButtonBox(0,0,0,0,function(){ if(mode != MODE_CAUGHT || game.player.lizards.length > MAXIMUM_CAPACITY) return; game.player.lizards.push(catchable_lizard); catchable_lizard = undefined; mode = MODE_CHOOSING; });
+    keep_btn.wx = 0.8;
+    keep_btn.wy = 0.6;
+    keep_btn.ww = 0.1;
+    keep_btn.wh = 0.1;
+    toScene(keep_btn,canv);
+
+    release_btn = new ButtonBox(0,0,0,0,function(){ if(mode != MODE_CAUGHT) return; catchable_lizard = undefined; mode = MODE_CHOOSING; });
+    release_btn.wx = 0.8;
+    release_btn.wy = 0.8;
+    release_btn.ww = 0.1;
+    release_btn.wh = 0.1;
+    toScene(release_btn,canv);
+
+    my_stats = new StatsDisp();
+    my_stats.wx = 0.2;
+    my_stats.wy = 0.6;
+    my_stats.ww = 0.6;
+    my_stats.wh = 0.2;
+    toScene(my_stats,canv);
+
+    caught_stats = new StatsDisp();
+    caught_stats.wx = 0.2;
+    caught_stats.wy = 0.2;
+    caught_stats.ww = 0.6;
+    caught_stats.wh = 0.2;
+    toScene(caught_stats,canv);
 
     clicker.register(ready_btn);
+    clicker.register(keep_btn);
+    clicker.register(release_btn);
     clicker.register(back_btn);
 
-    rock_selected_i = -1;
-    bait_selected_i = -1;
+    rock_selected_i = 0;
+    bait_selected_i = 0;
     liz_selected_i  = -1;
 
     mode = MODE_CHOOSING;
@@ -224,6 +251,7 @@ var RockScene = function(game, stage)
         {
           var r = rocks[rock_selected_i];
           catchable_lizard = new RockLizard();
+          catchable_lizard.name = "Bill";
           catchable_lizard.ww = 0.05;
           catchable_lizard.wh = 0.05;
           var t = Math.random()*Math.PI*2;
@@ -294,7 +322,19 @@ var RockScene = function(game, stage)
       context.drawImage(baits[bait_selected_i].img,baits[bait_selected_i].x,baits[bait_selected_i].y,baits[bait_selected_i].w,baits[bait_selected_i].h);
 
       if(liz_selected_i != -1)
-        drawStatsDisp();
+        drawStatsDisp(my_stats,game.player.lizards[liz_selected_i]);
+      if(catchable_lizard) //should always be true?
+      {
+        drawStatsDisp(caught_stats,catchable_lizard);
+
+        context.fillStyle = "#000000";
+        context.fillText("Keep",keep_btn.x,keep_btn.y-10);
+        keep_btn.draw(canv);
+
+        context.fillStyle = "#000000";
+        context.fillText("Release",release_btn.x,release_btn.y-10);
+        release_btn.draw(canv);
+      }
     }
   };
 
@@ -353,8 +393,8 @@ var RockScene = function(game, stage)
 
         switch(self.type)
         {
-          case SELECT_ROCK: rock_selected_i = selected_i; break;
-          case SELECT_BAIT: bait_selected_i = selected_i; break;
+          case SELECT_ROCK: rock_selected_i = selected_i; if(rock_selected_i == -1) rock_selected_i = 0; break;
+          case SELECT_BAIT: bait_selected_i = selected_i; if(bait_selected_i == -1) bait_selected_i = 0; break;
           case SELECT_LIZ:  liz_selected_i  = selected_i; break;
         }
       }
@@ -379,7 +419,7 @@ var RockScene = function(game, stage)
     {
       case SELECT_ROCK: selected_i = rock_selected_i;  title = rocks[select.i].name; break;
       case SELECT_BAIT: selected_i = bait_selected_i;  title = baits[select.i].name; break;
-      case SELECT_LIZ:  selected_i = liz_selected_i;   title = game.player.lizards[select.i].name; break;
+      case SELECT_LIZ:  selected_i = liz_selected_i; if(game.player.lizards.length > select.i) title = game.player.lizards[select.i].name; break;
     }
 
     if(select.type == SELECT_LIZ && game.player.lizards.length <= select.i)
@@ -421,10 +461,8 @@ var RockScene = function(game, stage)
     self.ww = 0.;
     self.wh = 0.;
   }
-  var drawStatsDisp = function()
+  var drawStatsDisp = function(stats,liz)
   {
-    var liz = game.player.lizards[liz_selected_i];
-
     context.fillStyle = "rgba(255,255,255,0.5)";
     context.fillRect(stats.x,stats.y,stats.w,stats.h);
     context.strokeStyle = "#000000";
@@ -490,7 +528,7 @@ var RockScene = function(game, stage)
 
     self.click = function()
     {
-      console.log("caught!");
+      mode = MODE_CAUGHT;
     }
   }
 
@@ -507,8 +545,8 @@ var RockScene = function(game, stage)
   RIcon3.context.fillRect(0,0,RIcon3.width,RIcon3.height);
 
   var BIcon1 = GenIcon();
-  BIcon1.context.fillStyle = "#FA6BDD";
-  BIcon1.context.fillRect(0,0,BIcon1.width,BIcon1.height);
+  //BIcon1.context.fillStyle = "#FA6BDD";
+  //BIcon1.context.fillRect(0,0,BIcon1.width,BIcon1.height);
 
   var BIcon2 = GenIcon();
   BIcon2.context.fillStyle = "#4ADB1D";
