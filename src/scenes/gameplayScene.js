@@ -361,7 +361,7 @@ var GamePlayScene = function(game, stage)
     context.fillRect(stats.x+10,stats.y+10,stats.h-20,stats.h-20);
     context.fillStyle = "#FFFFFF";
     context.fillText(liz.name,stats.x+stats.h,stats.y+20);
-    context.fillText("SPEED",stats.x+stats.h,stats.y+40);
+    context.fillText("SPEED:",stats.x+stats.h,stats.y+40);
     for(var i = 0; i < 10; i++)
     {
       if(liz.speed >= i/10) context.fillStyle = "#FFFFFF";
