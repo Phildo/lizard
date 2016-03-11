@@ -43,6 +43,30 @@ var RockScene = function(game, stage)
 
   var MAXIMUM_CAPACITY = 5;
 
+  var rock_liz_times = [
+    500,
+    1000,
+    2000,
+  ];
+
+  var rock_liz_speed_min = [
+    0.1,
+    0.3,
+    0.5,
+  ];
+  var rock_liz_speed_max = [
+    0.5,
+    0.8,
+    1.0,
+  ];
+
+  var bait_liz_mul = [
+    1,
+    0.75,
+    0.5,
+    0.2,
+  ];
+
   var time_til_lizard;
   var catchable_lizard;
 
@@ -192,14 +216,20 @@ var RockScene = function(game, stage)
       liz_selects[i] = select;
     }
 
-    ready_btn = new ButtonBox(0,0,0,0,function(){ if(mode != MODE_CHOOSING) return; time_til_lizard = randIntBelow(500); mode = MODE_HUNTING; });
+    ready_btn = new ButtonBox(0,0,0,0,
+      function(){
+        if(mode != MODE_CHOOSING) return;
+        var n = rock_liz_times[rock_selected_i]*bait_liz_mul[bait_selected_i];
+        time_til_lizard = Math.floor(n/2+randIntBelow(n/2));
+        mode = MODE_HUNTING;
+      });
     ready_btn.wx = 0.8;
     ready_btn.wy = 0.8;
     ready_btn.ww = 0.1;
     ready_btn.wh = 0.1;
     toScene(ready_btn,canv);
 
-    keep_btn = new ButtonBox(0,0,0,0,function(){ if(mode != MODE_CAUGHT || game.player.lizards.length >= MAXIMUM_CAPACITY) return; var l = new Lizard(); l.name = catchable_lizard.name; game.player.lizards.push(catchable_lizard); catchable_lizard = undefined; game.setScene(2); });
+    keep_btn = new ButtonBox(0,0,0,0,function(){ if(mode != MODE_CAUGHT || game.player.lizards.length >= MAXIMUM_CAPACITY) return; var l = new Lizard(); l.name = catchable_lizard.name; l.speed = catchable_lizard.speed; game.player.lizards.push(catchable_lizard); catchable_lizard = undefined; game.setScene(2); });
     keep_btn.wx = 0.8;
     keep_btn.wy = 0.6;
     keep_btn.ww = 0.1;
@@ -250,7 +280,8 @@ var RockScene = function(game, stage)
       if(time_til_lizard <= -200)
       {
         catchable_lizard = undefined;
-        time_til_lizard = randIntBelow(500);
+        var n = rock_liz_times[rock_selected_i]*bait_liz_mul[bait_selected_i];
+        time_til_lizard = Math.floor(n/2+randIntBelow(n/2));
       }
       else if(time_til_lizard <= 0)
       {
@@ -258,6 +289,7 @@ var RockScene = function(game, stage)
         {
           var r = rocks[rock_selected_i];
           catchable_lizard = new RockLizard();
+          catchable_lizard.speed = randR(rock_liz_speed_min[rock_selected_i],rock_liz_speed_max[rock_selected_i]);
           catchable_lizard.ww = 0.05;
           catchable_lizard.wh = 0.05;
           var t = Math.random()*Math.PI*2;
@@ -479,6 +511,8 @@ var RockScene = function(game, stage)
     context.fillStyle = "#000000";
     context.fillText(liz.name,stats.x+stats.h,stats.y+20);
     context.fillText("Speed",stats.x+stats.h,stats.y+30);
+    context.fillStyle = "#FF0000";
+    context.fillRect(stats.x+stats.h+10,stats.y+stats.h-25,liz.speed*(stats.w-stats.h-20),10);
   }
 
   var Rock = function()

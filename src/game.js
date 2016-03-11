@@ -16,10 +16,7 @@ var Game = function(init)
   //stub hack
   for(var i = 0; i < 3; i++) {
     self.player.lizards[i] = new Lizard();
-    self.player.lizards[i].speed = randIntBelow(10) + i;
-    if (self.player.lizards[i].speed === 0) {
-      self.player.lizards[i].speed = randIntBelow(10) + 1;
-    }
+    self.player.lizards[i].speed = Math.random();
   }
 
   self.racing_lizard_index = -1;
