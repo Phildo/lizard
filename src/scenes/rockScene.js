@@ -94,6 +94,9 @@ var RockScene = function(game, stage)
 
     rock = new Rock();
     rock.name = "SIMPLE ROCK";
+    rock.price = 0;
+    rock.unlocked = true;
+    rock.owned = true;
     rock.img = rock_bg_img;
     rock.wx = 0.2;
     rock.wy = 0.5;
@@ -104,6 +107,9 @@ var RockScene = function(game, stage)
 
     rock = new Rock();
     rock.name = "TINFOIL";
+    rock.price = 500;
+    rock.unlocked = true;
+    rock.owned = game.player.owns_tinfoil;
     rock.img = rock_tin_bg_img;
     rock.wx = 0.2;
     rock.wy = 0.5;
@@ -114,6 +120,9 @@ var RockScene = function(game, stage)
 
     rock = new Rock();
     rock.name = "CACTUS";
+    rock.price = 10000;
+    rock.unlocked = game.player.owns_tinfoil;
+    rock.owned = game.player.owns_cactus;
     rock.img = rock_cactus_bg_img;
     rock.wx = 0.2;
     rock.wy = 0.5;
@@ -127,6 +136,7 @@ var RockScene = function(game, stage)
 
     bait = new Bait();
     bait.name = "NO BAIT";
+    bait.price = 100;
     bait.img = BIcon1;
     bait.wx = 0.45;
     bait.wy = 0.45;
@@ -137,6 +147,7 @@ var RockScene = function(game, stage)
 
     bait = new Bait();
     bait.name = "BAD BAIT";
+    bait.price = 200;
     bait.img = BIcon2;
     bait.wx = 0.45;
     bait.wy = 0.45;
@@ -147,6 +158,7 @@ var RockScene = function(game, stage)
 
     bait = new Bait();
     bait.name = "OK BAIT";
+    bait.price = 300;
     bait.img = BIcon3;
     bait.wx = 0.45;
     bait.wy = 0.45;
@@ -157,6 +169,7 @@ var RockScene = function(game, stage)
 
     bait = new Bait();
     bait.name = "GOOD BAIT";
+    bait.price = 500;
     bait.img = BIcon4;
     bait.wx = 0.45;
     bait.wy = 0.45;
@@ -172,10 +185,10 @@ var RockScene = function(game, stage)
       select = new Select();
       select.i = i;
       select.type = SELECT_ROCK;
-      select.wx = 0;
-      select.wy = 0.1+(0.1*i);
-      select.ww = 0.2;
       select.wh = 0.1;
+      select.ww = 0.2;
+      select.wx = 0;
+      select.wy = 0.1+(select.wh*i);
       toScene(select,canv);
       clicker.register(select);
       hoverer.register(select);
@@ -189,10 +202,10 @@ var RockScene = function(game, stage)
       select = new Select();
       select.i = i;
       select.type = SELECT_BAIT;
-      select.wx = 0;
-      select.wy = 0.1+(0.1*i)+(0.1*rock_selects.length)+0.1;
-      select.ww = 0.2;
       select.wh = 0.1;
+      select.ww = 0.2;
+      select.wx = 0;
+      select.wy = (rock_selects[0].wh*(rock_selects.length+1))+0.1+(select.wh*i);
       toScene(select,canv);
       clicker.register(select);
       hoverer.register(select);
@@ -206,10 +219,10 @@ var RockScene = function(game, stage)
       select = new Select();
       select.i = i;
       select.type = SELECT_LIZ;
-      select.wx = 0;
-      select.wy = 0.1+(0.1*i);
+      select.wh = 0.16;
       select.ww = 0.2;
-      select.wh = 0.1;
+      select.wx = 0;
+      select.wy = 0.1+(select.wh*i);
       toScene(select,canv);
       clicker.register(select);
       hoverer.register(select);
@@ -505,6 +518,20 @@ var RockScene = function(game, stage)
             context.fillRect(select.x+52+10*i,select.y+46,8,8);
           }
         }
+        if(select.type == SELECT_ROCK)
+        {
+          var r = rocks[select.i];
+          if(!r.unlocked)
+          {
+            context.fillStyle = "#666666";
+            context.fillText("<LOCKED>",select.x+10,select.y+35);
+          }
+          else if(!r.owned)
+          {
+            context.fillStyle = "#000000";
+            context.fillText("$"+r.price,select.x+10,select.y+35);
+          }
+        }
       }
       else
       {
@@ -533,6 +560,20 @@ var RockScene = function(game, stage)
             if(liz.endurance >= i/10) context.fillStyle = "#FFFFFF";
             else                      context.fillStyle = "#999999";
             context.fillRect(select.x+52+10*i,select.y+46,8,8);
+          }
+        }
+        if(select.type == SELECT_ROCK)
+        {
+          var r = rocks[select.i];
+          if(!r.unlocked)
+          {
+            context.fillStyle = "#999999";
+            context.fillText("<LOCKED>",select.x+10,select.y+35);
+          }
+          else if(!r.owned)
+          {
+            context.fillStyle = "#FFFFFF";
+            context.fillText("$"+r.price,select.x+10,select.y+35);
           }
         }
       }
@@ -574,6 +615,10 @@ var RockScene = function(game, stage)
     var self = this;
     self.name = "rock";
     self.img;
+
+    self.price = 0;
+    self.unlocked = false;
+    self.owned = false;
 
     self.wx;
     self.wy;

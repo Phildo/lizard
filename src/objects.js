@@ -6,6 +6,9 @@ var Player = function()
 
   self.money = 0;
   self.lizards = [];
+
+  self.owns_tinfoil = false;
+  self.owns_cactus = false;
 }
 
 ENUM = 0;
