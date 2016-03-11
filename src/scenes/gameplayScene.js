@@ -76,6 +76,7 @@ var GamePlayScene = function(game, stage)
       tlizard.to_wy = tlizard.wy;
       tlizard.agitation = randIntBelow(500);
       toScene(tlizard,canv);
+      clicker.register(tlizard);
       tlizards[i] = tlizard;
     }
 
@@ -242,6 +243,15 @@ var GamePlayScene = function(game, stage)
     self.i;
 
     self.agitation = 0;
+
+    self.click = function()
+    {
+      if(game.player.lizards.length > self.i)
+      {
+        if(selected_i == self.i) selected_i = -1;
+        else                     selected_i = self.i;
+      }
+    }
   }
   var tickTerrariLizard = function(tliz)
   {
