@@ -34,6 +34,7 @@ var Canv = function(init)
   self.context.font        = init.font;
 
   self.context.imageSmoothingEnabled = self.smoothing;
+  self.context.font = "12px Arial";
 };
 Canv.prototype.clear = function()
 {

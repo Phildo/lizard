@@ -93,7 +93,7 @@ var RockScene = function(game, stage)
     var rock;
 
     rock = new Rock();
-    rock.name = "Simple Rock";
+    rock.name = "SIMPLE ROCK";
     rock.img = rock_bg_img;
     rock.wx = 0.2;
     rock.wy = 0.5;
@@ -103,7 +103,7 @@ var RockScene = function(game, stage)
     rocks.push(rock);
 
     rock = new Rock();
-    rock.name = "Tinfoil";
+    rock.name = "TINFOIL";
     rock.img = rock_tin_bg_img;
     rock.wx = 0.2;
     rock.wy = 0.5;
@@ -113,7 +113,7 @@ var RockScene = function(game, stage)
     rocks.push(rock);
 
     rock = new Rock();
-    rock.name = "Cactus";
+    rock.name = "CACTUS";
     rock.img = rock_cactus_bg_img;
     rock.wx = 0.2;
     rock.wy = 0.5;
@@ -126,7 +126,7 @@ var RockScene = function(game, stage)
     var bait;
 
     bait = new Bait();
-    bait.name = "No Bait";
+    bait.name = "NO BAIT";
     bait.img = BIcon1;
     bait.wx = 0.45;
     bait.wy = 0.45;
@@ -136,7 +136,7 @@ var RockScene = function(game, stage)
     baits.push(bait);
 
     bait = new Bait();
-    bait.name = "Bad Bait";
+    bait.name = "BAD BAIT";
     bait.img = BIcon2;
     bait.wx = 0.45;
     bait.wy = 0.45;
@@ -146,7 +146,7 @@ var RockScene = function(game, stage)
     baits.push(bait);
 
     bait = new Bait();
-    bait.name = "OK Bait";
+    bait.name = "OK BAIT";
     bait.img = BIcon3;
     bait.wx = 0.45;
     bait.wy = 0.45;
@@ -156,7 +156,7 @@ var RockScene = function(game, stage)
     baits.push(bait);
 
     bait = new Bait();
-    bait.name = "Good Bait";
+    bait.name = "GOOD BAIT";
     bait.img = BIcon4;
     bait.wx = 0.45;
     bait.wy = 0.45;
@@ -331,12 +331,8 @@ var RockScene = function(game, stage)
       context.fillText("Back",back_btn.x,back_btn.y-10);
       back_btn.draw(canv);
 
-      context.fillStyle = "#000000";
-      context.fillText("Rocks",rock_selects[0].x,rock_selects[0].y-10);
       for(var i = 0; i < rock_selects.length; i++)
         drawSelect(rock_selects[i]);
-      context.fillStyle = "#000000";
-      context.fillText("Bait",bait_selects[0].x,bait_selects[0].y-10);
       for(var i = 0; i < bait_selects.length; i++)
         drawSelect(bait_selects[i]);
 
@@ -473,26 +469,73 @@ var RockScene = function(game, stage)
 
     if(select.type == SELECT_LIZ && game.player.lizards.length <= select.i)
     {
-      context.fillStyle = "#222222";
+      context.fillStyle = "rgba(0,0,0,0.8)";
       context.fillRect(select.x,select.y,select.w,select.h);
-      context.fillStyle = "#000000";
-      context.fillText("No Lizard",select.x+10,select.y+select.h/2);
+      context.fillStyle = "#555555";
+      context.fillText("NO LIZARD",select.x+10,select.y+20);
     }
     else
     {
       if(selected_i == select.i)
       {
-        if(select.hovering) context.fillStyle = "#AAAAAA"; // selected + hovering
-        else                context.fillStyle = "#888888"; // selected +!hovering
+        if(select.hovering) context.fillStyle = "rgba(255,255,255,0.9)";
+        else                context.fillStyle = "rgba(255,255,255,0.8)";
+        context.fillRect(select.x,select.y,select.w,select.h);
+        context.fillStyle = "#000000";
+        context.fillText(title,select.x+10,select.y+20);
+
+        if(select.type == SELECT_LIZ)
+        {
+          var liz = game.player.lizards[select.i];
+
+          context.fillStyle = "#000000";
+          context.fillText("SPD:",select.x+10,select.y+40);
+          for(var i = 0; i < 10; i++)
+          {
+            if(liz.speed >= i/10) context.fillStyle = "#000000";
+            else                  context.fillStyle = "#666666";
+            context.fillRect(select.x+52+10*i,select.y+32,8,8);
+          }
+          context.fillStyle = "#000000";
+          context.fillText("END:",select.x+10,select.y+55);
+          for(var i = 0; i < 10; i++)
+          {
+            if(liz.endurance >= i/10) context.fillStyle = "#000000";
+            else                      context.fillStyle = "#666666";
+            context.fillRect(select.x+52+10*i,select.y+46,8,8);
+          }
+        }
       }
       else
       {
-        if(select.hovering) context.fillStyle = "#666666"; //!selected + hovering
-        else                context.fillStyle = "#444444"; //!selected +!hovering
+        if(select.hovering) context.fillStyle = "rgba(0,0,0,0.9)";
+        else                context.fillStyle = "rgba(0,0,0,0.8)";
+        context.fillRect(select.x,select.y,select.w,select.h);
+        context.fillStyle = "#FFFFFF";
+        context.fillText(title,select.x+10,select.y+20);
+
+        if(select.type == SELECT_LIZ)
+        {
+          var liz = game.player.lizards[select.i];
+
+          context.fillStyle = "#FFFFFF";
+          context.fillText("SPD:",select.x+10,select.y+40);
+          for(var i = 0; i < 10; i++)
+          {
+            if(liz.speed >= i/10) context.fillStyle = "#FFFFFF";
+            else                  context.fillStyle = "#999999";
+            context.fillRect(select.x+52+10*i,select.y+32,8,8);
+          }
+          context.fillStyle = "#FFFFFF";
+          context.fillText("END:",select.x+10,select.y+55);
+          for(var i = 0; i < 10; i++)
+          {
+            if(liz.endurance >= i/10) context.fillStyle = "#FFFFFF";
+            else                      context.fillStyle = "#999999";
+            context.fillRect(select.x+52+10*i,select.y+46,8,8);
+          }
+        }
       }
-      context.fillRect(select.x,select.y,select.w,select.h);
-      context.fillStyle = "#000000";
-      context.fillText(title,select.x+10,select.y+select.h/2);
     }
   }
 
