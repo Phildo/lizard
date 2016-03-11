@@ -199,7 +199,7 @@ var RockScene = function(game, stage)
     ready_btn.wh = 0.1;
     toScene(ready_btn,canv);
 
-    keep_btn = new ButtonBox(0,0,0,0,function(){ if(mode != MODE_CAUGHT || game.player.lizards.length >= MAXIMUM_CAPACITY) return; game.player.lizards.push(catchable_lizard); catchable_lizard = undefined; game.setScene(2); });
+    keep_btn = new ButtonBox(0,0,0,0,function(){ if(mode != MODE_CAUGHT || game.player.lizards.length >= MAXIMUM_CAPACITY) return; var l = new Lizard(); l.name = catchable_lizard.name; game.player.lizards.push(catchable_lizard); catchable_lizard = undefined; game.setScene(2); });
     keep_btn.wx = 0.8;
     keep_btn.wy = 0.6;
     keep_btn.ww = 0.1;
@@ -258,7 +258,6 @@ var RockScene = function(game, stage)
         {
           var r = rocks[rock_selected_i];
           catchable_lizard = new RockLizard();
-          catchable_lizard.name = "Bill";
           catchable_lizard.ww = 0.05;
           catchable_lizard.wh = 0.05;
           var t = Math.random()*Math.PI*2;
@@ -519,6 +518,8 @@ var RockScene = function(game, stage)
   var RockLizard = function()
   {
     var self = this;
+
+    self.name = randName();
 
     self.x = 0;
     self.y = 0;

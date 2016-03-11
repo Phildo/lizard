@@ -17,7 +17,7 @@ var Lizard = function()
 {
   var self = this;
 
-  self.name = "liz";
+  self.name = randName();
   self.gender = LIZARD_GENDER_NA;
   self.speed = 1;
   self.base_endurance = randIntBelow(300);
