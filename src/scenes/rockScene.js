@@ -43,6 +43,30 @@ var RockScene = function(game, stage)
 
   var MAXIMUM_CAPACITY = 5;
 
+  var rock_liz_times = [
+    500,
+    1000,
+    2000,
+  ];
+
+  var rock_liz_speed_min = [
+    0.1,
+    0.3,
+    0.5,
+  ];
+  var rock_liz_speed_max = [
+    0.5,
+    0.8,
+    1.0,
+  ];
+
+  var bait_liz_mul = [
+    1,
+    0.75,
+    0.5,
+    0.2,
+  ];
+
   var time_til_lizard;
   var catchable_lizard;
 
@@ -71,9 +95,9 @@ var RockScene = function(game, stage)
     rock = new Rock();
     rock.name = "Simple Rock";
     rock.img = rock_bg_img;
-    rock.wx = 0.3;
-    rock.wy = 0.3;
-    rock.ww = 0.4;
+    rock.wx = 0.2;
+    rock.wy = 0.5;
+    rock.ww = 0.6;
     rock.wh = 0.4;
     toScene(rock,canv);
     rocks.push(rock);
@@ -81,9 +105,9 @@ var RockScene = function(game, stage)
     rock = new Rock();
     rock.name = "Tinfoil";
     rock.img = rock_tin_bg_img;
-    rock.wx = 0.3;
-    rock.wy = 0.3;
-    rock.ww = 0.4;
+    rock.wx = 0.2;
+    rock.wy = 0.5;
+    rock.ww = 0.6;
     rock.wh = 0.4;
     toScene(rock,canv);
     rocks.push(rock);
@@ -91,9 +115,9 @@ var RockScene = function(game, stage)
     rock = new Rock();
     rock.name = "Cactus";
     rock.img = rock_cactus_bg_img;
-    rock.wx = 0.3;
-    rock.wy = 0.3;
-    rock.ww = 0.4;
+    rock.wx = 0.2;
+    rock.wy = 0.5;
+    rock.ww = 0.6;
     rock.wh = 0.4;
     toScene(rock,canv);
     rocks.push(rock);
@@ -192,14 +216,32 @@ var RockScene = function(game, stage)
       liz_selects[i] = select;
     }
 
-    ready_btn = new ButtonBox(0,0,0,0,function(){ if(mode != MODE_CHOOSING) return; time_til_lizard = randIntBelow(500); mode = MODE_HUNTING; });
+    ready_btn = new ButtonBox(0,0,0,0,
+      function(){
+        if(mode != MODE_CHOOSING) return;
+        var n = rock_liz_times[rock_selected_i]*bait_liz_mul[bait_selected_i];
+        time_til_lizard = Math.floor(n/2+randIntBelow(n/2));
+        mode = MODE_HUNTING;
+      });
     ready_btn.wx = 0.8;
     ready_btn.wy = 0.8;
     ready_btn.ww = 0.1;
     ready_btn.wh = 0.1;
     toScene(ready_btn,canv);
 
-    keep_btn = new ButtonBox(0,0,0,0,function(){ if(mode != MODE_CAUGHT || game.player.lizards.length >= MAXIMUM_CAPACITY) return; game.player.lizards.push(catchable_lizard); catchable_lizard = undefined; game.setScene(2); });
+    keep_btn = new ButtonBox(0,0,0,0,
+    function(){
+      if(mode != MODE_CAUGHT || (game.player.lizards.length >= MAXIMUM_CAPACITY && liz_selected_i == -1)) return;
+      var l = new Lizard();
+      l.name = catchable_lizard.name;
+      l.speed = catchable_lizard.speed;
+      if(game.player.lizards.length < MAXIMUM_CAPACITY)
+        game.player.lizards.push(l);
+      else
+        game.player.lizards[liz_selected_i] = l;
+      catchable_lizard = undefined;
+      game.setScene(2);
+    });
     keep_btn.wx = 0.8;
     keep_btn.wy = 0.6;
     keep_btn.ww = 0.1;
@@ -250,7 +292,8 @@ var RockScene = function(game, stage)
       if(time_til_lizard <= -200)
       {
         catchable_lizard = undefined;
-        time_til_lizard = randIntBelow(500);
+        var n = rock_liz_times[rock_selected_i]*bait_liz_mul[bait_selected_i];
+        time_til_lizard = Math.floor(n/2+randIntBelow(n/2));
       }
       else if(time_til_lizard <= 0)
       {
@@ -258,7 +301,7 @@ var RockScene = function(game, stage)
         {
           var r = rocks[rock_selected_i];
           catchable_lizard = new RockLizard();
-          catchable_lizard.name = "Bill";
+          catchable_lizard.speed = randR(rock_liz_speed_min[rock_selected_i],rock_liz_speed_max[rock_selected_i]);
           catchable_lizard.ww = 0.05;
           catchable_lizard.wh = 0.05;
           var t = Math.random()*Math.PI*2;
@@ -280,10 +323,9 @@ var RockScene = function(game, stage)
   {
     if(mode == MODE_CHOOSING)
     {
-      if(rock_selected_i != -1)
-        context.drawImage(rocks[rock_selected_i].img,0,0,canv.width,canv.height);
-      if(bait_selected_i != -1)
-        context.drawImage(baits[bait_selected_i].img,baits[bait_selected_i].x,baits[bait_selected_i].y,baits[bait_selected_i].w,baits[bait_selected_i].h);
+      context.drawImage(rocks[rock_selected_i].img,0,0,canv.width,canv.height);
+      //context.drawImage(rocks[rock_selected_i].img,rocks[rock_selected_i].x,rocks[rock_selected_i].y,rocks[rock_selected_i].w,rocks[rock_selected_i].h);
+      context.drawImage(baits[bait_selected_i].img,baits[bait_selected_i].x,baits[bait_selected_i].y,baits[bait_selected_i].w,baits[bait_selected_i].h);
 
       context.fillStyle = "#000000";
       context.fillText("Back",back_btn.x,back_btn.y-10);
@@ -480,6 +522,8 @@ var RockScene = function(game, stage)
     context.fillStyle = "#000000";
     context.fillText(liz.name,stats.x+stats.h,stats.y+20);
     context.fillText("Speed",stats.x+stats.h,stats.y+30);
+    context.fillStyle = "#FF0000";
+    context.fillRect(stats.x+stats.h+10,stats.y+stats.h-25,liz.speed*(stats.w-stats.h-20),10);
   }
 
   var Rock = function()
@@ -519,6 +563,8 @@ var RockScene = function(game, stage)
   var RockLizard = function()
   {
     var self = this;
+
+    self.name = randName();
 
     self.x = 0;
     self.y = 0;

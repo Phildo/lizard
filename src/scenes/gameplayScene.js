@@ -303,6 +303,8 @@ var GamePlayScene = function(game, stage)
     context.fillStyle = "#000000";
     context.fillText(liz.name,stats.x+stats.h,stats.y+20);
     context.fillText("Speed",stats.x+stats.h,stats.y+30);
+    context.fillStyle = "#FF0000";
+    context.fillRect(stats.x+stats.h+10,stats.y+stats.h-25,liz.speed*(stats.w-stats.h-20),10);
   }
 
 };
