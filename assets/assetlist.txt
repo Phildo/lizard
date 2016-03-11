@@ -17,4 +17,5 @@ Lizards DONE
 three types of bait: bad, ok, gr8b8 DONE
 Rock grandstand
 jumbotron
+Lizard Anims
 Title Screen :'[
