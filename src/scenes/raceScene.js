@@ -204,8 +204,8 @@ var RaceScene = function(game, stage)
 
     self.draw = function(ctx) {
       toScene(self, canv);
-      ctx.fillStyle = "green";
-      ctx.fillRect(self.x, self.y, self.w, self.h);
+      // ctx.fillStyle = "green";
+      // ctx.fillRect(self.x, self.y, self.w, self.h);
       self.runners.forEach(function(liz) {
         liz.draw(ctx, self);
       });
