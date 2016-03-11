@@ -79,6 +79,7 @@ var GamePlayScene = function(game, stage)
       tlizard.to_wx = tlizard.wx;
       tlizard.to_wy = tlizard.wy;
       tlizard.agitation = randIntBelow(500);
+      clicker.register(tlizard);
       toScene(tlizard,canv);
       tlizards[i] = tlizard;
     }
@@ -135,14 +136,14 @@ var GamePlayScene = function(game, stage)
     context.fillStyle = "rgba(0,0,0,0.8)";
     context.fillRect(rock_btn.x,rock_btn.y,rock_btn.w,rock_btn.h);
     context.fillStyle = "#FFFFFF";
-    context.fillText("GO LIZARDIN' ->",rock_btn.x+10,rock_btn.y+25);
+    context.fillText("GO LIZARDIN'",rock_btn.x+10,rock_btn.y+25);
 
     if(selected_i != -1)
     {
       context.fillStyle = "rgba(0,0,0,0.8)";
       context.fillRect(race_btn.x,race_btn.y,race_btn.w,race_btn.h);
       context.fillStyle = "#FFFFFF";
-      context.fillText("TO THE RACES ->",race_btn.x+10,race_btn.y+25);
+      context.fillText("TO THE RACES",race_btn.x+10,race_btn.y+25);
     }
 
     context.fillStyle = "rgba(0,0,0,0.8)";
@@ -312,6 +313,15 @@ var GamePlayScene = function(game, stage)
 
     self.framefloat = 0;
     self.frame = 0;
+
+    self.click = function()
+    {
+      if(game.player.lizards.length > self.i)
+      {
+        if(selected_i == self.i) selected_i = -1;
+        else                     selected_i = self.i;
+      }
+    }
   }
   var tickTerrariLizard = function(tliz)
   {
@@ -340,7 +350,7 @@ var GamePlayScene = function(game, stage)
   var drawTerrariLizard = function(tliz)
   {
     context.save();
-    context.translate(tliz.x,tliz.y);
+    context.translate(tliz.x+tliz.w/2,tliz.y+tliz.h/2);
     if(
       tliz.theta > Math.PI/2 &&
       tliz.theta < 3*Math.PI/2
@@ -350,9 +360,15 @@ var GamePlayScene = function(game, stage)
       context.scale(-1,1);
     }
     else
+    {
       context.rotate(tliz.theta-(Math.PI/6));
-    context.drawImage(frames[tliz.frame],tliz.w/-2,tliz.h/-2,tliz.w,tliz.h);
+    }
+    context.translate(-tliz.w/2,-tliz.h/2);
+    context.drawImage(frames[tliz.frame],0,0,tliz.w,tliz.h);
     context.restore();
+
+    //context.strokeStyle = "#FF00FF";
+    //context.strokeRect(tliz.x,tliz.y,tliz.w,tliz.h);
   }
 
   var StatsDisp = function()

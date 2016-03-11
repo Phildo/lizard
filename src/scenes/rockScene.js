@@ -91,6 +91,11 @@ var RockScene = function(game, stage)
     var rock_gr8_b8_img = new Image();
   rock_gr8_b8_img.src = "assets/b8/grasshopperb82.png";
 
+  var frames = [];
+  var i = 0;
+  frames[i] = new Image(); frames[i].src = "assets/lizards/darkblueiso.png"; i++;
+  frames[i] = new Image(); frames[i].src = "assets/lizards/darkblueisorun.png"; i++;
+
   self.ready = function()
   {
     clicker = new Clicker({source:stage.dispCanv.canvas});
@@ -397,19 +402,23 @@ var RockScene = function(game, stage)
           catchable_lizard = new RockLizard();
           catchable_lizard.speed = randR(rock_liz_speed_min[rock_selected_i],rock_liz_speed_max[rock_selected_i]);
           catchable_lizard.endurance = randR(0.1,1);
-          catchable_lizard.ww = 0.05;
-          catchable_lizard.wh = 0.05;
+          catchable_lizard.ww = 0.7;
+          catchable_lizard.wh = 0.7;
           var t = Math.random()*Math.PI*2;
           catchable_lizard.wx = (r.wx+r.ww/2)+Math.cos(t)*r.ww - catchable_lizard.ww/2;
           catchable_lizard.wy = (r.wy+r.wh/2)+Math.sin(t)*r.wh - catchable_lizard.wh/2;
           t = (t+Math.PI) % (Math.PI*2);
           catchable_lizard.to_wx = (r.wx+r.ww/2)+Math.cos(t)*r.ww - catchable_lizard.ww/2;
           catchable_lizard.to_wy = (r.wy+r.wh/2)+Math.sin(t)*r.wh - catchable_lizard.wh/2;
+          catchable_lizard.theta = Math.atan2(catchable_lizard.to_wy-catchable_lizard.wy,catchable_lizard.to_wx-catchable_lizard.wx);
+          console.log('b');
+          while(catchable_lizard.theta < 0)         catchable_lizard.theta += Math.PI*2;
+          while(catchable_lizard.theta > Math.PI*2) catchable_lizard.theta -= Math.PI*2;
+          console.log('e');
           clicker.register(catchable_lizard);
         }
 
-        catchable_lizard.wx = lerp(catchable_lizard.wx,catchable_lizard.to_wx,0.01);
-        catchable_lizard.wy = lerp(catchable_lizard.wy,catchable_lizard.to_wy,0.01);
+        tickCatchableLizard();
       }
     }
   };
@@ -468,9 +477,8 @@ var RockScene = function(game, stage)
 
       if(catchable_lizard)
       {
-        toScene(catchable_lizard,canv);
-        context.fillStyle = "#FFFF00";
-        context.fillRect(catchable_lizard.x,catchable_lizard.y,catchable_lizard.w,catchable_lizard.h);
+        console.log('oho');
+        drawCatchableLizard();
       }
     }
     else if(mode == MODE_CAUGHT)
@@ -826,11 +834,52 @@ var RockScene = function(game, stage)
 
     self.to_wx;
     self.to_wy;
+    self.theta = 0;
+
+    self.framefloat = 0;
+    self.frame = 0;
 
     self.click = function()
     {
       mode = MODE_CAUGHT;
     }
+  }
+  var tickCatchableLizard = function()
+  {
+    console.log('tick');
+    catchable_lizard.wx = lerp(catchable_lizard.wx,catchable_lizard.to_wx,0.01);
+    catchable_lizard.wy = lerp(catchable_lizard.wy,catchable_lizard.to_wy,0.01);
+
+    var newx = lerp(catchable_lizard.wx,catchable_lizard.to_wx,0.01);
+    var newy = lerp(catchable_lizard.wy,catchable_lizard.to_wy,0.01);
+    catchable_lizard.framefloat += (Math.abs(newx-catchable_lizard.wx)+Math.abs(newy-catchable_lizard.wy))*40;
+    while(catchable_lizard.framefloat > frames.length) catchable_lizard.framefloat -= frames.length;
+    catchable_lizard.frame = Math.floor(catchable_lizard.framefloat)
+    catchable_lizard.wx = newx;
+    catchable_lizard.wy = newy;
+  }
+  var drawCatchableLizard = function()
+  {
+    console.log('draw');
+    toScene(catchable_lizard,canv);
+    context.save();
+    context.translate(catchable_lizard.x+catchable_lizard.w/2,catchable_lizard.y+catchable_lizard.h/2);
+    if(
+      catchable_lizard.theta > Math.PI/2 &&
+      catchable_lizard.theta < 3*Math.PI/2
+    )
+    {
+      context.rotate(catchable_lizard.theta+(Math.PI/6)+(Math.PI));
+      context.scale(-1,1);
+    }
+    else
+      context.rotate(catchable_lizard.theta-(Math.PI/6));
+    context.translate(-catchable_lizard.w/2,-catchable_lizard.h/2);
+    context.drawImage(frames[catchable_lizard.frame],0,0,catchable_lizard.w,catchable_lizard.h);
+    context.restore();
+
+    //context.strokeStyle = "#FF00FF";
+    //context.strokeRect(catchable_lizard.x,catchable_lizard.y,catchable_lizard.w,catchable_lizard.h);
   }
 
   var MoneyDisp = function()
