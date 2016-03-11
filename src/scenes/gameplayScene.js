@@ -305,6 +305,7 @@ var GamePlayScene = function(game, stage)
 
     self.to_wx;
     self.to_wy;
+    self.theta;
 
     self.i;
 
@@ -331,6 +332,9 @@ var GamePlayScene = function(game, stage)
       tliz.agitation = randIntBelow(100);
       tliz.to_wx = randR(terrarium.wx,terrarium.wx+terrarium.ww-tliz.ww);
       tliz.to_wy = randR(terrarium.wy,terrarium.wy+terrarium.wh-tliz.wh);
+
+      tliz.theta = Math.atan2(tliz.to_wy-tliz.wy,tliz.to_wx-tliz.wx);
+      tliz.theta -= Math.PI/6;
     }
 
     var newx = lerp(tliz.wx,tliz.to_wx,0.01);
@@ -344,12 +348,11 @@ var GamePlayScene = function(game, stage)
   }
   var drawTerrariLizard = function(tliz)
   {
-    if(selected_i == tliz.i)
-    {
-      context.fillStyle = "#FFFFFF";
-      context.strokeRect(tliz.x,tliz.y,tliz.w,tliz.h);
-    }
-    context.drawImage(frames[tliz.frame],tliz.x,tliz.y,tliz.w,tliz.h);
+    context.save();
+    context.translate(tliz.x,tliz.y);
+    context.rotate(tliz.theta);
+    context.drawImage(frames[tliz.frame],0,0,tliz.w,tliz.h);
+    context.restore();
   }
 
   var StatsDisp = function()
