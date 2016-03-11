@@ -72,6 +72,9 @@ var GamePlayScene = function(game, stage)
       tlizard.wh = 0.05;
       tlizard.wx = randR(terrarium.wx,terrarium.wx+terrarium.ww-tlizard.ww);
       tlizard.wy = randR(terrarium.wy,terrarium.wy+terrarium.wh-tlizard.wh);
+      tlizard.to_wx = tlizard.wx;
+      tlizard.to_wy = tlizard.wy;
+      tlizard.agitation = randIntBelow(500);
       toScene(tlizard,canv);
       tlizards[i] = tlizard;
     }
@@ -233,11 +236,27 @@ var GamePlayScene = function(game, stage)
     self.ww = 0.;
     self.wh = 0.;
 
+    self.to_wx;
+    self.to_wy;
+
     self.i;
+
+    self.agitation = 0;
   }
   var tickTerrariLizard = function(tliz)
   {
+    tliz.agitation++;
 
+    if(tliz.agitation >= 500)
+    {
+      tliz.agitation = randIntBelow(100);
+      tliz.to_wx = randR(terrarium.wx,terrarium.wx+terrarium.ww-tliz.ww);
+      tliz.to_wy = randR(terrarium.wy,terrarium.wy+terrarium.wh-tliz.wh);
+    }
+
+    tliz.wx = lerp(tliz.wx,tliz.to_wx,0.01);
+    tliz.wy = lerp(tliz.wy,tliz.to_wy,0.01);
+    toScene(tliz,canv);
   }
   var drawTerrariLizard = function(tliz)
   {
