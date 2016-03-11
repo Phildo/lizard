@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="assets/genericons/genericons.css">
+    <style>
+        #stage_container {
+            background: url("assets/rockcactus.png");
+            background-size: cover;
+        }
+        #home-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.7);
+        }
+        #home-button:hover, #start-button:hover {
+            background: rgba(255, 255, 255, 0.4);
+            color: #000;
+        }
+        #stats {
+            position: absolute;
+            left: 0;
+            height: 100%;
+            width: 160px;
+        }
+        #runners {
+            width: 100%;
+            bottom: 0;
+            position: absolute;
+        }
+        #start-button {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            color: #fff;
+
+            background: rgba(0, 0, 0, 0.7);
+        }
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style-type: none; 
+        }
+        li {
+            margin: 0;
+            padding: 12px 10px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            text-transform: uppercase;
+            font-weight: bold;
+            font-family: arial;
+        }
+        li:hover, li.active {
+            background: rgba(255, 255, 255, 0.4);
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+<div id="content" style="display:block; margin:50px auto; width:800px; position:relative;">
+  <div id="stage_container" style="display:block; width:800px; height:450px; position:absolute; top:0px; left:0px; user-select:none;">
+
+
+        <div id="home-button"><span class="genericon genericon-home" style="font-size:48px;"></span></div>
+        <div id="addons">
+            <div id="rocks">
+                <ul>
+                    <li class="active">Hot Rock</li>
+                    <li class="active">Cactus</li>
+                    <li>Tin Foil</li>
+                </ul>
+            </div>
+            <div id="bait">
+                <ul>
+                    <li class="active">No Bait</li>
+                    <li>Bad Bait</li>
+                    <li>Good Bait</li>
+                    <li>Dank Bait</li>
+                </ul>
+            </div>
+        </div>
+        <div id="start-button"><span class="genericon genericon-play" style="font-size:48px;"></span></div>
+
+
+   </div>
+  <div id="shadow_container" style="display:block; width:800px; position:absolute; left:0px; top:450px; pointer-events:none; user-select:none;">
+    <img id="shadow" src="assets/shadow.png" style="display:block; width:800px; pointer-events:none; user-select:none;"/>
+  </div>
+  <div id="debug_div" style="display:block; width:800px; height:450px; position:absolute; top:0px; left:0px; pointer-events:none; user-select:none;"> </div>
+</div>
+</body>
+</html>
