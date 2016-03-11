@@ -20,6 +20,8 @@ var RaceScene = function(game, stage)
   {
     var selectedLizard = game.player.lizards[game.racing_lizard_index];
     var rank = game.player.rank;
+    // var rank = RANK_CHALLENGER;
+    // rank = 6;
     var contestants = [];
 
     var fee = rank * 50;
@@ -142,6 +144,9 @@ var RaceScene = function(game, stage)
   };
 
   var tickRunner = function(liz) {
+    // if (liz.track_pos >= self.track.length - 1)
+    //   return;
+
     liz.energy--;
 
     if (liz.energy < 0 || (liz.to_pos - liz.track_pos) < DELTA) {
@@ -158,12 +163,12 @@ var RaceScene = function(game, stage)
     var top = track.wy;
     var bot = top + track.wh;
     var laneH = (bot - top) / track.runners.length;
-    var left = track.wx;
-    var laneW = track.ww;
+    var left = track.lanes[liz.lane].wx;
+    var laneW = track.lanes[liz.lane].ww;
 
     liz.wy = top + laneH * liz.lane;
-    liz.wh = laneH * 0.9;
     liz.ww = laneW / (track.length);
+    liz.wh = liz.ww * 0.5;
     liz.wx = left + laneW * (liz.track_pos / (track.length));
   };
 
@@ -209,13 +214,36 @@ var RaceScene = function(game, stage)
     self.w = 0;
     self.h = 0;
 
-    self.wx = 0.1;
-    self.wy = 0.5;
-    self.ww = 0.8;
-    self.wh = 0.3;
+    self.wx = 0.15;
+    self.wy = 0.34 + (0.01  * rank);
+    self.ww = 0.75;
+    self.wh = 0.5;
+
+    self.lanes = [
+      {
+        wx: 0.2,
+        ww: 0.60
+      },
+      {
+        wx: 0.185,
+        ww: 0.625
+      },
+      {
+        wx: 0.17,
+        ww: 0.65
+      },
+      {
+        wx: 0.155,
+        ww: 0.675
+      },
+      {
+        wx: 0.14,
+        ww: 0.70
+      }
+    ];
 
     self.state = RACE_READY;
-    self.length = 5 + (rank * 5);
+    self.length = 5 + (rank);
 
     self.runners = contestants;
     self.winner = null;
