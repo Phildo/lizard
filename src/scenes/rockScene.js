@@ -26,12 +26,16 @@ var RockScene = function(game, stage)
   var rocks;
   var baits;
 
+  var moneydisp;
   var rock_selects;
   var bait_selects;
   var liz_selects;
 
   var my_stats;
   var caught_stats;
+
+  var rockdisp;
+  var baitdisp;
 
   var ready_btn;
   var keep_btn;
@@ -178,6 +182,13 @@ var RockScene = function(game, stage)
     toScene(bait,canv);
     baits.push(bait);
 
+    moneydisp = new MoneyDisp();
+    moneydisp.wx = 0;
+    moneydisp.wy = 0.02;
+    moneydisp.ww = 0.1;
+    moneydisp.wh = 0.06;
+    toScene(moneydisp,canv);
+
     rock_selects = [];
     var select;
     for(var i = 0; i < rocks.length; i++)
@@ -282,6 +293,20 @@ var RockScene = function(game, stage)
     caught_stats.wh = 0.2;
     toScene(caught_stats,canv);
 
+    rockdisp = new RockDisp();
+    rockdisp.wx = rock_selects[0].ww+0.1;
+    rockdisp.wy = rock_selects[0].wy;
+    rockdisp.ww = 1-rockdisp.wx-0.1;
+    rockdisp.wh = rock_selects[rock_selects.length-1].wy+rock_selects[0].wh-rockdisp.wy;
+    toScene(rockdisp,canv);
+
+    baitdisp = new BaitDisp();
+    baitdisp.wx = bait_selects[0].ww+0.1;
+    baitdisp.wy = bait_selects[0].wy;
+    baitdisp.ww = 1-baitdisp.wx-0.1;
+    baitdisp.wh = bait_selects[bait_selects.length-1].wy+bait_selects[0].wh-baitdisp.wy;
+    toScene(baitdisp,canv);
+
     clicker.register(ready_btn);
     clicker.register(keep_btn);
     clicker.register(release_btn);
@@ -343,6 +368,14 @@ var RockScene = function(game, stage)
       context.fillStyle = "#000000";
       context.fillText("Back",back_btn.x,back_btn.y-10);
       back_btn.draw(canv);
+
+      context.fillStyle = "rgba(0,0,0,0.8)";
+      context.fillRect(moneydisp.x,moneydisp.y,moneydisp.w,moneydisp.h);
+      context.fillStyle = "#FFFFFF";
+      context.fillText("$"+game.player.money,moneydisp.x+10,moneydisp.y+20);
+
+      drawRockDisp();
+      drawBaitDisp();
 
       for(var i = 0; i < rock_selects.length; i++)
         drawSelect(rock_selects[i]);
@@ -532,6 +565,12 @@ var RockScene = function(game, stage)
             context.fillText("$"+r.price,select.x+10,select.y+35);
           }
         }
+        if(select.type == SELECT_BAIT)
+        {
+          var b = baits[select.i];
+          context.fillStyle = "#000000";
+          context.fillText("$"+b.price,select.x+10,select.y+35);
+        }
       }
       else
       {
@@ -575,6 +614,12 @@ var RockScene = function(game, stage)
             context.fillStyle = "#FFFFFF";
             context.fillText("$"+r.price,select.x+10,select.y+35);
           }
+        }
+        if(select.type == SELECT_BAIT)
+        {
+          var b = baits[select.i];
+          context.fillStyle = "#FFFFFF";
+          context.fillText("$"+b.price,select.x+10,select.y+35);
         }
       }
     }
@@ -671,6 +716,69 @@ var RockScene = function(game, stage)
     {
       mode = MODE_CAUGHT;
     }
+  }
+
+  var MoneyDisp = function()
+  {
+    var self = this;
+
+    self.x = 0;
+    self.y = 0;
+    self.w = 0;
+    self.h = 0;
+
+    self.wx = 0.;
+    self.wy = 0.;
+    self.ww = 0.;
+    self.wh = 0.;
+  }
+
+  var RockDisp = function()
+  {
+    var self = this;
+
+    self.x = 0;
+    self.y = 0;
+    self.w = 0;
+    self.h = 0;
+
+    self.wx = 0.;
+    self.wy = 0.;
+    self.ww = 0.;
+    self.wh = 0.;
+  }
+  var drawRockDisp = function()
+  {
+    context.fillStyle = "rgba(0,0,0,0.8)";
+    context.fillRect(rockdisp.x,rockdisp.y,rockdisp.w,rockdisp.h);
+    context.fillStyle = "#FFFFFF";
+
+    context.fillText(rocks[rock_selected_i].name,rockdisp.x+10,rockdisp.y+20);
+    context.fillText(rocks[rock_selected_i].description,rockdisp.x+10,rockdisp.y+40);
+  }
+
+  var BaitDisp = function()
+  {
+    var self = this;
+
+    self.x = 0;
+    self.y = 0;
+    self.w = 0;
+    self.h = 0;
+
+    self.wx = 0.;
+    self.wy = 0.;
+    self.ww = 0.;
+    self.wh = 0.;
+  }
+  var drawBaitDisp = function()
+  {
+    context.fillStyle = "rgba(0,0,0,0.8)";
+    context.fillRect(baitdisp.x,baitdisp.y,baitdisp.w,baitdisp.h);
+    context.fillStyle = "#FFFFFF";
+
+    context.fillText(baits[bait_selected_i].name,baitdisp.x+10,baitdisp.y+20);
+    context.fillText(baits[bait_selected_i].description,baitdisp.x+10,baitdisp.y+40);
   }
 
   var RIcon1 = GenIcon();
