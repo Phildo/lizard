@@ -22,6 +22,9 @@ var RaceScene = function(game, stage)
     var rank = game.player.rank;
     var contestants = [];
 
+    var fee = rank * 50;
+    game.player.money -= fee;
+
     opponents[rank].forEach(function(lizard, index) {
       contestants.push(new LizRunner(lizard, index));
     });
@@ -48,6 +51,9 @@ var RaceScene = function(game, stage)
     // set up the race again button
     self.again_btn = new ButtonBox(0,0,0,0, function() { 
       if (self.track.state === RACE_DONE) {
+        var fee = game.player.rank * 50;
+        if (game.player.money < fee)
+          return;
         self.cleanup();
         self.ready();
       }
