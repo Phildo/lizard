@@ -1,7 +1,7 @@
 gray: 9FAABF
 
 
-Rock:
+Rock: DONE
 Rock
 Cactus Upgrade
 Tinfoil Upgrade
