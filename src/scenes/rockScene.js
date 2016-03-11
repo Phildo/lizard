@@ -39,6 +39,9 @@ var RockScene = function(game, stage)
 
   var MAXIMUM_CAPACITY = 5;
 
+  var time_til_lizard;
+  var catchable_lizard;
+
   self.ready = function()
   {
     clicker = new Clicker({source:stage.dispCanv.canvas});
@@ -178,7 +181,7 @@ var RockScene = function(game, stage)
       liz_selects[i] = select;
     }
 
-    ready_btn = new ButtonBox(0,0,0,0,function(){ if(mode != MODE_CHOOSING) return; if(rock_selected_i == -1) { console.log("select rock!"); return; } if(bait_selected_i == -1) { console.log("select bait!"); return; } });
+    ready_btn = new ButtonBox(0,0,0,0,function(){ if(mode != MODE_CHOOSING) return; if(rock_selected_i == -1) { console.log("select rock!"); return; } if(bait_selected_i == -1) { console.log("select bait!"); return; } time_til_lizard = randIntBelow(500); mode = MODE_HUNTING; });
     ready_btn.wx = 0.8;
     ready_btn.wy = 0.8;
     ready_btn.ww = 0.1;
@@ -206,6 +209,36 @@ var RockScene = function(game, stage)
   {
     hoverer.flush();
     clicker.flush();
+
+    if(mode == MODE_HUNTING)
+    {
+      time_til_lizard--;
+      if(time_til_lizard <= -200)
+      {
+        catchable_lizard = undefined;
+        time_til_lizard = randIntBelow(500);
+      }
+      else if(time_til_lizard <= 0)
+      {
+        if(!catchable_lizard)
+        {
+          var r = rocks[rock_selected_i];
+          catchable_lizard = new RockLizard();
+          catchable_lizard.ww = 0.05;
+          catchable_lizard.wh = 0.05;
+          var t = Math.random()*Math.PI*2;
+          catchable_lizard.wx = (r.wx+r.ww/2)+Math.cos(t)*r.ww - catchable_lizard.ww/2;
+          catchable_lizard.wy = (r.wy+r.wh/2)+Math.sin(t)*r.wh - catchable_lizard.wh/2;
+          t = (t+Math.PI) % (Math.PI*2);
+          catchable_lizard.to_wx = (r.wx+r.ww/2)+Math.cos(t)*r.ww - catchable_lizard.ww/2;
+          catchable_lizard.to_wy = (r.wy+r.wh/2)+Math.sin(t)*r.wh - catchable_lizard.wh/2;
+          clicker.register(catchable_lizard);
+        }
+
+        catchable_lizard.wx = lerp(catchable_lizard.wx,catchable_lizard.to_wx,0.01);
+        catchable_lizard.wy = lerp(catchable_lizard.wy,catchable_lizard.to_wy,0.01);
+      }
+    }
   };
 
   self.draw = function()
@@ -239,6 +272,16 @@ var RockScene = function(game, stage)
       context.fillStyle = "#000000";
       context.fillText("Back",back_btn.x,back_btn.y-10);
       back_btn.draw(canv);
+
+      context.drawImage(rocks[rock_selected_i].img,rocks[rock_selected_i].x,rocks[rock_selected_i].y,rocks[rock_selected_i].w,rocks[rock_selected_i].h);
+      context.drawImage(baits[bait_selected_i].img,baits[bait_selected_i].x,baits[bait_selected_i].y,baits[bait_selected_i].w,baits[bait_selected_i].h);
+
+      if(catchable_lizard)
+      {
+        toScene(catchable_lizard,canv);
+        context.fillStyle = "#FFFF00";
+        context.fillRect(catchable_lizard.x,catchable_lizard.y,catchable_lizard.w,catchable_lizard.h);
+      }
     }
     else if(mode == MODE_CAUGHT)
     {
@@ -246,6 +289,10 @@ var RockScene = function(game, stage)
       context.fillText("My Lizards",10,20);
       for(var i = 0; i < liz_selects.length; i++)
         drawSelect(liz_selects[i]);
+
+      context.drawImage(rocks[rock_selected_i].img,rocks[rock_selected_i].x,rocks[rock_selected_i].y,rocks[rock_selected_i].w,rocks[rock_selected_i].h);
+      context.drawImage(baits[bait_selected_i].img,baits[bait_selected_i].x,baits[bait_selected_i].y,baits[bait_selected_i].w,baits[bait_selected_i].h);
+
       if(liz_selected_i != -1)
         drawStatsDisp();
     }
@@ -422,6 +469,29 @@ var RockScene = function(game, stage)
     self.y;
     self.w;
     self.h;
+  }
+
+  var RockLizard = function()
+  {
+    var self = this;
+
+    self.x = 0;
+    self.y = 0;
+    self.w = 0;
+    self.h = 0;
+
+    self.wx = 0.;
+    self.wy = 0.;
+    self.ww = 0.;
+    self.wh = 0.;
+
+    self.to_wx;
+    self.to_wy;
+
+    self.click = function()
+    {
+      console.log("caught!");
+    }
   }
 
   var RIcon1 = GenIcon();
