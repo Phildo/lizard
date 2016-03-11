@@ -42,7 +42,7 @@ var RockScene = function(game, stage)
     clicker = new Clicker({source:stage.dispCanv.canvas});
     hoverer = new Hoverer({source:stage.dispCanv.canvas});
 
-    back_btn = new ButtonBox(0,0,0,0,function(){ game.setScene(3); });
+    back_btn = new ButtonBox(0,0,0,0,function(){ if(mode == MODE_CAUGHT) return; game.setScene(2); });
     back_btn.wx = 0.8;
     back_btn.wy = 0.1;
     back_btn.ww = 0.1;
@@ -90,7 +90,7 @@ var RockScene = function(game, stage)
       select.i = i;
       select.type = SELECT_BAIT;
       select.wx = 0;
-      select.wy = 0.1+(0.1*i);
+      select.wy = 0.1+(0.1*i)+(0.1*rock_selects.length)+0.1;
       select.ww = 0.2;
       select.wh = 0.1;
       toScene(select,canv);
@@ -115,7 +115,6 @@ var RockScene = function(game, stage)
       hoverer.register(select);
       liz_selects[i] = select;
     }
-
 
     stats = new StatsDisp();
     stats.wx = 0.2;
@@ -146,13 +145,17 @@ var RockScene = function(game, stage)
       context.fillStyle = "#000000";
       context.fillText("Back",back_btn.x,back_btn.y);
       back_btn.draw(canv);
+
+      for(var i = 0; i < rock_selects.length; i++)
+        drawSelect(rock_selects[i]);
+      for(var i = 0; i < bait_selects.length; i++)
+        drawSelect(bait_selects[i]);
     }
     else if(mode == MODE_HUNTING)
     {
       context.fillStyle = "#000000";
       context.fillText("Back",back_btn.x,back_btn.y);
       back_btn.draw(canv);
-
     }
     else if(mode == MODE_CAUGHT)
     {
@@ -192,6 +195,19 @@ var RockScene = function(game, stage)
 
     self.click = function()
     {
+      //selective listening
+      if(mode == MODE_CHOOSING)
+      {
+        if(self.type != SELECT_ROCK && self.type != SELECT_BAIT)
+          return;
+      }
+      else if(mode == MODE_HUNTING)
+        return;
+      else if(mode == MODE_CAUGHT)
+      {
+        if(self.type != SELECT_LIZ) return;
+      }
+
       var selected_i;
       switch(self.type)
       {
@@ -200,10 +216,17 @@ var RockScene = function(game, stage)
         case SELECT_LIZ:  selected_i = liz_selected_i;  break;
       }
 
-      if(game.player.lizards.length > self.i)
+      if(self.type == SELECT_LIZ && game.player.lizards.length <= self.i) return;
       {
         if(selected_i == self.i) selected_i = -1;
         else                     selected_i = self.i;
+
+        switch(self.type)
+        {
+          case SELECT_ROCK: rock_selected_i = selected_i; break;
+          case SELECT_BAIT: bait_selected_i = selected_i; break;
+          case SELECT_LIZ:  liz_selected_i  = selected_i; break;
+        }
       }
     }
 
@@ -220,15 +243,23 @@ var RockScene = function(game, stage)
   var drawSelect = function(select)
   {
     var selected_i;
-    var length;
-    switch(self.type)
+    var title;
+
+    switch(select.type)
     {
-      case SELECT_ROCK: selected_i = rock_selected_i; break;
-      case SELECT_BAIT: selected_i = bait_selected_i; break;
-      case SELECT_LIZ:  selected_i = liz_selected_i;  break;
+      case SELECT_ROCK: selected_i = rock_selected_i;  title = rocks[select.i].name; break;
+      case SELECT_BAIT: selected_i = bait_selected_i;  title = baits[select.i].name; break;
+      case SELECT_LIZ:  selected_i = liz_selected_i;   title = game.player.lizards[select.i].name; break;
     }
 
-    if(game.player.lizards.length > select.i)
+    if(select.type == SELECT_LIZ && game.player.lizards.length <= select.i)
+    {
+      context.fillStyle = "#222222";
+      context.fillRect(select.x,select.y,select.w,select.h);
+      context.fillStyle = "#000000";
+      context.fillText("No Lizard",select.x+10,select.y+select.h/2);
+    }
+    else
     {
       if(selected_i == select.i)
       {
@@ -242,14 +273,7 @@ var RockScene = function(game, stage)
       }
       context.fillRect(select.x,select.y,select.w,select.h);
       context.fillStyle = "#000000";
-      context.fillText(game.player.lizards[select.i].name,select.x+10,select.y+select.h/2);
-    }
-    else
-    {
-      context.fillStyle = "#222222";
-      context.fillRect(select.x,select.y,select.w,select.h);
-      context.fillStyle = "#000000";
-      context.fillText("No Lizard",select.x+10,select.y+select.h/2);
+      context.fillText(title,select.x+10,select.y+select.h/2);
     }
   }
 
@@ -286,11 +310,13 @@ var RockScene = function(game, stage)
   var Rock = function()
   {
     var self = this;
+    self.name = "rock";
   }
 
   var Bait = function()
   {
     var self = this;
+    self.name = "bait";
   }
 
 };
