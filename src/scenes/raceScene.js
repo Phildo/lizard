@@ -6,6 +6,8 @@ var RaceScene = function(game, stage)
   var ctx = canv.context;
 
   var DELTA = 0.0001;
+  self.stats;
+  self.moneydisp;
 
   self.clicker;
   self.back_btn;
@@ -20,6 +22,8 @@ var RaceScene = function(game, stage)
   {
     var selectedLizard = game.player.lizards[game.racing_lizard_index];
     var rank = game.player.rank;
+    // var rank = RANK_CHALLENGER;
+    // rank = 6;
     var contestants = [];
 
     var fee = rank * 50;
@@ -32,7 +36,12 @@ var RaceScene = function(game, stage)
 
     // Set up button to go back to Terrarium
     self.clicker = new Clicker({source:stage.dispCanv.canvas});
-    self.back_btn = new ButtonBox(10,10,10,10,function(){ game.setScene(2); });
+    self.back_btn = new ButtonBox(0,0,0,0,function(){ game.setScene(2); });
+    self.back_btn.wx = 0.8;
+    self.back_btn.wy = 0.1;
+    self.back_btn.ww = 0.2;
+    self.back_btn.wh = 0.1;
+    toScene(self.back_btn,canv);
     self.clicker.register(self.back_btn);
 
     // Set up button to start race
@@ -41,9 +50,9 @@ var RaceScene = function(game, stage)
         self.track.state = RACE_RUNNING;
       }
     });
-    self.race_btn.wx = 0.5;
-    self.race_btn.wy = 0.2;
-    self.race_btn.ww = 0.1;
+    self.race_btn.wx = 0.8;
+    self.race_btn.wy = 0.8;
+    self.race_btn.ww = 0.2;
     self.race_btn.wh = 0.1;
     toScene(self.race_btn, canv);
     self.clicker.register(self.race_btn);
@@ -59,12 +68,36 @@ var RaceScene = function(game, stage)
       }
     });
 
-    self.again_btn.wx = 0.5;
-    self.again_btn.wy = 0.2;
-    self.again_btn.ww = 0.1;
+    self.again_btn.wx = 0.8;
+    self.again_btn.wy = 0.8;
+    self.again_btn.ww = 0.2;
     self.again_btn.wh = 0.1;
     toScene(self.again_btn, canv);
     self.clicker.register(self.again_btn);
+
+    // Set up the stats
+    self.stats = [];
+
+    contestants.forEach(function(lizard, index) {
+      var select = new LizSelect();
+      select.i = index;
+      select.wh = 0.16
+      select.ww = 0.2;
+      select.wx = 0;
+      select.wy = 0.1+(select.wh*index);
+      toScene(select, canv);
+      select.y = Math.round(select.y);
+      select.h = Math.round(select.h);
+      self.stats.push(select);
+    });
+    self.stats[self.stats.length - 1].player = true;
+
+    // Set up money display
+    self.moneydisp = new MoneyDisp();
+    self.moneydisp.wx = 0;
+    self.moneydisp.wy = 0.02;
+    self.moneydisp.ww = 0.1;
+    self.moneydisp.wh = 0.06;
 
     // Initialize the track
     self.track = new Track(contestants, rank);
@@ -108,15 +141,30 @@ var RaceScene = function(game, stage)
     ctx.drawImage(bg_img, 0, 0, canv.width, canv.height);
 
     // Draw button to go back to Terrarium
-    ctx.fillStyle = "#000000";
-    self.back_btn.draw(canv);
+
+    ctx.fillStyle = "rgba(0,0,0,0.8)";
+    ctx.fillRect(self.back_btn.x,self.back_btn.y,self.back_btn.w,self.back_btn.h);
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillText("BACK TO THA PEN",self.back_btn.x+10,self.back_btn.y+25);
+
+    // Draw money display
+    self.moneydisp.draw(ctx);
+
+    // Draw the track
+    self.track.draw(ctx);
 
     if (self.track.state === RACE_READY) {
-      ctx.fillText("Start Race", self.race_btn.x, self.race_btn.y);
-      self.race_btn.draw(canv);
-    }
+      // Draw the start race button
+      ctx.fillStyle = "rgba(0,0,0,0.8)";
+      ctx.fillRect(self.race_btn.x,self.race_btn.y,self.race_btn.w,self.race_btn.h);
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillText("START RACE",self.race_btn.x+10,self.race_btn.y+25);
 
-    self.track.draw(ctx);
+      // Draw the stats on left
+      self.stats.forEach(function(select) {
+        drawSelect(select);
+      });
+    }
 
     if (self.track.state === RACE_DONE) {
       var winner = self.track.runners[self.track.winner];
@@ -129,8 +177,10 @@ var RaceScene = function(game, stage)
         ctx.fillText("Sorry! You lost this race. Better luck next time!", 300, 50);
       }
 
-      ctx.fillText("Race Again", self.again_btn.x, self.again_btn.y);
-      self.again_btn.draw(canv);
+      ctx.fillStyle = "rgba(0,0,0,0.8)";
+      ctx.fillRect(self.again_btn.x,self.again_btn.y,self.again_btn.w,self.again_btn.h);
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillText("RACE AGAIN",self.again_btn.x+10,self.again_btn.y+25);
     }
   };
 
@@ -142,6 +192,9 @@ var RaceScene = function(game, stage)
   };
 
   var tickRunner = function(liz) {
+    // if (liz.track_pos >= self.track.length - 1)
+    //   return;
+
     liz.energy--;
 
     if (liz.energy < 0 || (liz.to_pos - liz.track_pos) < DELTA) {
@@ -158,12 +211,12 @@ var RaceScene = function(game, stage)
     var top = track.wy;
     var bot = top + track.wh;
     var laneH = (bot - top) / track.runners.length;
-    var left = track.wx;
-    var laneW = track.ww;
+    var left = track.lanes[liz.lane].wx;
+    var laneW = track.lanes[liz.lane].ww;
 
     liz.wy = top + laneH * liz.lane;
-    liz.wh = laneH * 0.9;
     liz.ww = laneW / (track.length);
+    liz.wh = liz.ww * 0.5;
     liz.wx = left + laneW * (liz.track_pos / (track.length));
   };
 
@@ -209,13 +262,36 @@ var RaceScene = function(game, stage)
     self.w = 0;
     self.h = 0;
 
-    self.wx = 0.1;
-    self.wy = 0.5;
-    self.ww = 0.8;
-    self.wh = 0.3;
+    self.wx = 0.15;
+    self.wy = 0.34 + (0.01  * rank);
+    self.ww = 0.75;
+    self.wh = 0.5;
+
+    self.lanes = [
+      {
+        wx: 0.2,
+        ww: 0.60
+      },
+      {
+        wx: 0.185,
+        ww: 0.625
+      },
+      {
+        wx: 0.17,
+        ww: 0.65
+      },
+      {
+        wx: 0.155,
+        ww: 0.675
+      },
+      {
+        wx: 0.14,
+        ww: 0.70
+      }
+    ];
 
     self.state = RACE_READY;
-    self.length = 5 + (rank * 5);
+    self.length = 5 + (rank);
 
     self.runners = contestants;
     self.winner = null;
@@ -255,6 +331,100 @@ var RaceScene = function(game, stage)
       }
     };
   };
+
+  var MoneyDisp = function()
+  {
+    var self = this;
+
+    self.x = 0;
+    self.y = 0;
+    self.w = 0;
+    self.h = 0;
+
+    self.wx = 0.;
+    self.wy = 0.;
+    self.ww = 0.;
+    self.wh = 0.;
+
+    self.draw = function(ctx) {
+      toScene(self,canv);
+      ctx.fillStyle = "rgba(0,0,0,0.8)";
+      ctx.fillRect(self.x,self.y,self.w,self.h);
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillText("$"+game.player.money,self.x+10,self.y+20);
+    }
+  };
+
+  var LizSelect = function()
+  {
+    var self = this;
+
+    self.x = 0;
+    self.y = 0;
+    self.w = 0;
+    self.h = 0;
+
+    self.wx = 0.;
+    self.wy = 0.;
+    self.ww = 0.;
+    self.wh = 0.;
+
+    self.i;
+  }
+  var drawSelect = function(select)
+  {
+    var runner = self.track.runners[select.i];
+    var liz = runner.ref;
+
+    if(select.player)
+    {
+      ctx.fillStyle = "rgba(255,255,255,0.8)";
+      ctx.fillRect(select.x,select.y,select.w,select.h);
+      ctx.fillStyle = "#000000";
+      ctx.fillText(liz.name,select.x+10,select.y+20);
+
+      ctx.fillStyle = "#000000";
+      ctx.fillText("SPD:",select.x+10,select.y+40);
+      for(var i = 0; i < 10; i++)
+      {
+        if(liz.speed >= i/10) ctx.fillStyle = "#000000";
+        else                  ctx.fillStyle = "#666666";
+        ctx.fillRect(select.x+52+10*i,select.y+32,8,8);
+      }
+      ctx.fillStyle = "#000000";
+      ctx.fillText("END:",select.x+10,select.y+55);
+      for(var i = 0; i < 10; i++)
+      {
+        if(liz.endurance >= i/10) ctx.fillStyle = "#000000";
+        else                      ctx.fillStyle = "#666666";
+        ctx.fillRect(select.x+52+10*i,select.y+46,8,8);
+      }
+    }
+    else
+    {
+      ctx.fillStyle = "rgba(0,0,0,0.8)";
+      ctx.fillRect(select.x,select.y,select.w,select.h);
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillText(liz.name,select.x+10,select.y+20);
+
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillText("SPD:",select.x+10,select.y+40);
+      for(var i = 0; i < 10; i++)
+      {
+        if(liz.speed >= i/10) ctx.fillStyle = "#FFFFFF";
+        else                  ctx.fillStyle = "#999999";
+        ctx.fillRect(select.x+52+10*i,select.y+32,8,8);
+      }
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillText("END:",select.x+10,select.y+55);
+      for(var i = 0; i < 10; i++)
+      {
+        if(liz.endurance >= i/10) ctx.fillStyle = "#FFFFFF";
+        else                      ctx.fillStyle = "#999999";
+        ctx.fillRect(select.x+52+10*i,select.y+46,8,8);
+      }
+    }
+  }
 
   var opponents = [
     [ // RANK_BRONZE

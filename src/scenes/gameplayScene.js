@@ -24,6 +24,11 @@ var GamePlayScene = function(game, stage)
   var bg_img = new Image();
   bg_img.src = "assets/environmental/penforlizard2.png";
 
+  var frames = [];
+  var i = 0;
+  frames[i] = new Image(); frames[i].src = "assets/lizards/darkblueiso.png"; i++;
+  frames[i] = new Image(); frames[i].src = "assets/lizards/darkblueisorun.png"; i++;
+
   self.ready = function()
   {
     clicker = new Clicker({source:stage.dispCanv.canvas});
@@ -32,24 +37,9 @@ var GamePlayScene = function(game, stage)
     rock_btn = new ButtonBox(0,0,0,0,function(){ game.setScene(3); });
     rock_btn.wx = 0.8;
     rock_btn.wy = 0.1;
-    rock_btn.ww = 0.1;
+    rock_btn.ww = 0.2;
     rock_btn.wh = 0.1;
     toScene(rock_btn,canv);
-
-    race_btn = new ButtonBox(0,0,0,0,function(){ 
-      if(selected_i == -1) 
-        return;
-      var fee = game.player.rank * 50;
-      if (game.player.money < fee)
-        return;
-      game.racing_lizard_index = selected_i;
-      game.setScene(4);
-    });
-    race_btn.wx = 0.8;
-    race_btn.wy = 0.3;
-    race_btn.ww = 0.1;
-    race_btn.wh = 0.1;
-    toScene(race_btn,canv);
 
     terrarium = new Terrarium();
     terrarium.wx = 0.25;
@@ -82,8 +72,8 @@ var GamePlayScene = function(game, stage)
     {
       tlizard = new TerrariLizard();
       tlizard.i = i;
-      tlizard.ww = 0.05;
-      tlizard.wh = 0.05;
+      tlizard.ww = 0.1;
+      tlizard.wh = 0.1;
       tlizard.wx = randR(terrarium.wx,terrarium.wx+terrarium.ww-tlizard.ww);
       tlizard.wy = randR(terrarium.wy,terrarium.wy+terrarium.wh-tlizard.wh);
       tlizard.to_wx = tlizard.wx;
@@ -100,6 +90,22 @@ var GamePlayScene = function(game, stage)
     stats.ww = 1-stats.wx;
     stats.wh = 0.3;
     toScene(stats,canv);
+
+    race_btn = new ButtonBox(0,0,0,0,function(){
+      if(selected_i == -1)
+        return;
+      var fee = game.player.rank * 50;
+      if (game.player.money < fee)
+        return;
+      game.racing_lizard_index = selected_i;
+      game.setScene(4);
+    });
+    race_btn.wx = 0.8;
+    race_btn.ww = 0.2;
+    race_btn.wh = 0.1;
+    race_btn.wy = stats.wy-race_btn.wh;
+    toScene(race_btn,canv);
+
 
     moneydisp = new MoneyDisp();
     moneydisp.wx = 0;
@@ -127,15 +133,17 @@ var GamePlayScene = function(game, stage)
   {
     context.drawImage(bg_img, 0, 0, canv.width, canv.height);
 
-    context.fillStyle = "#000000";
-    context.fillText("To Rock",rock_btn.x,rock_btn.y);
-    rock_btn.draw(canv);
+    context.fillStyle = "rgba(0,0,0,0.8)";
+    context.fillRect(rock_btn.x,rock_btn.y,rock_btn.w,rock_btn.h);
+    context.fillStyle = "#FFFFFF";
+    context.fillText("GO LIZARDIN' ->",rock_btn.x+10,rock_btn.y+25);
 
     if(selected_i != -1)
     {
-      context.fillStyle = "#000000";
-      context.fillText("To Race",race_btn.x,race_btn.y);
-      race_btn.draw(canv);
+      context.fillStyle = "rgba(0,0,0,0.8)";
+      context.fillRect(race_btn.x,race_btn.y,race_btn.w,race_btn.h);
+      context.fillStyle = "#FFFFFF";
+      context.fillText("TO THE RACES ->",race_btn.x+10,race_btn.y+25);
     }
 
     context.fillStyle = "rgba(0,0,0,0.8)";
@@ -302,6 +310,9 @@ var GamePlayScene = function(game, stage)
 
     self.agitation = 0;
 
+    self.framefloat = 0;
+    self.frame = 0;
+
     self.click = function()
     {
       if(game.player.lizards.length > self.i)
@@ -322,15 +333,23 @@ var GamePlayScene = function(game, stage)
       tliz.to_wy = randR(terrarium.wy,terrarium.wy+terrarium.wh-tliz.wh);
     }
 
-    tliz.wx = lerp(tliz.wx,tliz.to_wx,0.01);
-    tliz.wy = lerp(tliz.wy,tliz.to_wy,0.01);
+    var newx = lerp(tliz.wx,tliz.to_wx,0.01);
+    var newy = lerp(tliz.wy,tliz.to_wy,0.01);
+    tliz.framefloat += (Math.abs(newx-tliz.wx)+Math.abs(newy-tliz.wy))*40;
+    while(tliz.framefloat > frames.length) tliz.framefloat -= frames.length;
+    tliz.frame = Math.floor(tliz.framefloat)
+    tliz.wx = newx;
+    tliz.wy = newy;
     toScene(tliz,canv);
   }
   var drawTerrariLizard = function(tliz)
   {
-    if(selected_i == tliz.i) context.fillStyle = "#FFFFFF";
-    else                     context.fillStyle = "#FFFF00";
-    context.fillRect(tliz.x,tliz.y,tliz.w,tliz.h);
+    if(selected_i == tliz.i)
+    {
+      context.fillStyle = "#FFFFFF";
+      context.strokeRect(tliz.x,tliz.y,tliz.w,tliz.h);
+    }
+    context.drawImage(frames[tliz.frame],tliz.x,tliz.y,tliz.w,tliz.h);
   }
 
   var StatsDisp = function()
@@ -358,7 +377,7 @@ var GamePlayScene = function(game, stage)
     context.fillRect(stats.x+10,stats.y+10,stats.h-20,stats.h-20);
     context.fillStyle = "#FFFFFF";
     context.fillText(liz.name,stats.x+stats.h,stats.y+20);
-    context.fillText("SPEED",stats.x+stats.h,stats.y+40);
+    context.fillText("SPEED:",stats.x+stats.h,stats.y+40);
     for(var i = 0; i < 10; i++)
     {
       if(liz.speed >= i/10) context.fillStyle = "#FFFFFF";
