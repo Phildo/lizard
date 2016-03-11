@@ -13,6 +13,12 @@ var Game = function(init)
   //Shared Game State
   self.player = new Player();
 
+  //stub hack
+  for(var i = 0; i < 3; i++)
+    self.player.lizards[i] = new Lizard();
+
+  self.racing_lizard_index = -1;
+
   var stage = new Stage({width:init.width,height:init.height,container:init.container});
   var scenes = [
     /* 0 */ new NullScene(self, stage),

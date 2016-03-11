@@ -32,7 +32,7 @@ var GamePlayScene = function(game, stage)
     rock_btn.wh = 0.1;
     toScene(rock_btn,canv);
 
-    race_btn = new ButtonBox(0,0,0,0,function(){ if(selected_i == -1) return; game.setScene(4); });
+    race_btn = new ButtonBox(0,0,0,0,function(){ if(selected_i == -1) return; game.racing_lizard_index = selected_i; game.setScene(4); });
     race_btn.wx = 0.8;
     race_btn.wy = 0.3;
     race_btn.ww = 0.1;
@@ -91,11 +91,6 @@ var GamePlayScene = function(game, stage)
     clicker.register(race_btn);
 
     selected_i = -1;
-
-    //stub hack
-    game.player.lizards = [];
-    for(var i = 0; i < 3; i++)
-      game.player.lizards[i] = new Lizard();
   };
 
   self.tick = function()
