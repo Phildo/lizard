@@ -55,11 +55,13 @@ var GamePlayScene = function(game, stage)
     {
       select = new LizSelect();
       select.i = i;
-      select.wx = 0;
-      select.wy = 0.1+(0.1*i);
+      select.wh = 0.16;
       select.ww = 0.2;
-      select.wh = 0.1;
+      select.wx = 0;
+      select.wy = 0.1+(select.wh*i);
       toScene(select,canv);
+      select.y = Math.round(select.y);
+      select.h = Math.round(select.h);
       clicker.register(select);
       hoverer.register(select);
       selects[i] = select;
@@ -84,10 +86,10 @@ var GamePlayScene = function(game, stage)
     }
 
     stats = new StatsDisp();
-    stats.wx = 0.2;
-    stats.wy = 0.6;
-    stats.ww = 0.6;
-    stats.wh = 0.2;
+    stats.wx = selects[0].ww+0.1;
+    stats.wy = selects[selects.length-1].wy+selects[selects.length-1].wh-0.3;
+    stats.ww = 1-stats.wx;
+    stats.wh = 0.3;
     toScene(stats,canv);
 
     clicker.register(rock_btn);
@@ -180,26 +182,65 @@ var GamePlayScene = function(game, stage)
   {
     if(game.player.lizards.length > select.i)
     {
+      var liz = game.player.lizards[select.i];
+
       if(selected_i == select.i)
       {
-        if(select.hovering) context.fillStyle = "#AAAAAA"; // selected + hovering
-        else                context.fillStyle = "#888888"; // selected +!hovering
+        if(select.hovering) context.fillStyle = "rgba(255,255,255,0.9)";
+        else                context.fillStyle = "rgba(255,255,255,0.8)";
+        context.fillRect(select.x,select.y,select.w,select.h);
+        context.fillStyle = "#000000";
+        context.fillText(liz.name,select.x+10,select.y+20);
+
+        context.fillStyle = "#000000";
+        context.fillText("SPEED:",select.x+10,select.y+40);
+        for(var i = 0; i < 10; i++)
+        {
+          if(liz.speed >= i/10) context.fillStyle = "#000000";
+          else                  context.fillStyle = "#666666";
+          context.fillRect(select.x+52+10*i,select.y+32,8,8);
+        }
+        context.fillStyle = "#000000";
+        context.fillText("ENDUR:",select.x+10,select.y+55);
+        for(var i = 0; i < 10; i++)
+        {
+          if(liz.endurance >= i/10) context.fillStyle = "#000000";
+          else                      context.fillStyle = "#666666";
+          context.fillRect(select.x+52+10*i,select.y+46,8,8);
+        }
       }
       else
       {
-        if(select.hovering) context.fillStyle = "#666666"; //!selected + hovering
-        else                context.fillStyle = "#444444"; //!selected +!hovering
+        if(select.hovering) context.fillStyle = "rgba(0,0,0,0.9)";
+        else                context.fillStyle = "rgba(0,0,0,0.8)";
+        context.fillRect(select.x,select.y,select.w,select.h);
+        context.fillStyle = "#FFFFFF";
+        context.fillText(liz.name,select.x+10,select.y+20);
+
+        context.fillStyle = "#FFFFFF";
+        context.fillText("SPEED:",select.x+10,select.y+40);
+        for(var i = 0; i < 10; i++)
+        {
+          if(liz.speed >= i/10) context.fillStyle = "#FFFFFF";
+          else                  context.fillStyle = "#999999";
+          context.fillRect(select.x+52+10*i,select.y+32,8,8);
+        }
+        context.fillStyle = "#FFFFFF";
+        context.fillText("ENDUR:",select.x+10,select.y+55);
+        for(var i = 0; i < 10; i++)
+        {
+          if(liz.endurance >= i/10) context.fillStyle = "#FFFFFF";
+          else                      context.fillStyle = "#999999";
+          context.fillRect(select.x+52+10*i,select.y+46,8,8);
+        }
       }
-      context.fillRect(select.x,select.y,select.w,select.h);
-      context.fillStyle = "#000000";
-      context.fillText(game.player.lizards[select.i].name,select.x+10,select.y+select.h/2);
     }
     else
     {
-      context.fillStyle = "#222222";
+      context.fillStyle = "rgba(0,0,0,0.8)";
       context.fillRect(select.x,select.y,select.w,select.h);
-      context.fillStyle = "#000000";
-      context.fillText("No Lizard",select.x+10,select.y+select.h/2);
+      context.fillStyle = "#555555";
+      context.fillText("NO LIZARD",select.x+10,select.y+20);
     }
   }
 
@@ -293,18 +334,28 @@ var GamePlayScene = function(game, stage)
   {
     var liz = game.player.lizards[selected_i];
 
-    context.fillStyle = "rgba(255,255,255,0.5)";
+    context.fillStyle = "rgba(0,0,0,0.8)";
     context.fillRect(stats.x,stats.y,stats.w,stats.h);
-    context.strokeStyle = "#000000";
-    context.strokeRect(stats.x,stats.y,stats.w,stats.h);
 
     context.fillStyle = "#FFFF00";
     context.fillRect(stats.x+10,stats.y+10,stats.h-20,stats.h-20);
-    context.fillStyle = "#000000";
+    context.fillStyle = "#FFFFFF";
     context.fillText(liz.name,stats.x+stats.h,stats.y+20);
-    context.fillText("Speed",stats.x+stats.h,stats.y+30);
-    context.fillStyle = "#FF0000";
-    context.fillRect(stats.x+stats.h+10,stats.y+stats.h-25,liz.speed*(stats.w-stats.h-20),10);
+    context.fillText("SPEED",stats.x+stats.h,stats.y+40);
+    for(var i = 0; i < 10; i++)
+    {
+      if(liz.speed >= i/10) context.fillStyle = "#FFFFFF";
+      else                  context.fillStyle = "#999999";
+      context.fillRect(stats.x+stats.h+52+10*i,stats.y+32,8,8);
+    }
+    context.fillStyle = "#FFFFFF";
+    context.fillText("ENDUR:",stats.x+stats.h,stats.y+55);
+    for(var i = 0; i < 10; i++)
+    {
+      if(liz.endurance >= i/10) context.fillStyle = "#FFFFFF";
+      else                      context.fillStyle = "#999999";
+      context.fillRect(stats.x+stats.h+52+10*i,stats.y+46,8,8);
+    }
   }
 
 };
