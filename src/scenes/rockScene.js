@@ -489,6 +489,18 @@ var RockScene = function(game, stage)
         context.fillText("MY LIZARD",my_stats_title.x+10,my_stats_title.y+20);
         drawStatsDisp(my_stats,game.player.lizards[liz_selected_i]);
       }
+      else
+      {
+        context.fillStyle = "rgba(0,0,0,0.8)";
+        context.fillRect(my_stats_title.x,my_stats_title.y,my_stats_title.w,my_stats_title.h);
+        context.fillStyle = "#FFFFFF";
+        context.fillText("MY LIZARD",my_stats_title.x+10,my_stats_title.y+20);
+        context.fillStyle = "rgba(0,0,0,0.8)";
+        context.fillRect(my_stats.x,my_stats.y,my_stats.w,my_stats.h);
+        context.fillStyle = "#999999";
+        context.fillText("(NO LIZARD SELECTED)",my_stats.x+10,my_stats.y+20);
+
+      }
       if(catchable_lizard) //should always be true?
       {
         context.fillStyle = "rgba(0,0,0,0.8)";
