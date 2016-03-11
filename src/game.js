@@ -14,7 +14,7 @@ var Game = function(init)
   self.player = new Player();
 
   //stub hack
-  for(var i = 0; i < 3; i++) {
+  for(var i = 0; i < 1; i++) {
     self.player.lizards[i] = new Lizard(Math.floor(randR(1, 3)), randR(0.01, 0.30), randR(0.01, 0.30));
   }
 

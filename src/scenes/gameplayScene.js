@@ -80,7 +80,6 @@ var GamePlayScene = function(game, stage)
       tlizard.to_wy = tlizard.wy;
       tlizard.agitation = randIntBelow(500);
       toScene(tlizard,canv);
-      clicker.register(tlizard);
       tlizards[i] = tlizard;
     }
 
@@ -305,7 +304,7 @@ var GamePlayScene = function(game, stage)
 
     self.to_wx;
     self.to_wy;
-    self.theta;
+    self.theta = 0;
 
     self.i;
 
@@ -313,15 +312,6 @@ var GamePlayScene = function(game, stage)
 
     self.framefloat = 0;
     self.frame = 0;
-
-    self.click = function()
-    {
-      if(game.player.lizards.length > self.i)
-      {
-        if(selected_i == self.i) selected_i = -1;
-        else                     selected_i = self.i;
-      }
-    }
   }
   var tickTerrariLizard = function(tliz)
   {
@@ -334,7 +324,8 @@ var GamePlayScene = function(game, stage)
       tliz.to_wy = randR(terrarium.wy,terrarium.wy+terrarium.wh-tliz.wh);
 
       tliz.theta = Math.atan2(tliz.to_wy-tliz.wy,tliz.to_wx-tliz.wx);
-      tliz.theta -= Math.PI/6;
+      while(tliz.theta < 0)         tliz.theta += Math.PI*2;
+      while(tliz.theta > Math.PI*2) tliz.theta -= Math.PI*2;
     }
 
     var newx = lerp(tliz.wx,tliz.to_wx,0.01);
@@ -350,8 +341,17 @@ var GamePlayScene = function(game, stage)
   {
     context.save();
     context.translate(tliz.x,tliz.y);
-    context.rotate(tliz.theta);
-    context.drawImage(frames[tliz.frame],0,0,tliz.w,tliz.h);
+    if(
+      tliz.theta > Math.PI/2 &&
+      tliz.theta < 3*Math.PI/2
+    )
+    {
+      context.rotate(tliz.theta+(Math.PI/6)+(Math.PI));
+      context.scale(-1,1);
+    }
+    else
+      context.rotate(tliz.theta-(Math.PI/6));
+    context.drawImage(frames[tliz.frame],tliz.w/-2,tliz.h/-2,tliz.w,tliz.h);
     context.restore();
   }
 
