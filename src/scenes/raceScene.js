@@ -21,8 +21,8 @@ var RaceScene = function(game, stage)
     var speed = 1;
     lizards.forEach(function(liz, index) {
       liz.speed = speed;
-      speed++;
       liz.name = liz.name + speed;
+      speed++;
       var gen = Math.floor(Math.random() * 2);
       if (gen === 0) {
         liz.gender = LIZARD_GENDER_MALE;
@@ -32,6 +32,12 @@ var RaceScene = function(game, stage)
       liz.trackPos = 0;
       liz.lane = index;
     });
+
+    var playersLiz = game.player.lizards[game.racing_lizard_index];
+    playersLiz.trackPos = 0;
+    playersLiz.lane = lizards.length;
+    playersLiz.speed = 6;
+    lizards.push(playersLiz);
     // Set up button to go back to Terrarium
     self.clicker = new Clicker({source:stage.dispCanv.canvas});
     self.back_btn = new ButtonBox(10,10,10,10,function(){ game.setScene(2); });
@@ -55,7 +61,12 @@ var RaceScene = function(game, stage)
     } else if(self.track.state === RACE_RUNNING) {
       self.track.update();
     } else if(self.track.state === RACE_FINISH) {
-
+      var winner = self.track.runners[self.track.winner];
+      var playerLiz = game.player.lizards[game.racing_lizard_index];
+      if (winner === playerLiz) {
+        game.player.money += 100;
+        self.track.state = RACE_DONE;
+      };
     }
   };
 
@@ -68,9 +79,9 @@ var RaceScene = function(game, stage)
 
     self.track.draw(ctx);
 
-    if (self.track.state === RACE_FINISH) {
+    if (self.track.state === RACE_DONE) {
       ctx.fillStyle = "#000";
-      ctx.fillText(self.track.runners[self.track.winner].name + " won!", 300, 50);
+      ctx.fillText(self.track.runners[self.track.winner].name + " won! You now have $" + game.player.money + "!", 300, 50);
     }
   };
 
@@ -79,11 +90,13 @@ var RaceScene = function(game, stage)
     // Cleanup clicker
     self.clicker.detach();
     self.clicker = undefined;
+    game.racing_lizard_index = -1;
   };
 
   var RACE_READY     = ENUM; ENUM++;
   var RACE_RUNNING   = ENUM; ENUM++;
   var RACE_FINISH    = ENUM; ENUM++;
+  var RACE_DONE      = ENUM; ENUM++;
 
   var Track = function(contestants) {
     var self = this;
@@ -160,5 +173,3 @@ var RaceScene = function(game, stage)
 
 
 };
-
-// curr state, next state, calculateState, checkFinish
