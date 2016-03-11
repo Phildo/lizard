@@ -17,31 +17,14 @@ var RaceScene = function(game, stage)
 
   self.ready = function()
   {
-    // Nasty temp code to initialize some fake components
-    // TODO: Make a better way to do this
-    var lizards = [
-      new LizRunner(new Lizard()),
-      new LizRunner(new Lizard()),
-      new LizRunner(new Lizard()),
-      new LizRunner(new Lizard())
-    ];
-    lizards.forEach(function(liz, index) {
-      liz.ref.speed = randIntBelow(6) + 1;
-      liz.ref.name = liz.name + index;
-      var gen = Math.floor(Math.random() * 2);
-      if (gen === 0) {
-        liz.ref.gender = LIZARD_GENDER_MALE;
-      } else {
-        liz.ref.gender = LIZARD_GENDER_FEMALE;
-      }
-      liz.lane = index;
-    });
+    var selectedLizard = game.player.lizards[game.racing_lizard_index];
+    var rank = selectedLizard.rank;
+    var contestants = [];
 
-    // Add the player's selected lizard to the list of contestants
-    var playerLiz = game.player.lizards[game.racing_lizard_index];
-    var pLiz = new LizRunner(playerLiz);
-    pLiz.lane = lizards.length;
-    lizards.push(pLiz);
+    opponents[rank].forEach(function(lizard, index) {
+      contestants.push(new LizRunner(lizard, index));
+    });
+    contestants.push(new LizRunner(selectedLizard, contestants.length));
 
     // Set up button to go back to Terrarium
     self.clicker = new Clicker({source:stage.dispCanv.canvas});
@@ -58,7 +41,7 @@ var RaceScene = function(game, stage)
     self.clicker.register(self.race_btn);
 
     // Initialize the track
-    self.track = new Track(lizards);
+    self.track = new Track(contestants, rank);
     self.track.init();
   };
 
@@ -67,14 +50,27 @@ var RaceScene = function(game, stage)
     // Flush clicker queue and call events
     self.clicker.flush();
 
-    if(self.track.state === RACE_RUNNING) {
+    if (self.track.state === RACE_RUNNING) {
       self.track.update();
-    } else if(self.track.state === RACE_FINISH) {
+    } 
+    else if(self.track.state === RACE_FINISH) {
       var winner = self.track.runners[self.track.winner];
       var playerLiz = game.player.lizards[game.racing_lizard_index];
+
       if (winner.ref === playerLiz) {
-        game.player.money += 100;
+        game.player.money += self.track.winnings;
         winner.ref.wins++;
+
+        // Check for promotion
+        
+        console.log(winner.ref.rank);
+        var newRank = Math.floor(winner.ref.wins / 5);
+        console.log(newRank);
+        if (newRank > winner.ref.rank) {
+          // PROMOTION!
+          winner.ref.rank = Math.min(newRank, RANK_CHALLENGER);
+          console.log(winner.ref.rank);
+        }
       }
 
       self.track.state = RACE_DONE;
@@ -102,7 +98,7 @@ var RaceScene = function(game, stage)
       ctx.fillStyle = "#000";
       // TODO: Create a win text obj for world positioning.
       if (winner.ref === playerLiz) {
-        ctx.fillText(winner.ref.name + " won! You now have $" + game.player.money + "!", 300, 50);
+        ctx.fillText(winner.ref.name + " won! You won $" + self.track.winnings + "!", 300, 50);
       } else {
         ctx.fillText("Sorry! You lost this race. Better luck next time!", 300, 50);
       }
@@ -121,8 +117,10 @@ var RaceScene = function(game, stage)
     liz.energy--;
 
     if (liz.energy < 0 || (liz.to_pos - liz.track_pos) < DELTA) {
-      liz.energy = randIntBelow(liz.ref.base_endurance);
-      liz.to_pos = liz.track_pos + (liz.ref.speed * liz.energy * 0.01);
+      var end = liz.ref.base_endurance * 100;
+      var s = liz.ref.speed * 10;
+      liz.energy = randIntBelow(end);
+      liz.to_pos = liz.track_pos + (s * liz.energy * 0.01);
     }
 
     liz.track_pos = lerp(liz.track_pos, liz.to_pos, 0.01);
@@ -136,9 +134,9 @@ var RaceScene = function(game, stage)
     var laneW = track.ww;
 
     liz.wy = top + laneH * liz.lane;
-    liz.wx = left + laneW * (liz.track_pos / track.length);
     liz.wh = laneH * 0.9;
-    liz.ww = laneW / track.length;
+    liz.ww = laneW / (track.length);
+    liz.wx = left + laneW * (liz.track_pos / (track.length));
   };
 
   var RACE_READY     = ENUM; ENUM++;
@@ -146,7 +144,7 @@ var RaceScene = function(game, stage)
   var RACE_FINISH    = ENUM; ENUM++;
   var RACE_DONE      = ENUM; ENUM++;
 
-  var LizRunner = function(liz) {
+  var LizRunner = function(liz, lane) {
     var self = this;
 
     self.x = 0;
@@ -162,9 +160,9 @@ var RaceScene = function(game, stage)
     self.ref = liz;
 
     self.track_pos = 0;
-    self.lane;
+    self.lane = lane;
     self.to_pos;
-    self.energy = liz.base_endurance;
+    self.energy = liz.base_endurance * 100;
 
     self.draw = function(ctx, track) {
       trackToWorld(self, track);
@@ -175,7 +173,7 @@ var RaceScene = function(game, stage)
     }
   }
 
-  var Track = function(contestants) {
+  var Track = function(contestants, rank) {
     var self = this;
 
     self.x = 0;
@@ -189,24 +187,25 @@ var RaceScene = function(game, stage)
     self.wh = 0.3;
 
     self.state = RACE_READY;
-    self.length = 20;
+    self.length = 5 + (rank * 5);
 
     self.runners = contestants;
     self.winner = null;
+    self.winnings = 100 + (100 * rank);
 
 
     self.init = function() {
       self.runners.forEach(function(liz) {
         trackToWorld(liz, self);
-        liz.to_pos = liz.track_pos + (liz.ref.speed * liz.energy * 0.01);
+        var s = liz.ref.speed * 10;
+        liz.to_pos = liz.track_pos + (s * liz.energy * 0.01);
       });
     };
 
     self.draw = function(ctx) {
       toScene(self, canv);
-      ctx.fillStyle = "green";
-      ctx.fillRect(self.x, self.y, self.w, self.h);
-
+      // ctx.fillStyle = "green";
+      // ctx.fillRect(self.x, self.y, self.w, self.h);
       self.runners.forEach(function(liz) {
         liz.draw(ctx, self);
       });
@@ -220,7 +219,7 @@ var RaceScene = function(game, stage)
       for (var i = 0, l = self.runners.length; i < l; i++) {
         var liz = self.runners[i];
         tickRunner(liz);
-        if (liz.track_pos >= self.length) {
+        if (liz.track_pos >= self.length - 1) {
           self.state = RACE_FINISH;
           self.winner = i;
           return;
@@ -228,4 +227,49 @@ var RaceScene = function(game, stage)
       }
     };
   };
+
+  var opponents = [
+    [ // RANK_BRONZE
+      new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.30), randR(0.01, 0.30)),
+      new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.30), randR(0.01, 0.30)),
+      new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.30), randR(0.01, 0.30)),
+      new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.30), randR(0.01, 0.30))
+    ],
+    [ // RANK_SILVER
+      new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 0.40)),
+      new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 0.40)),
+      new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 0.40)),
+      new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 0.40))
+    ],
+    [ // RANK_GOLD
+      new Lizard(LIZARD_GENDER_MALE, randR(0.20, 0.50), randR(0.20, 0.50)),
+      new Lizard(LIZARD_GENDER_MALE, randR(0.20, 0.50), randR(0.20, 0.50)),
+      new Lizard(LIZARD_GENDER_MALE, randR(0.20, 0.50), randR(0.20, 0.50)),
+      new Lizard(LIZARD_GENDER_MALE, randR(0.20, 0.50), randR(0.20, 0.50))
+    ],
+    [ // RANK_PLATINUM
+      new Lizard(LIZARD_GENDER_MALE, randR(0.40, 0.70), randR(0.40, 0.70)),
+      new Lizard(LIZARD_GENDER_MALE, randR(0.40, 0.70), randR(0.40, 0.70)),
+      new Lizard(LIZARD_GENDER_MALE, randR(0.40, 0.70), randR(0.40, 0.70)),
+      new Lizard(LIZARD_GENDER_MALE, randR(0.40, 0.70), randR(0.40, 0.70))
+    ],
+    [ // RANK_DIAMOND
+      new Lizard(LIZARD_GENDER_MALE, randR(0.40, 0.80), randR(0.40, 0.80)),
+      new Lizard(LIZARD_GENDER_MALE, randR(0.40, 0.80), randR(0.40, 0.80)),
+      new Lizard(LIZARD_GENDER_MALE, randR(0.40, 0.80), randR(0.40, 0.80)),
+      new Lizard(LIZARD_GENDER_MALE, randR(0.40, 0.80), randR(0.40, 0.80))
+    ],
+    [ // RANK_MASTER
+      new Lizard(LIZARD_GENDER_MALE, randR(0.60, 0.90), randR(0.60, 0.90)),
+      new Lizard(LIZARD_GENDER_MALE, randR(0.60, 0.90), randR(0.60, 0.90)),
+      new Lizard(LIZARD_GENDER_MALE, randR(0.60, 0.90), randR(0.60, 0.90)),
+      new Lizard(LIZARD_GENDER_MALE, randR(0.60, 0.90), randR(0.60, 0.90))
+    ],
+    [ // RANK_CHALLENGER
+      new Lizard(LIZARD_GENDER_MALE, randR(0.70, 1.0), randR(0.70, 1.0)),
+      new Lizard(LIZARD_GENDER_MALE, randR(0.70, 1.0), randR(0.70, 1.0)),
+      new Lizard(LIZARD_GENDER_MALE, randR(0.70, 1.0), randR(0.70, 1.0)),
+      new Lizard(LIZARD_GENDER_MALE, randR(0.70, 1.0), randR(0.70, 1.0))
+    ]
+  ];
 };
