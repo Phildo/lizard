@@ -11,38 +11,39 @@ var RaceScene = function(game, stage)
 
   self.ready = function()
   {
+    // Nasty temp code to initialize some fake components
+    // TODO: Make a better way to do this
     var lizards = [
-      new Lizard(),
-      new Lizard(),
-      new Lizard(),
-      new Lizard()
+      new LizRunner(new Lizard()),
+      new LizRunner(new Lizard()),
+      new LizRunner(new Lizard()),
+      new LizRunner(new Lizard())
     ];
-
-    var speed = 1;
     lizards.forEach(function(liz, index) {
-      liz.speed = speed;
-      liz.name = liz.name + speed;
-      speed++;
+      liz.ref.speed = randIntBelow(6) + 1;
+      liz.ref.name = liz.name + index;
       var gen = Math.floor(Math.random() * 2);
       if (gen === 0) {
-        liz.gender = LIZARD_GENDER_MALE;
+        liz.ref.gender = LIZARD_GENDER_MALE;
       } else {
-        liz.gender = LIZARD_GENDER_FEMALE;
+        liz.ref.gender = LIZARD_GENDER_FEMALE;
       }
-      liz.trackPos = 0;
       liz.lane = index;
     });
 
-    var playersLiz = game.player.lizards[game.racing_lizard_index];
-    playersLiz.trackPos = 0;
-    playersLiz.lane = lizards.length;
-    playersLiz.speed = 6;
-    lizards.push(playersLiz);
+    // Add the player's selected lizard to the list of contestants
+    var playerLiz = game.player.lizards[game.racing_lizard_index];
+    var pLiz = new LizRunner(playerLiz);
+    pLiz.lane = lizards.length;
+    lizards.push(pLiz);
+
+
     // Set up button to go back to Terrarium
     self.clicker = new Clicker({source:stage.dispCanv.canvas});
     self.back_btn = new ButtonBox(10,10,10,10,function(){ game.setScene(2); });
     self.clicker.register(self.back_btn);
 
+    // Initialize the track
     self.track = new Track(lizards);
     self.track.init();
   };
@@ -63,10 +64,11 @@ var RaceScene = function(game, stage)
     } else if(self.track.state === RACE_FINISH) {
       var winner = self.track.runners[self.track.winner];
       var playerLiz = game.player.lizards[game.racing_lizard_index];
-      if (winner === playerLiz) {
+      if (winner.ref === playerLiz) {
         game.player.money += 100;
-        self.track.state = RACE_DONE;
       };
+
+      self.track.state = RACE_DONE;
     }
   };
 
@@ -80,8 +82,15 @@ var RaceScene = function(game, stage)
     self.track.draw(ctx);
 
     if (self.track.state === RACE_DONE) {
+      var winner = self.track.runners[self.track.winner];
+      var playerLiz = game.player.lizards[game.racing_lizard_index];
       ctx.fillStyle = "#000";
-      ctx.fillText(self.track.runners[self.track.winner].name + " won! You now have $" + game.player.money + "!", 300, 50);
+      // TODO: Create a win text obj for world positioning.
+      if (winner.ref === playerLiz) {
+        ctx.fillText(winner.ref.name + " won! You now have $" + game.player.money + "!", 300, 50);
+      } else {
+        ctx.fillText("Sorry! You lost this race. Better luck next time!", 300, 50);
+      }
     }
   };
 
@@ -93,10 +102,64 @@ var RaceScene = function(game, stage)
     game.racing_lizard_index = -1;
   };
 
+  var tickRunner = function(liz) {
+    liz.energy--;
+
+    if (liz.energy < 0) {
+      liz.energy = randIntBelow(liz.ref.base_endurance);
+      liz.to_pos = liz.track_pos + (liz.ref.speed * liz.energy * 0.01);
+    }
+
+    liz.track_pos = lerp(liz.track_pos, liz.to_pos, 0.01);
+    console.log(liz.track_pos);
+  };
+
+  var trackToWorld = function(liz, track) {
+    var top = track.wy;
+    var bot = top + track.wh;
+    var laneH = (bot - top) / track.runners.length;
+    var left = track.wx;
+    var laneW = track.ww;
+
+    liz.wy = top + laneH * liz.lane;
+    liz.wx = left + laneW * (liz.track_pos / track.length);
+    liz.wh = laneH * 0.9;
+    liz.ww = laneW / track.length;
+  };
+
   var RACE_READY     = ENUM; ENUM++;
   var RACE_RUNNING   = ENUM; ENUM++;
   var RACE_FINISH    = ENUM; ENUM++;
   var RACE_DONE      = ENUM; ENUM++;
+
+  var LizRunner = function(liz) {
+    var self = this;
+
+    self.x = 0;
+    self.y = 0;
+    self.w = 0;
+    self.h = 0;
+
+    self.wx = 0;
+    self.wy = 0;
+    self.ww = 0;
+    self.wh = 0;
+
+    self.ref = liz;
+
+    self.track_pos = 0;
+    self.lane;
+    self.to_pos;
+    self.energy = liz.base_endurance;
+
+    self.draw = function(ctx, track) {
+      trackToWorld(self, track);
+      toScene(self, canv);
+      ctx.fillStyle = "red";
+      // Eventually lizards should have a draw method
+      ctx.fillRect(self.x, self.y, self.w, self.h);
+    }
+  }
 
   var Track = function(contestants) {
     var self = this;
@@ -112,7 +175,7 @@ var RaceScene = function(game, stage)
     self.wh = 0.3;
 
     self.state = RACE_READY;
-    self.length = 25;
+    self.length = 20;
 
     self.timeout = null;
 
@@ -123,6 +186,7 @@ var RaceScene = function(game, stage)
     self.init = function() {
       self.runners.forEach(function(liz) {
         trackToWorld(liz, self);
+        liz.to_pos = liz.track_pos + (liz.ref.speed * liz.energy * 0.01);
       });
     };
 
@@ -132,11 +196,7 @@ var RaceScene = function(game, stage)
       ctx.fillRect(self.x, self.y, self.w, self.h);
 
       self.runners.forEach(function(liz) {
-        trackToWorld(liz, self);
-        toScene(liz, canv);
-        ctx.fillStyle = "red";
-        // Eventually lizards should have a draw method
-        ctx.fillRect(liz.x, liz.y, liz.w, liz.h);
+        liz.draw(ctx, self);
       });
     };
 
@@ -145,29 +205,16 @@ var RaceScene = function(game, stage)
         return;
       }
 
-      self.runners.forEach(function(liz, index) {
-        liz.trackPos += (liz.speed * 0.01);
-        if (liz.trackPos >= self.length) {
+      for (var i = 0, l = self.runners.length; i < l; i++) {
+        var liz = self.runners[i];
+        tickRunner(liz);
+        if (liz.track_pos >= self.length) {
           self.state = RACE_FINISH;
-          self.winner = index;
+          self.winner = i;
+          return;
         }
-      });
+      }
     };
-
-    var trackToWorld = function(liz, track) {
-      var top = track.wy;
-      var bot = top + track.wh;
-      var laneH = (bot - top) / track.runners.length;
-      var left = track.wx;
-      var laneW = track.ww;
-
-      liz.wy = top + laneH * liz.lane;
-      liz.wx = left + laneW * (liz.trackPos / track.length);
-      console.log(liz.wx);
-      liz.wh = laneH * 0.9;
-      liz.ww = laneW / track.length;
-    };
-
   };
 
 
