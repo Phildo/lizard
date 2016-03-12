@@ -6,6 +6,8 @@ var RockScene = function(game, stage)
   var canvas = canv.canvas;
   var context = canv.context;
 
+  var phil_hack_transition_in;
+
   var ENUM;
 
   ENUM = 0;
@@ -159,13 +161,21 @@ var RockScene = function(game, stage)
   var catch_sfx;
   var buy_sfx;
   var start_to_catch_sfx;
+  var keep_lizard_sfx;
+  var release_lizard_sfx;
   self.ready = function()
   {
+    phil_hack_transition_in = 100;
+
     audiooo = new Aud("assets/sounds/Rock.mp3",true);
     audiooo.play();
     catch_sfx = new Aud("assets/sounds/DamnSon.mp3",false);
     buy_sfx = new Aud("assets/sounds/Sounds/Purchase.wav", false);
     start_to_catch_sfx = new Aud("assets/sounds/Sounds/Character Sleep.wav", false);
+
+    //will only really work with fade to black transition;
+    keep_lizard_sfx = new Aud("assets/sounds/Sounds/New Villager.wav", false);
+    release_lizard_sfx = new Aud("assets/sounds/Sounds/Monster Defeat.wav", false);
 
 
 
@@ -415,6 +425,7 @@ var RockScene = function(game, stage)
         game.exhausted = -1;
       }
       liz_selected_i = -1;
+      keep_lizard_sfx.play();
       game.setScene(3);
     });
     keep_btn.wx = caught_stats_title.wx+caught_stats_title.ww+0.05;
@@ -428,6 +439,7 @@ var RockScene = function(game, stage)
       clicker.unregister(catchable_lizard);
       catchable_lizard = undefined;
       mode = MODE_CHOOSING;
+      release_lizard_sfx.play();
     });
     release_btn.wx = keep_btn.wx+keep_btn.ww+0.05;
     release_btn.wy = keep_btn.wy;
@@ -566,6 +578,8 @@ var RockScene = function(game, stage)
         tickCatchableLizard();
       }
     }
+    if(phil_hack_transition_in)
+      phil_hack_transition_in--;
   };
 
   self.draw = function()
@@ -730,7 +744,6 @@ var RockScene = function(game, stage)
     }
     // Draw error message
     if (game.error_msg !== "") {
-      console.log(game.error_msg);
       var lines = textToLines(canv, "bold 48px Arial", canv.width * 0.65, game.error_msg);
       context.save();
       context.fillStyle = "#ffffff";
@@ -750,12 +763,14 @@ var RockScene = function(game, stage)
       for (var i = 0, l = lines.length; i < l; i++) {
         context.fillText(lines[i], text_pos.x, text_pos.y + (i * 48)); 
       }
-      context.restore();     
+      context.restore();
     }
     if (mode === MODE_CHOOSING) {
       help_text.draw(canv);
     }
-    
+
+    context.fillStyle = "rgba(0,0,0,"+(phil_hack_transition_in/100)+")";
+    context.fillRect(0,0,canv.width,canv.height);
   };
 
   self.cleanup = function()
@@ -771,6 +786,12 @@ var RockScene = function(game, stage)
 
     start_to_catch_sfx.stop();
     start_to_catch_sfx = undefined;
+
+    keep_lizard_sfx.stop();
+    keep_lizard_sfx = undefined;
+
+    release_lizard_sfx.stop();
+    release_lizard_sfx = undefined;
 
     clicker.detach();
     clicker = undefined;

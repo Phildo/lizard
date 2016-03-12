@@ -37,6 +37,7 @@ var LoadingScene = function(game, stage)
     img_srcs.push("assets/environmental/rock.png");
     img_srcs.push("assets/environmental/rockcactus.png");
     img_srcs.push("assets/environmental/rockcactustinfoil.png");
+    img_srcs.push("assets/liz/shadow.png");
     for(var i = 0; i < img_srcs.length; i++)
     {
       images[i] = new Image();

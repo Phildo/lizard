@@ -70,6 +70,9 @@ var RaceScene = function(game, stage)
   var bg_img = new Image();
   bg_img.src = "assets/environmental/racetrack3.png";
 
+  var shadow_img = new Image();
+  shadow_img.src = "assets/liz/shadow.png";
+
   var audiooo;
   var pre_race_sfx;
   self.ready = function()
@@ -377,14 +380,36 @@ var RaceScene = function(game, stage)
     self.frameFloat = 0;
 
     self.draw = function(ctx, track) {
-      trackToWorld(self, track);
-      toScene(self, canv);
-      ctx.save();
-      ctx.translate(self.x + self.w/2, self.y + self.h/2);
-      ctx.rotate((Math.PI / 180) * -20);
-      ctx.translate(-self.w/2, -self.h/2);
-      ctx.drawImage(game.frames[self.ref.color][self.frame], 0, 0, self.w, self.h);
-      ctx.restore();
+      if (self.ref != game.player.lizards[game.racing_lizard_index])
+      {
+        trackToWorld(self, track);
+        toScene(self, canv);
+        ctx.save();
+        ctx.translate(self.x + self.w/2, self.y + self.h/2);
+        ctx.rotate((Math.PI / 180) * -20);
+        ctx.translate(-self.w/2, -self.h/2);
+        ctx.drawImage(game.frames[self.ref.color][self.frame], 0, 0, self.w, self.h);
+        ctx.restore();
+      }
+
+      else if (self.ref === game.player.lizards[game.racing_lizard_index])
+      {
+        
+
+        trackToWorld(self, track);
+        toScene(self, canv);
+        ctx.save();
+        ctx.translate(self.x + self.w/2, self.y + self.h/2);
+        ctx.rotate((Math.PI / 180) * -20);
+        ctx.translate(-self.w/2, -self.h/2);
+        ctx.drawImage(shadow_img, 0, 0, self.w, self.h);
+        ctx.drawImage(game.frames[self.ref.color][self.frame], 0, 0, self.w, self.h);
+        ctx.restore();
+
+
+
+
+      }
     }
   }
 
