@@ -319,17 +319,17 @@ var RockScene = function(game, stage)
       liz_selected_i = -1;
       game.setScene(2);
     });
-    keep_btn.wx = 0.8;
-    keep_btn.wy = caught_stats.wy+0.025;
-    keep_btn.ww = 0.2;
-    keep_btn.wh = 0.1;
+    keep_btn.wx = caught_stats_title.wx+caught_stats_title.ww+0.05;
+    keep_btn.wy = caught_stats_title.wy;
+    keep_btn.ww = caught_stats_title.ww;
+    keep_btn.wh = caught_stats_title.wh;
     toScene(keep_btn,canv);
 
     release_btn = new ButtonBox(0,0,0,0,function(){ if(mode != MODE_CAUGHT) return; catchable_lizard = undefined; mode = MODE_CHOOSING; });
-    release_btn.wx = 0.8;
-    release_btn.wy = caught_stats.wy+caught_stats.wh-0.125;
-    release_btn.ww = 0.2;
-    release_btn.wh = 0.1;
+    release_btn.wx = keep_btn.wx+keep_btn.ww+0.05;
+    release_btn.wy = keep_btn.wy;
+    release_btn.ww = keep_btn.ww;
+    release_btn.wh = keep_btn.wh;
     toScene(release_btn,canv);
 
     rockdisp = new RockDisp();
@@ -520,9 +520,9 @@ var RockScene = function(game, stage)
           context.fillRect(keep_btn.x,keep_btn.y,keep_btn.w,keep_btn.h);
           context.fillStyle = "#FFFFFF";
           if(game.player.lizards.length < MAXIMUM_CAPACITY)
-            context.fillText("KEEP",keep_btn.x+10,keep_btn.y+25);
+            context.fillText("KEEP",keep_btn.x+10,keep_btn.y+20);
           else
-            context.fillText("SWAP",keep_btn.x+10,keep_btn.y+25);
+            context.fillText("SWAP",keep_btn.x+10,keep_btn.y+20);
         }
 
         context.fillStyle = "rgba(0,0,0,0.8)";
