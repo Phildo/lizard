@@ -195,7 +195,7 @@ var RaceScene = function(game, stage)
     // if (liz.track_pos >= self.track.length - 1)
     //   return;
 
-    liz.energy -= 0.1;
+    liz.energy -= 0.5;
 
     if (liz.energy < 0 || (liz.to_pos - liz.track_pos) < DELTA) {
       var end = liz.ref.base_endurance * 100;
@@ -204,7 +204,14 @@ var RaceScene = function(game, stage)
       liz.to_pos = liz.track_pos + (s * liz.energy * 0.01);
     }
 
-    liz.track_pos = lerp(liz.track_pos, liz.to_pos, 0.01);
+    var newPos = lerp(liz.track_pos, liz.to_pos, 0.01);
+    liz.frameFloat += ((newPos - liz.track_pos) * 10);
+    if (liz.frameFloat > game.frames[liz.ref.color].length) {
+      liz.frameFloat = liz.frameFloat % game.frames[liz.ref.color].length;
+    }
+
+    liz.frame = Math.floor(liz.frameFloat);
+    liz.track_pos = newPos;
   };
 
   var trackToWorld = function(liz, track) {
@@ -216,7 +223,7 @@ var RaceScene = function(game, stage)
 
     liz.wy = top + laneH * liz.lane;
     liz.ww = laneW / (track.length);
-    liz.wh = liz.ww * 0.5;
+    liz.wh = liz.ww / 1.56875;
     liz.wx = left + laneW * (liz.track_pos / (track.length));
   };
 
@@ -245,12 +252,18 @@ var RaceScene = function(game, stage)
     self.to_pos;
     self.energy = liz.base_endurance * 100;
 
+    self.frame = 0;
+    self.frameFloat = 0;
+
     self.draw = function(ctx, track) {
       trackToWorld(self, track);
       toScene(self, canv);
-      ctx.fillStyle = "red";
-      // Eventually lizards should have a draw method
-      ctx.fillRect(self.x, self.y, self.w, self.h);
+      ctx.save();
+      ctx.translate(self.x + self.w/2, self.y + self.h/2);
+      ctx.rotate((Math.PI / 180) * -20);
+      ctx.translate(-self.w/2, -self.h/2);
+      ctx.drawImage(game.frames[self.ref.color][self.frame], 0, 0, self.w, self.h);
+      ctx.restore();
     }
   }
 
@@ -375,55 +388,38 @@ var RaceScene = function(game, stage)
   {
     var runner = self.track.runners[select.i];
     var liz = runner.ref;
+    
+    ctx.fillStyle = "rgba(0,0,0,0.8)";
+    ctx.fillRect(select.x,select.y,select.w,select.h);
+    ctx.fillStyle = "#FFFFFF";
+    if (select.player) {
+      ctx.fillText("YOU: " + liz.name,select.x+10,select.y+20);
+    } else {
+      ctx.fillText((select.i + 1) + ": " + liz.name,select.x+10,select.y+20);
+    }
 
-    if(select.player)
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillText("SPD:",select.x+10,select.y+40);
+    for(var i = 0; i < 10; i++)
     {
-      ctx.fillStyle = "rgba(255,255,255,0.8)";
-      ctx.fillRect(select.x,select.y,select.w,select.h);
-      ctx.fillStyle = "#000000";
-      ctx.fillText(liz.name,select.x+10,select.y+20);
+      if(liz.speed >= i/10) ctx.fillStyle = "#FFFFFF";
+      else                  ctx.fillStyle = "#999999";
+      ctx.fillRect(select.x+52+10*i,select.y+32,8,8);
+    }
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillText("END:",select.x+10,select.y+55);
+    for(var i = 0; i < 10; i++)
+    {
+      if(liz.base_endurance >= i/10)  ctx.fillStyle = "#FFFFFF";
+      else                                ctx.fillStyle = "#999999";
+      ctx.fillRect(select.x+52+10*i,select.y+46,8,8);
 
-      ctx.fillStyle = "#000000";
-      ctx.fillText("SPD:",select.x+10,select.y+40);
-      for(var i = 0; i < 10; i++)
-      {
-        if(liz.speed >= i/10) ctx.fillStyle = "#000000";
-        else                  ctx.fillStyle = "#666666";
-        ctx.fillRect(select.x+52+10*i,select.y+32,8,8);
-      }
-      ctx.fillStyle = "#000000";
-      ctx.fillText("END:",select.x+10,select.y+55);
-      for(var i = 0; i < 10; i++)
-      {
-        if((runner.energy * 0.01) >= i/10)  ctx.fillStyle = "red";
-        else                                ctx.fillStyle = "#666666";
+      if((runner.energy * 0.01) >= i/10) {
+        ctx.fillStyle = "red";
         ctx.fillRect(select.x+52+10*i,select.y+46,8,8);
       }
     }
-    else
-    {
-      ctx.fillStyle = "rgba(0,0,0,0.8)";
-      ctx.fillRect(select.x,select.y,select.w,select.h);
-      ctx.fillStyle = "#FFFFFF";
-      ctx.fillText(liz.name,select.x+10,select.y+20);
-
-      ctx.fillStyle = "#FFFFFF";
-      ctx.fillText("SPD:",select.x+10,select.y+40);
-      for(var i = 0; i < 10; i++)
-      {
-        if(liz.speed >= i/10) ctx.fillStyle = "#FFFFFF";
-        else                  ctx.fillStyle = "#999999";
-        ctx.fillRect(select.x+52+10*i,select.y+32,8,8);
-      }
-      ctx.fillStyle = "#FFFFFF";
-      ctx.fillText("END:",select.x+10,select.y+55);
-      for(var i = 0; i < 10; i++)
-      {
-        if((runner.energy * 0.01) >= i/10) ctx.fillStyle = "red";
-        else                      ctx.fillStyle = "#999999";
-        ctx.fillRect(select.x+52+10*i,select.y+46,8,8);
-      }
-    }
+    
   }
 
   var opponents = [
