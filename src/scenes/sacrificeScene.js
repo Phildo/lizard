@@ -120,14 +120,23 @@ var SacrificeScene = function(game, stage)
     stats.wh = 0.3;
     toScene(stats,canv);
 
-    var sacrificeLiz = function(victim_i, receiver_i) {
-      // Sacrifice logic goes here
-      // sacrifice victim to receiver
-      alert("test");
+    var sacrificeLiz = function(victim_i, receiver_i)
+    {
+      var vic = game.player.lizards[victim_i];
+      var rec = game.player.lizards[receiver_i];
+
+      var s = vic.speed     - Math.random() - (rec.cannibal*0.1);
+      if(s > 0)    rec.speed += s/2;
+      if(s < -0.9) rec.speed += s+0.9;
+
+      var e = vic.endurance - Math.random()- (rec.cannibal*0.1);
+      if(s > 0)    rec.endurance += s/2;
+      if(s < -0.9) rec.endurance += s+0.9;
+
+      rec.cannibal++;
     }
 
     // Set Up Sacrifice buttons
-    
     sacrifice_btns = [];
     for (let i = 0; i < 4; i ++) {
       let btn = new ButtonBox(0,0,0,0, function() {
