@@ -187,6 +187,7 @@ var GamePlayScene = function(game, stage)
         }
 
         game.racing_lizard_index = selected_i;
+        race_select_sfx.play();
         phil_hack_dark_transition_tick++;
       });
       btn.ww = 0.175;
