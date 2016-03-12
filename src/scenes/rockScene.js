@@ -108,7 +108,8 @@ var RockScene = function(game, stage)
 
     rock = new Rock();
     rock.name = "SIMPLE ROCK";
-    rock.description = "This is a simple rock. It attracts simple lizards.";
+    rock.description = "This is a simple rock. It attracts simple lizards. Nothing wrong with simple. Except they're slow. So if you care about racing yeah I guess there's something wrong with simple.";
+    rock.tldr = "Attracts Slow Lizards";
     rock.price = 0;
     rock.unlocked = true;
     rock.owned = true;
@@ -122,7 +123,8 @@ var RockScene = function(game, stage)
 
     rock = new Rock();
     rock.name = "TINFOIL";
-    rock.description = "Tinfoil makes a simple rock hot. Lizards like hot.";
+    rock.description = "Tinfoil makes a simple rock hot. Hot Lizards like Hot Rocks. Hot Lizards go faaaaast. (I mean really there's probably no correlation between lizard speed and temperature, but the idea is this will make you catch faster lizards).";
+    rock.tldr = "Attracts Fast Lizards";
     rock.price = 500;
     rock.unlocked = true;
     rock.owned = game.player.owns_tinfoil;
@@ -136,7 +138,8 @@ var RockScene = function(game, stage)
 
     rock = new Rock();
     rock.name = "CACTUS";
-    rock.description = "Who doesn't appreciate a good cactus. Top Tier Lizards sure do.";
+    rock.description = "Who doesn't appreciate a good cactus. Top Tier Lizards appreciate the heck outa a good cactus. They'll appreciate it so much they might swing by for a look. Then you'll kidnap them. Steal them from their families. Monster.";
+    rock.tldr = "Attracts Real Fast Lizards";
     rock.price = 10000;
     rock.unlocked = game.player.owns_tinfoil;
     rock.owned = game.player.owns_cactus;
@@ -154,6 +157,7 @@ var RockScene = function(game, stage)
     bait = new Bait();
     bait.name = "NO BAIT";
     bait.description = "No bait, no lizards. Ok a few lizards. But not many.";
+    bait.tldr = "Lizards will come slowly.";
     bait.price = 0;
     bait.img = BIcon1;
     bait.wx = 0.45;
@@ -164,8 +168,9 @@ var RockScene = function(game, stage)
     baits.push(bait);
 
     bait = new Bait();
-    bait.name = "BAD BAIT";
-    bait.description = "Some OK bait. Should get SOME lizard's attention...";
+    bait.name = "FLY";
+    bait.description = "I think lizards like to eat flies. Buy this fly and maybe lizards will come more quickly. But I'm no lizard expert. I AM a fly expert though, and as a fly expert, I know one thing for sure: that is one enormous fly.";
+    bait.tldr = "Lizards will come less slowly maybe.";
     bait.price = 100;
     bait.img = rock_poor_b8_img;
     bait.wx = 0.45;
@@ -176,8 +181,9 @@ var RockScene = function(game, stage)
     baits.push(bait);
 
     bait = new Bait();
-    bait.name = "OK BAIT";
-    bait.description = "This bait brings all the lizards to the yard.";
+    bait.name = "WORM";
+    bait.description = "If I wasn't sure whether lizards ate flies or not (and I wasn't), I'm doubly unsure about worms. But, in this case, it appears that worms attract lizards. I never claimed they ate the worm, though. But maybe they do?";
+    bait.tldr = "Lizards will come more quickly, with greater endurance for some reason.";
     bait.price = 200;
     bait.img = rock_good_b8_img;
     bait.wx = 0.45;
@@ -188,8 +194,9 @@ var RockScene = function(game, stage)
     baits.push(bait);
 
     bait = new Bait();
-    bait.name = "GOOD BAIT";
-    bait.description = "8/8 gr8 b8 m8";
+    bait.name = "GRASSHOPPER";
+    bait.description = "By now it's obvious that I don't understand the diet of lizards. But a grasshopper seems like it might plausably be more delicious than a fly or a worm. I hope my ignorance of lizard diets has distracted from the absurd price tags though.";
+    bait.tldr = "Lizards come fast, and with profound endurance.";
     bait.price = 500;
     bait.img = rock_gr8_b8_img;
     bait.wx = 0.45;
@@ -771,9 +778,7 @@ var RockScene = function(game, stage)
     context.fillStyle = "#999999";
     var lines = textToLines(canv, "12px Arial", stats.w-stats.h-10, liz.description)
     for(var i = 0; i < lines.length; i++)
-    {
       context.fillText(lines[i],stats.x+stats.h,stats.y+stats.h/2+5+15*i);
-    }
   }
 
 
@@ -785,6 +790,7 @@ var RockScene = function(game, stage)
     var self = this;
     self.name = "rock";
     self.description = "a rock";
+    self.tldr = "a rock";
     self.img;
 
     self.price = 0;
@@ -807,6 +813,7 @@ var RockScene = function(game, stage)
     var self = this;
     self.name = "bait";
     self.description = "some bait";
+    self.tldr = "some bait";
     self.img;
 
     self.wx;
@@ -922,7 +929,14 @@ var RockScene = function(game, stage)
     context.fillStyle = "#FFFFFF";
 
     context.fillText(rocks[rock_selected_i].name,rockdisp.x+10,rockdisp.y+20);
-    context.fillText(rocks[rock_selected_i].description,rockdisp.x+10,rockdisp.y+40);
+
+    context.fillStyle = "#999999";
+    var lines = textToLines(canv, "12px Arial", rockdisp.w-20, rocks[rock_selected_i].description)
+    for(var i = 0; i < lines.length; i++)
+      context.fillText(lines[i],rockdisp.x+10,rockdisp.y+40+15*i);
+
+    context.fillStyle = "#FFFFFF";
+    context.fillText(rocks[rock_selected_i].tldr,rockdisp.x+10,rockdisp.y+rockdisp.h-10);
   }
 
   var BaitDisp = function()
@@ -946,7 +960,14 @@ var RockScene = function(game, stage)
     context.fillStyle = "#FFFFFF";
 
     context.fillText(baits[bait_selected_i].name,baitdisp.x+10,baitdisp.y+20);
-    context.fillText(baits[bait_selected_i].description,baitdisp.x+10,baitdisp.y+40);
+
+    context.fillStyle = "#999999";
+    var lines = textToLines(canv, "12px Arial", baitdisp.w-20, baits[bait_selected_i].description)
+    for(var i = 0; i < lines.length; i++)
+      context.fillText(lines[i],baitdisp.x+10,baitdisp.y+40+15*i);
+
+    context.fillStyle = "#FFFFFF";
+    context.fillText(baits[bait_selected_i].tldr,baitdisp.x+10,baitdisp.y+baitdisp.h-10);
   }
 
   var Title = function()
