@@ -31,7 +31,7 @@ var SacrificeScene = function(game, stage)
   var audiooo;
   self.ready = function()
   {
-    audiooo = new Aud("assets/sounds/Sacrifice.mp3");
+    audiooo = new Aud("assets/sounds/Sacrifice.mp3", true);
     audiooo.play();
 
     hit_ui = false;

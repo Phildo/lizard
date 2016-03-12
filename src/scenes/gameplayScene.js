@@ -20,6 +20,22 @@ var GamePlayScene = function(game, stage)
   var tlizards;
   var stats;
   var moneydisp;
+  var help_text = {
+    msg: "SELECT A LIZARD TO GO RACING WITH.",
+    x:0,y:0,w:0,h:0,
+    wx:0, wy: 1, ww:0, wh: 0,
+    draw: function(canv) {
+      toScene(this, canv);
+      this.x += 5;
+      this.y -= 15;
+      let ctx = canv.context;
+      ctx.save();
+      ctx.font = "bold 16px Arial";
+      ctx.fillStyle = "#ffffff";
+      ctx.fillText(this.msg, this.x, this.y);
+      ctx.restore();
+    }
+  };
 
   var selected_i;
 
@@ -30,10 +46,16 @@ var GamePlayScene = function(game, stage)
 
   var hit_ui;
 
+  var fees = [
+    0,
+    50,
+    200,
+    1000
+  ];
   var audiooo;
   self.ready = function()
   {
-    audiooo = new Aud("assets/sounds/Pen.mp3");
+    audiooo = new Aud("assets/sounds/Pen.mp3",true);
     audiooo.play();
 
     hit_ui = false;
@@ -127,7 +149,7 @@ var GamePlayScene = function(game, stage)
       if(selected_i == -1)
         return;
       game.player.rank = rank;
-      var fee = game.player.rank * 50;
+      var fee = fees[rank];
       if (game.player.money < fee)
         return;
       game.racing_lizard_index = selected_i;
@@ -138,8 +160,8 @@ var GamePlayScene = function(game, stage)
     var race_msg = [
       "50CC - NO FEE",
       "100CC - $50 FEE",
-      "150CC - $100 FEE",
-      "MASTER - $150 FEE"
+      "150CC - $200 FEE",
+      "MASTER - $1000 FEE"
     ];
     race_btns = [];
     for (let i = 0; i < 4; i ++) {
@@ -297,6 +319,8 @@ var GamePlayScene = function(game, stage)
       }
       context.restore();
     }
+
+    help_text.draw(canv);
   };
 
   self.cleanup = function()

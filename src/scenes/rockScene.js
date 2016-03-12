@@ -88,6 +88,23 @@ var RockScene = function(game, stage)
     0.1,
   ];
 
+  var help_text = {
+    msg: "HOVER FOR DESCRIPTIONS. CLICK TO BUY.",
+    x:0,y:0,w:0,h:0,
+    wx:0, wy: 1, ww:0, wh: 0,
+    draw: function(canv) {
+      toScene(this, canv);
+      this.x += 5;
+      this.y -= 15;
+      let ctx = canv.context;
+      ctx.save();
+      ctx.font = "bold 14px Arial";
+      ctx.fillStyle = "#ffffff";
+      ctx.fillText(this.msg, this.x, this.y);
+      ctx.restore();
+    }
+  };
+
   var time_til_lizard;
   var catchable_lizard;
 
@@ -106,10 +123,12 @@ var RockScene = function(game, stage)
   rock_gr8_b8_img.src = "assets/b8/grasshopperb82.png";
 
   var audiooo;
+  var sfx;
   self.ready = function()
   {
-    audiooo = new Aud("assets/sounds/Rock.mp3");
+    audiooo = new Aud("assets/sounds/Rock.mp3",true);
     audiooo.play();
+    sfx = new Aud("assets/sounds/DamnSon.mp3",false);
 
     clicker = new Clicker({source:stage.dispCanv.canvas});
     hoverer = new Hoverer({source:stage.dispCanv.canvas});
@@ -141,7 +160,7 @@ var RockScene = function(game, stage)
 
     rock = new Rock();
     rock.name = "TINFOIL";
-    rock.description = "Tinfoil makes a simple rock hot. Hot Lizards like Hot Rocks. Hot Lizards go faaaaast. (I mean really there's probably no correlation between lizard speed and temperature, but the idea is this will make you catch faster lizards).";
+    rock.description = "(PERMANENT) Tinfoil makes a simple rock hot. Hot Lizards like Hot Rocks. Hot Lizards go faaaaast. (I mean really there's probably no correlation between lizard speed and temperature, but the idea is this will make you catch faster lizards).";
     rock.tldr = "Attracts Fast Lizards";
     rock.price = 500;
     rock.unlocked = true;
@@ -156,7 +175,7 @@ var RockScene = function(game, stage)
 
     rock = new Rock();
     rock.name = "CACTUS";
-    rock.description = "Who doesn't appreciate a good cactus. Top Tier Lizards appreciate the heck outa a good cactus. They'll appreciate it so much they might swing by for a look. Then you'll kidnap them. Steal them from their families. Monster.";
+    rock.description = "(PERMANENT) Who doesn't appreciate a good cactus. Top Tier Lizards appreciate the heck outa a good cactus. They'll appreciate it so much they might swing by for a look. Then you'll kidnap them. Steal them from their families. Monster.";
     rock.tldr = "Attracts Real Fast Lizards";
     rock.price = 10000;
     rock.unlocked = game.player.owns_tinfoil;
@@ -187,7 +206,7 @@ var RockScene = function(game, stage)
 
     bait = new Bait();
     bait.name = "FLY";
-    bait.description = "I think lizards like to eat flies. Buy this fly and maybe lizards will come more quickly. But I'm no lizard expert. I AM a fly expert though, and as a fly expert, I know one thing for sure: that is one enormous fly.";
+    bait.description = "(ONE TIME USE) I think lizards like to eat flies. Buy this fly and maybe lizards will come more quickly. But I'm no lizard expert. I AM a fly expert though, and as a fly expert, I know one thing for sure: that is one enormous fly.";
     bait.tldr = "Lizards will come less slowly maybe.";
     bait.price = 100;
     bait.img = rock_poor_b8_img;
@@ -200,7 +219,7 @@ var RockScene = function(game, stage)
 
     bait = new Bait();
     bait.name = "WORM";
-    bait.description = "If I wasn't sure whether lizards ate flies or not (and I wasn't), I'm doubly unsure about worms. But, in this case, it appears that worms attract lizards. I never claimed they ate the worm, though. But maybe they do?";
+    bait.description = "(ONE TIME USE) If I wasn't sure whether lizards ate flies or not (and I wasn't), I'm doubly unsure about worms. But, in this case, it appears that worms attract lizards. I never claimed they ate the worm, though. But maybe they do?";
     bait.tldr = "Lizards will come more quickly, with greater endurance for some reason. Yeah I know this text is overflowing but there's nothing you can do.";
     bait.price = 200;
     bait.img = rock_good_b8_img;
@@ -213,7 +232,7 @@ var RockScene = function(game, stage)
 
     bait = new Bait();
     bait.name = "GRASSHOPPER";
-    bait.description = "By now it's obvious that I don't understand the diet of lizards. But a grasshopper seems like it might plausably be more delicious than a fly or a worm. I hope my ignorance of lizard diets has at least distracted from the absurd price tags though.";
+    bait.description = "(ONE TIME USE) By now it's obvious that I don't understand the diet of lizards. But a grasshopper seems like it might plausably be more delicious than a fly or a worm. I hope my ignorance of lizard diets has at least distracted from the absurd price tags though.";
     bait.tldr = "Lizards come fast, and with profound endurance.";
     bait.price = 500;
     bait.img = rock_gr8_b8_img;
@@ -438,7 +457,6 @@ var RockScene = function(game, stage)
     else if (game.player.owns_tinfoil)  rock_selected_i = 1;
     else                                rock_selected_i = 0;
 
-    rock_selected_i = 0;
     bait_selected_i = 0;
     liz_selected_i  = -1;
 
@@ -653,6 +671,8 @@ var RockScene = function(game, stage)
       }
       context.restore();     
     }
+
+    help_text.draw(canv);
     
   };
 
@@ -687,6 +707,8 @@ var RockScene = function(game, stage)
 
     self.click = function()
     {
+          
+
       //selective listening
       if(mode == MODE_CHOOSING)
       {
@@ -709,16 +731,87 @@ var RockScene = function(game, stage)
       }
 
       if(self.type == SELECT_LIZ && game.player.lizards.length <= self.i) return;
-      {
-        if(selected_i == self.i) selected_i = -1;
-        else                     selected_i = self.i;
+    
+      if (selected_i !== self.i) {
 
-        switch(self.type)
-        {
-          case SELECT_ROCK: rock_selected_i = selected_i; if(rock_selected_i == -1) rock_selected_i = 0; break;
-          case SELECT_BAIT: bait_selected_i = selected_i; if(bait_selected_i == -1) bait_selected_i = 0; break;
-          case SELECT_LIZ:  liz_selected_i  = selected_i; break;
+        if (mode === MODE_CHOOSING) {
+          switch(self.type) {
+            case SELECT_ROCK:
+              let r = rocks[self.i];
+              if (!r.unlocked) {
+                // rock not unlocked
+                game.error_msg = "IT SAYS LOCKED. THAT MEANS YOU GOTTA UNLOCK IT BEFORE YOU BUY IT. NO I WON'T TELL YOU HOW.";
+                setTimeout(function() {
+                  game.error_msg = "";
+                }, 5000);
+                selected_i = -1;
+              } else if (r.price > game.player.money) {
+                // not enough money for rock
+                game.error_msg = "THIS ROCK IS EXPENSIVE. MORE EXPENSIVE THAN WHAT YOU CAN AFFORD. GO MAKE MONEY KID.";
+                setTimeout(function() {
+                  game.error_msg = "";
+                }, 5000);
+                selected_i = -1;
+              } else if (!r.owned){
+                // rock not owned, lets buy it
+                rocks[2].unlocked = true;
+                game.player.money -= rocks[self.i].price;
+                rocks[self.i].owned = true;
+                if (self.i === 1) {
+                  game.player.owns_tinfoil = true;
+                } else if (self.i === 2) {
+                  game.player.owns_cactusv = true;
+                }
+                selected_i = self.i;
+              } else {
+                // we own this rock, lets make it selected
+                selected_i = self.i;
+              }
+
+              break;
+
+            case SELECT_BAIT:
+              let b = baits[self.i];
+
+              if (b.price > game.player.money) {
+                //not enough money for bait
+                game.error_msg = "YOU DO NOT HAVE ENOUGH MONEY FOR THIS BAIT. THIS IS NOT A CHARITY CASE.";
+                setTimeout(function() {
+                  game.error_msg = "";
+                }, 5000);
+
+                selected_i = -1;
+
+              } else {
+                // enough money, lets buy and select it
+                game.player.money -= b.price;
+                selected_i = self.i;
+              }
+
+              break;
+          }
+        } else {
+          selected_i = self.i
         }
+      }
+      
+
+      switch(self.type)
+      {
+        case SELECT_ROCK: 
+          rock_selected_i = selected_i; 
+          if(rock_selected_i == -1){
+            if (game.player.owns_cactus) {
+              rock_selected_i = 2;
+            } else if (game.player.owns_tinfoil) {
+              rock_selected_i = 1;
+            } else {
+              rock_selected_i = 0;
+            }
+          }
+          break;
+        case SELECT_BAIT: bait_selected_i = selected_i; if(bait_selected_i == -1) bait_selected_i = 0; break;
+        case SELECT_LIZ:  liz_selected_i  = selected_i; break;
       }
     }
 
@@ -988,6 +1081,7 @@ var RockScene = function(game, stage)
     self.click = function()
     {
       mode = MODE_CAUGHT;
+      sfx.play();
     }
   }
   var tickCatchableLizard = function()
