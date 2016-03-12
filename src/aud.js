@@ -12,7 +12,7 @@ var initAudListener = function()
   aud_listener_init = true;
   document.addEventListener("pause", stopAllAuds, false);
 }
-var Aud = function(source)
+var Aud = function(source,shouldloop)
 {
   var PLAT="IOS";
   //var PLAT="ANDROID";
@@ -26,7 +26,7 @@ var Aud = function(source)
   {
     self.audio = new Audio(source);
     self.audio.controls = false;
-    self.audio.loop = true;
+    self.audio.loop = shouldloop;
 
     self.load = function()
     {

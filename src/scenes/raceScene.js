@@ -22,7 +22,7 @@ var RaceScene = function(game, stage)
   var audiooo;
   self.ready = function()
   {
-    audiooo = new Aud("assets/sounds/Race.mp3");
+    audiooo = new Aud("assets/sounds/Race.mp3",true);
     audiooo.play();
 
     var opponents = [

@@ -33,7 +33,7 @@ var GamePlayScene = function(game, stage)
   var audiooo;
   self.ready = function()
   {
-    audiooo = new Aud("assets/sounds/Pen.mp3");
+    audiooo = new Aud("assets/sounds/Pen.mp3",true);
     audiooo.play();
 
     hit_ui = false;
