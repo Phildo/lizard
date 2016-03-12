@@ -19,8 +19,12 @@ var RaceScene = function(game, stage)
   var bg_img = new Image();
   bg_img.src = "assets/environmental/racetrack3.png";
 
+  var audiooo;
   self.ready = function()
   {
+    audiooo = new Aud("assets/sounds/Race.mp3");
+    audiooo.play();
+
     var opponents = [
       [ // RANK_50
         new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 0.50)),
@@ -227,6 +231,9 @@ var RaceScene = function(game, stage)
 
   self.cleanup = function()
   {
+    audiooo.stop();
+    audiooo = undefined;
+
     // Cleanup clicker
     self.clicker.detach();
     self.clicker = undefined;

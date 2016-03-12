@@ -28,8 +28,12 @@ var SacrificeScene = function(game, stage)
 
   var hit_ui;
 
+  var audiooo;
   self.ready = function()
   {
+    audiooo = new Aud("assets/sounds/Pen.mp3");
+    audiooo.play();
+
     hit_ui = false;
     clicker = new Clicker({source:stage.dispCanv.canvas});
     hoverer = new Hoverer({source:stage.dispCanv.canvas});
@@ -263,6 +267,9 @@ var SacrificeScene = function(game, stage)
 
   self.cleanup = function()
   {
+    audiooo.stop();
+    audiooo = undefined;
+
     clicker.detach();
     clicker = undefined;
     hoverer.detach();
