@@ -15,6 +15,8 @@ var GamePlayScene = function(game, stage)
 
   var race_btns;
 
+  var phil_hack_dark_transition_tick = 0;
+
   var terrarium;
   var selects;
   var tlizards;
@@ -179,7 +181,7 @@ var GamePlayScene = function(game, stage)
         }
 
         game.racing_lizard_index = selected_i;
-        game.setScene(5);
+        phil_hack_dark_transition_tick++;
       });
       btn.ww = 0.175;
       btn.wh = 0.1;
@@ -215,6 +217,8 @@ var GamePlayScene = function(game, stage)
 
     for(var i = 0; i < tlizards.length; i++)
       clicker.register(tlizards[i]);
+
+    phil_hack_dark_transition_tick = 0;
   };
 
   self.tick = function()
@@ -225,6 +229,13 @@ var GamePlayScene = function(game, stage)
 
     for(var i = 0; i < tlizards.length; i++)
       tickTerrariLizard(tlizards[i]);
+
+    if(phil_hack_dark_transition_tick)
+    {
+      phil_hack_dark_transition_tick++;
+      if(phil_hack_dark_transition_tick >= 100)
+        game.setScene(5);
+    }
   };
 
   self.draw = function()
@@ -313,6 +324,9 @@ var GamePlayScene = function(game, stage)
     }
 
     help_text.draw(canv);
+
+    context.fillStyle = "rgba(0,0,0,"+(phil_hack_dark_transition_tick/100)+")";
+    context.fillRect(0,0,canv.width,canv.height);
   };
 
   self.cleanup = function()
@@ -344,6 +358,7 @@ var GamePlayScene = function(game, stage)
 
     self.click = function()
     {
+      if(phil_hack_dark_transition_tick) return;
       if(game.player.lizards.length > self.i)
       {
         if(selected_i == self.i) selected_i = -1;
@@ -486,6 +501,7 @@ var GamePlayScene = function(game, stage)
 
     self.click = function()
     {
+      if(phil_hack_dark_transition_tick) return;
       if(hit_ui) return;
       if(game.player.lizards.length > self.i)
       {
