@@ -183,7 +183,7 @@ var RockScene = function(game, stage)
     bait = new Bait();
     bait.name = "WORM";
     bait.description = "If I wasn't sure whether lizards ate flies or not (and I wasn't), I'm doubly unsure about worms. But, in this case, it appears that worms attract lizards. I never claimed they ate the worm, though. But maybe they do?";
-    bait.tldr = "Lizards will come more quickly, with greater endurance for some reason.";
+    bait.tldr = "Lizards will come more quickly, with greater endurance for some reason. Yeah I know this text is overflowing but there's nothing you can do.";
     bait.price = 200;
     bait.img = rock_good_b8_img;
     bait.wx = 0.45;
@@ -195,7 +195,7 @@ var RockScene = function(game, stage)
 
     bait = new Bait();
     bait.name = "GRASSHOPPER";
-    bait.description = "By now it's obvious that I don't understand the diet of lizards. But a grasshopper seems like it might plausably be more delicious than a fly or a worm. I hope my ignorance of lizard diets has distracted from the absurd price tags though.";
+    bait.description = "By now it's obvious that I don't understand the diet of lizards. But a grasshopper seems like it might plausably be more delicious than a fly or a worm. I hope my ignorance of lizard diets has at least distracted from the absurd price tags though.";
     bait.tldr = "Lizards come fast, and with profound endurance.";
     bait.price = 500;
     bait.img = rock_gr8_b8_img;
