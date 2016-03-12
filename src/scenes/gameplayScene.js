@@ -336,8 +336,8 @@ var GamePlayScene = function(game, stage)
         context.save();
         context.fillStyle = "red";
         context.font = "bold 24px Arial";
+        context.translate(select.x + 2, select.y + 25);
         context.rotate((Math.PI / 180) * 15);
-        context.translate(select.x + 20, select.y + 20);
         context.fillText("EXHAUSTED!", 0, 0);
         context.restore();
       }
