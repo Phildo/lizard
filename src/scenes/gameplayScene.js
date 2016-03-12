@@ -223,7 +223,7 @@ var GamePlayScene = function(game, stage)
         context.fillText("END:",select.x+10,select.y+55);
         for(var i = 0; i < 10; i++)
         {
-          if(liz.endurance >= i/10) context.fillStyle = "#000000";
+          if(liz.base_endurance >= i/10) context.fillStyle = "#000000";
           else                      context.fillStyle = "#666666";
           context.fillRect(select.x+52+10*i,select.y+46,8,8);
         }
@@ -248,7 +248,7 @@ var GamePlayScene = function(game, stage)
         context.fillText("END:",select.x+10,select.y+55);
         for(var i = 0; i < 10; i++)
         {
-          if(liz.endurance >= i/10) context.fillStyle = "#FFFFFF";
+          if(liz.base_endurance >= i/10) context.fillStyle = "#FFFFFF";
           else                      context.fillStyle = "#999999";
           context.fillRect(select.x+52+10*i,select.y+46,8,8);
         }
@@ -405,7 +405,7 @@ var GamePlayScene = function(game, stage)
     context.fillText("ENDUR:",stats.x+stats.h,stats.y+55);
     for(var i = 0; i < 10; i++)
     {
-      if(liz.endurance >= i/10) context.fillStyle = "#FFFFFF";
+      if(liz.base_endurance >= i/10) context.fillStyle = "#FFFFFF";
       else                      context.fillStyle = "#999999";
       context.fillRect(stats.x+stats.h+52+10*i,stats.y+46,8,8);
     }

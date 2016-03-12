@@ -330,7 +330,7 @@ var RockScene = function(game, stage)
       l.description = catchable_lizard.description;
       l.color = catchable_lizard.color;
       l.speed = catchable_lizard.speed;
-      l.endurance = catchable_lizard.endurance;
+      l.base_endurance = catchable_lizard.base_endurance;
       if(game.player.lizards.length < MAXIMUM_CAPACITY)
         game.player.lizards.push(l);
       else
@@ -421,7 +421,7 @@ var RockScene = function(game, stage)
           catchable_lizard = new RockLizard();
           catchable_lizard.color = randIntBelow(6);
           catchable_lizard.speed = randR(rock_liz_speed_min[rock_selected_i],rock_liz_speed_max[rock_selected_i]);
-          catchable_lizard.endurance = randR(rock_liz_endure_min[bait_selected_i],rock_liz_endure_max[bait_selected_i]);
+          catchable_lizard.base_endurance = randR(rock_liz_endure_min[bait_selected_i],rock_liz_endure_max[bait_selected_i]);
           catchable_lizard.ww = 0.07;
           catchable_lizard.wh = 0.07;
           var t = Math.random()*Math.PI*2;
@@ -671,7 +671,7 @@ var RockScene = function(game, stage)
           context.fillText("END:",select.x+10,select.y+55);
           for(var i = 0; i < 10; i++)
           {
-            if(liz.endurance >= i/10) context.fillStyle = "#000000";
+            if(liz.base_endurance >= i/10) context.fillStyle = "#000000";
             else                      context.fillStyle = "#666666";
             context.fillRect(select.x+52+10*i,select.y+46,8,8);
           }
@@ -721,7 +721,7 @@ var RockScene = function(game, stage)
           context.fillText("END:",select.x+10,select.y+55);
           for(var i = 0; i < 10; i++)
           {
-            if(liz.endurance >= i/10) context.fillStyle = "#FFFFFF";
+            if(liz.base_endurance >= i/10) context.fillStyle = "#FFFFFF";
             else                      context.fillStyle = "#999999";
             context.fillRect(select.x+52+10*i,select.y+46,8,8);
           }
@@ -783,7 +783,7 @@ var RockScene = function(game, stage)
     context.fillText("ENDUR:",stats.x+stats.h,stats.y+55);
     for(var i = 0; i < 10; i++)
     {
-      if(liz.endurance >= i/10) context.fillStyle = "#FFFFFF";
+      if(liz.base_endurance >= i/10) context.fillStyle = "#FFFFFF";
       else                      context.fillStyle = "#999999";
       context.fillRect(stats.x+stats.h+52+10*i,stats.y+46,8,8);
     }

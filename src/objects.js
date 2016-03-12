@@ -36,7 +36,6 @@ var Lizard = function(gender, speed, endurance)
   self.description = randDescription().replace("NAME",self.naturalName).replace("NAME",self.naturalName).replace("NAME",self.naturalName).replace("NAME",self.naturalName).replace("NAME",self.naturalName).replace("NAME",self.naturalName).replace("NAME",self.naturalName);
   self.gender = gender || LIZARD_GENDER_NA;
   self.speed = speed || 0.3;
-  self.endurance = randR(0.1,1);
   self.base_endurance = endurance || Math.random();
   self.wins = 0;
   self.total_races = 0;
