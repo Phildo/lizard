@@ -1,3 +1,4 @@
+"use strict";
 var GamePlayScene = function(game, stage)
 {
   var self = this;
@@ -9,7 +10,8 @@ var GamePlayScene = function(game, stage)
   var hoverer;
 
   var rock_btn;
-  var race_btn;
+
+  var race_btns;
 
   var terrarium;
   var selects;
@@ -86,20 +88,70 @@ var GamePlayScene = function(game, stage)
     stats.wh = 0.3;
     toScene(stats,canv);
 
-    race_btn = new ButtonBox(0,0,0,0,function(){
+    var race_btn_activate = function(rank) {
       if(selected_i == -1)
         return;
+      game.player.rank = rank;
       var fee = game.player.rank * 50;
       if (game.player.money < fee)
         return;
       game.racing_lizard_index = selected_i;
       game.setScene(4);
-    });
-    race_btn.wx = 0.8;
-    race_btn.ww = 0.2;
-    race_btn.wh = 0.1;
-    race_btn.wy = stats.wy-race_btn.wh;
-    toScene(race_btn,canv);
+    }
+
+    // Set Up Race Buttons
+    var race_msg = [
+      "50CC - NO FEE",
+      "100CC - $50 FEE",
+      "150CC - $100 FEE",
+      "MASTER - $150 FEE"
+    ];
+    race_btns = [];
+    for (let i = 0; i < 4; i ++) {
+      let btn = new ButtonBox(0,0,0,0, function() {
+        if(selected_i == -1)
+          return;
+        if (selected_i === game.exhausted) {
+          game.error_msg = "LIZARD EXHAUSTED! MUST REST BEFORE RACING AGAIN."
+          setTimeout(function() {
+            game.error_msg = "";
+          }, 3000);
+          return;
+        }
+        game.player.rank = i;
+        var fee = game.player.rank * 50;
+        if (game.player.money < fee) {
+          game.error_msg = "NOT ENOUGH MONEY!";
+          setTimeout(function() {
+            game.error_msg = "";
+          }, 3000);
+          return;
+        }
+
+        game.racing_lizard_index = selected_i;
+        game.setScene(4);
+      });
+      btn.ww = 0.175;
+      btn.wh = 0.1;
+      btn.wx = 0.825 - (btn.ww * (3 - i));
+      btn.wy = stats.wy - btn.wh;
+      toScene(btn, canv);
+
+      btn.hovering = false;
+      btn.hover = function() {
+        btn.hovering = true;
+      };
+      btn.unhover = function() {
+        btn.hovering = false;
+      }
+
+      race_btns.push({
+        btn: btn,
+        msg: race_msg[i]
+      });
+      clicker.register(btn);
+      hoverer.register(btn);
+    }
 
     moneydisp = new MoneyDisp();
     moneydisp.wx = 0;
@@ -109,7 +161,6 @@ var GamePlayScene = function(game, stage)
     toScene(moneydisp,canv);
 
     clicker.register(rock_btn);
-    clicker.register(race_btn);
 
     selected_i = -1;
   };
@@ -132,14 +183,6 @@ var GamePlayScene = function(game, stage)
     context.fillStyle = "#FFFFFF";
     context.fillText("GO LIZARDIN'",rock_btn.x+10,rock_btn.y+25);
 
-    if(selected_i != -1)
-    {
-      context.fillStyle = "rgba(0,0,0,0.8)";
-      context.fillRect(race_btn.x,race_btn.y,race_btn.w,race_btn.h);
-      context.fillStyle = "#FFFFFF";
-      context.fillText("TO THE RACES",race_btn.x+10,race_btn.y+25);
-    }
-
     context.fillStyle = "rgba(0,0,0,0.8)";
     context.fillRect(moneydisp.x,moneydisp.y,moneydisp.w,moneydisp.h);
     context.fillStyle = "#FFFFFF";
@@ -151,7 +194,42 @@ var GamePlayScene = function(game, stage)
       drawTerrariLizard(tlizards[i]);
 
     if(selected_i != -1)
+    {
       drawStatsDisp();
+      race_btns.forEach(function(item, index) {
+        var btn = item.btn;
+        if (btn.hovering) {
+          context.fillStyle = "rgba(255,255,255,0.8)";
+          context.fillRect(btn.x,btn.y,btn.w,btn.h);
+          context.fillStyle = "#000000";
+          context.fillText(item.msg,btn.x+10,btn.y+25);
+        } else {
+          context.fillStyle = "rgba(0,0,0,0.8)";
+          context.fillRect(btn.x,btn.y,btn.w,btn.h);
+          context.fillStyle = "#FFFFFF";
+          context.fillText(item.msg,btn.x+10,btn.y+25); 
+        }
+      });
+    }
+
+    // Draw error message
+    context.save();
+    context.fillStyle = "#ffffff";
+    context.font = "bold 48px Arial";
+    context.textAlign = "center";
+    var text_pos = {
+      ww: 0,
+      wh: 0,
+      wx: 0.5,
+      wy: 0.1,
+      x: 0,
+      y: 0,
+      h: 0,
+      w: 0
+    };
+    toScene(text_pos, canv);
+    context.fillText(game.error_msg, text_pos.x, text_pos.y);
+    context.restore();
   };
 
   self.cleanup = function()
@@ -160,6 +238,7 @@ var GamePlayScene = function(game, stage)
     clicker = undefined;
     hoverer.detach();
     hoverer = undefined;
+    game.error_msg = "";
   };
 
   var LizSelect = function()
@@ -252,6 +331,15 @@ var GamePlayScene = function(game, stage)
           else                      context.fillStyle = "#999999";
           context.fillRect(select.x+52+10*i,select.y+46,8,8);
         }
+      }
+      if (select.i === game.exhausted) {
+        context.save();
+        context.fillStyle = "red";
+        context.font = "bold 24px Arial";
+        context.rotate((Math.PI / 180) * 15);
+        context.translate(select.x + 20, select.y + 20);
+        context.fillText("EXHAUSTED!", 0, 0);
+        context.restore();
       }
     }
     else

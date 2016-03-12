@@ -1,11 +1,8 @@
 var RANK_ENUM = 0;
-var RANK_BRONZE       = RANK_ENUM; RANK_ENUM++;
-var RANK_SILVER       = RANK_ENUM; RANK_ENUM++;
-var RANK_GOLD         = RANK_ENUM; RANK_ENUM++;
-var RANK_PLATINUM     = RANK_ENUM; RANK_ENUM++;
-var RANK_DIAMOND      = RANK_ENUM; RANK_ENUM++;
+var RANK_50           = RANK_ENUM; RANK_ENUM++;
+var RANK_100          = RANK_ENUM; RANK_ENUM++;
+var RANK_150          = RANK_ENUM; RANK_ENUM++;
 var RANK_MASTER       = RANK_ENUM; RANK_ENUM++;
-var RANK_CHALLENGER   = RANK_ENUM; RANK_ENUM++;
 
 var Player = function()
 {
@@ -14,7 +11,7 @@ var Player = function()
   self.money = 0;//10000;
   self.lizards = [];
 
-  self.rank = RANK_BRONZE;
+  self.rank;
   self.wins = 0;
   self.total_races = 0;
 

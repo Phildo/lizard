@@ -13,12 +13,15 @@ var Game = function(init)
   //Shared Game State
   self.player = new Player();
 
+
   //stub hack
   for(var i = 0; i < 1; i++) {
     self.player.lizards[i] = new Lizard(Math.floor(randR(1, 3)), randR(0.01, 0.30), randR(0.01, 0.30));
   }
 
   self.racing_lizard_index = -1;
+  self.exhausted = -1;
+  self.error_msg = "";
 
   self.frames = [];
   var i = 0;
