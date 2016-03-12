@@ -108,6 +108,8 @@ var RockScene = function(game, stage)
   var time_til_lizard;
   var catchable_lizard;
 
+  var bought_bait = -1;
+
   var rock_bg_img = new Image();
   rock_bg_img.src = "assets/environmental/rock2.png";
   var rock_tin_bg_img = new Image();
@@ -677,8 +679,9 @@ var RockScene = function(game, stage)
       }
       context.restore();     
     }
-
-    help_text.draw(canv);
+    if (mode === MODE_CHOOSING) {
+      help_text.draw(canv);
+    }
     
   };
 
@@ -780,7 +783,15 @@ var RockScene = function(game, stage)
             case SELECT_BAIT:
               let b = baits[self.i];
 
-              if (b.price > game.player.money) {
+              if (bought_bait !== -1) {
+                // ALREADY BOUGHT BAIT
+                game.error_msg = "YOU'VE ALREADY BOUGHT SOME BAIT. TRY CATCHING A LIZARD WITH IT.";
+                setTimeout(function() {
+                  game.error_msg = "";
+                }, 5000);
+              }
+
+              else if (b.price > game.player.money) {
                 //not enough money for bait
                 game.error_msg = "YOU DO NOT HAVE ENOUGH MONEY FOR THIS BAIT. THIS IS NOT A CHARITY CASE.";
                 setTimeout(function() {
@@ -793,6 +804,7 @@ var RockScene = function(game, stage)
                 // enough money, lets buy and select it
                 game.player.money -= b.price;
                 selected_i = self.i;
+                bought_bait = self.i;
                 buy_sfx.play();
                 game.error_msg = "YOU BOUGHT THE BAIT!";
                 setTimeout(function() {
