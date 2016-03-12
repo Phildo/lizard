@@ -7,11 +7,17 @@ var descriptions = [
   "What. A. GORGEOUS Lizard. My gosh. Just look at this lizard. NAME is beautiful and NAME knows it. Those eyes. That tail. Wow.",
   "There is legend that has fortold the coming of a lizard so powerful as to shake the foundations upon which modern lizard society sit. This lizard, however, is pretty average. You do you, NAME.",
   "NAME dreams of one day becoming a lizard. Good news, because NAME has already acheived just that. And really, isn't that what it's all about? Accepting you for YOU.",
-  "NAME likes Death Metal. I know. Cought me off guard too.",
+  "NAME likes Death Metal. I know. Caught me off guard too.",
   "NAME is just happy you like her.",
+  "NAME just wanted to meet a friendly mate at the local hot rock, but he considered a bit to fast. Now he runs for you. Sad, I know.",
+  "There comes a day in every young lizard's life when they must step upon the rock and become an adult. Every lizard prepares for this day through their entire childhood. Today was NAME's day. You took that from her. You don't care though, do you?",
+  "äžNWkçG'›7¿åg‹Ú;úQ5ØCÛQ$FéƒxÌøéŽ[ÔoR Ž²íH0E*GŽ™óÅ/~ñ/xà«W®ÛÚ2Øq Y´hsÓM7ÝM'›7¿ågž‹(2·##—ÍôWSO*ûž|Ä4íÕéƒxÌøéŽ[ÔoR †a¶yžŸ& êííEPÙä<X4ß‚y}ë™1íÙgŸ‚¡ácÉ¤¡£K",
+  "You know what they say about NAME.",
+  "My advice... Go out to desert... find a hot rock... strike up some good body warmth and then after you get her hot... pull out your tin foil and say warm this up basanite lol. Only messin"
 ];
 var randDescription = function()
 {
+  //return descriptions[descriptions.length - 1]
   return descriptions[randIntBelow(descriptions.length)];
 }
 

@@ -281,9 +281,21 @@ var RockScene = function(game, stage)
       function(){
         if(mode != MODE_CHOOSING) return;
         var r = rocks[rock_selected_i];
-        if(!r.unlocked || !r.owned) return;
+        if(!r.unlocked || !r.owned) {
+          game.error_msg = "YOU DO NOT OWN THIS ROCK ENHANCEMENT. YOU THINK YOU CAN JUST USE THIS? NO, YOU CANNOT.";
+          setTimeout(function() {
+            game.error_msg = "";
+          }, 5000);
+          return;
+        }
         var b = baits[bait_selected_i];
-        if(b.price > game.player.money) return;
+        if(b.price > game.player.money) {
+          game.error_msg = "YOU DO NOT HAVE ENOUGH MONEY FOR THIS BAIT. THIS IS NOT A CHARITY CASE.";
+          setTimeout(function() {
+            game.error_msg = "";
+          }, 5000);
+          return;
+        }
         game.player.money -= b.price;
         var n = rock_liz_times[rock_selected_i]*bait_liz_mul[bait_selected_i];
         time_til_lizard = Math.floor(n/2+randIntBelow(n/2));
@@ -397,6 +409,25 @@ var RockScene = function(game, stage)
     clicker.register(release_btn);
     clicker.register(back_btn);
 
+    back_btn.hovering = false;
+    back_btn.hover = function() {
+      back_btn.hovering = true;
+    };
+    back_btn.unhover = function() {
+      back_btn.hovering = false;
+    };
+    ready_btn.hovering = false;
+    ready_btn.hover = function() {
+      ready_btn.hovering = true;
+    };
+    ready_btn.unhover = function() {
+      ready_btn.hovering = false;
+    };
+
+
+    hoverer.register(back_btn);
+    hoverer.register(ready_btn);
+
     rock_selected_i = 0;
     bait_selected_i = 0;
     liz_selected_i  = -1;
@@ -455,18 +486,25 @@ var RockScene = function(game, stage)
       //context.drawImage(rocks[rock_selected_i].img,rocks[rock_selected_i].x,rocks[rock_selected_i].y,rocks[rock_selected_i].w,rocks[rock_selected_i].h);
       context.drawImage(baits[bait_selected_i].img,baits[bait_selected_i].x,baits[bait_selected_i].y,baits[bait_selected_i].w,baits[bait_selected_i].h);
 
-      context.fillStyle = "rgba(0,0,0,0.8)";
-      context.fillRect(back_btn.x,back_btn.y,back_btn.w,back_btn.h);
-      context.fillStyle = "#FFFFFF";
-      context.fillText("BACK TO THA PEN",back_btn.x+10,back_btn.y+25);
+      // Draw back button (repeat down below because in 2 spots)
+      if (!back_btn.hovering) {
+        context.fillStyle = "rgba(0,0,0,0.8)";
+        context.fillRect(back_btn.x,back_btn.y,back_btn.w,back_btn.h);
+        context.fillStyle = "#FFFFFF";
+        context.fillText("BACK TO THA PEN",back_btn.x+10,back_btn.y+25);
+      } else {
+        context.fillStyle = "rgba(255,255,255,0.8)";
+        context.fillRect(back_btn.x,back_btn.y,back_btn.w,back_btn.h);
+        context.fillStyle = "#000000";
+        context.fillText("BACK TO THA PEN",back_btn.x+10,back_btn.y+25);
+      }
 
       context.fillStyle = "rgba(0,0,0,0.8)";
       context.fillRect(moneydisp.x,moneydisp.y,moneydisp.w,moneydisp.h);
       context.fillStyle = "#FFFFFF";
       context.fillText("$"+game.player.money,moneydisp.x+10,moneydisp.y+20);
 
-      drawRockDisp();
-      drawBaitDisp();
+      
 
       for(var i = 0; i < rock_selects.length; i++)
         drawSelect(rock_selects[i]);
@@ -485,10 +523,18 @@ var RockScene = function(game, stage)
         context.fillText("BUY",buy_btn.x+10,buy_btn.y+20);
       }
 
-      context.fillStyle = "rgba(0,0,0,0.8)";
-      context.fillRect(ready_btn.x,ready_btn.y,ready_btn.w,ready_btn.h);
-      context.fillStyle = "#FFFFFF";
-      context.fillText("CATCH A LIZARD",ready_btn.x+10,ready_btn.y+25);
+      // Draw ready button
+      if (!ready_btn.hovering) {
+        context.fillStyle = "rgba(0,0,0,0.8)";
+        context.fillRect(ready_btn.x,ready_btn.y,ready_btn.w,ready_btn.h);
+        context.fillStyle = "#FFFFFF";
+        context.fillText("CATCH A LIZARD",ready_btn.x+10,ready_btn.y+25);
+      } else {
+        context.fillStyle = "rgba(255,255,255,0.8)";
+        context.fillRect(ready_btn.x,ready_btn.y,ready_btn.w,ready_btn.h);
+        context.fillStyle = "#000000";
+        context.fillText("CATCH A LIZARD",ready_btn.x+10,ready_btn.y+25);
+      }
     }
     else if(mode == MODE_HUNTING)
     {
@@ -573,25 +619,30 @@ var RockScene = function(game, stage)
         context.fillText("RELEASE",release_btn.x+10,release_btn.y+25);
       }
     }
-
     // Draw error message
-    context.save();
-    context.fillStyle = "#ffffff";
-    context.font = "bold 48px Arial";
-    context.textAlign = "center";
-    var text_pos = {
-      ww: 0,
-      wh: 0,
-      wx: 0.5,
-      wy: 0.1,
-      x: 0,
-      y: 0,
-      h: 0,
-      w: 0
-    };
-    toScene(text_pos, canv);
-    context.fillText(game.error_msg, text_pos.x, text_pos.y);
-    context.restore();
+    if (game.error_msg !== "") {
+      console.log(game.error_msg);
+      var lines = textToLines(canv, "bold 48px Arial", canv.width * 0.75, game.error_msg);
+      context.save();
+      context.fillStyle = "#ffffff";
+      context.font = "bold 48px Arial";
+      context.textAlign = "center";
+      var text_pos = {
+        ww: 0,
+        wh: 0,
+        wx: 0.5,
+        wy: 0.1,
+        x: 0,
+        y: 0,
+        h: 0,
+        w: 0
+      };
+      toScene(text_pos, canv);
+      for (var i = 0, l = lines.length; i < l; i++) {
+        context.fillText(lines[i], text_pos.x, text_pos.y + (i * 48)); 
+      }
+      context.restore();     
+    }
     
   };
 
@@ -601,6 +652,7 @@ var RockScene = function(game, stage)
     clicker = undefined;
     hoverer.detach();
     hoverer = undefined;
+    game.error_msg = "";
   };
 
   var Select = function()

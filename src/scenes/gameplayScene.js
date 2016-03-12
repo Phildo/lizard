@@ -39,7 +39,16 @@ var GamePlayScene = function(game, stage)
     rock_btn.wy = 0.1;
     rock_btn.ww = 0.2;
     rock_btn.wh = 0.1;
+    rock_btn.hovering = false;
+    rock_btn.hover = function() {
+      rock_btn.hovering = true;
+    }
+    rock_btn.unhover = function() {
+      rock_btn.hovering = false;
+    }
     toScene(rock_btn,canv);
+    clicker.register(rock_btn);
+    hoverer.register(rock_btn);
 
     terrarium = new Terrarium();
     terrarium.wx = 0.25;
@@ -115,7 +124,7 @@ var GamePlayScene = function(game, stage)
           return;
         hit_ui = true;
         if (selected_i === game.exhausted) {
-          game.error_msg = "LIZARD EXHAUSTED! MUST REST BEFORE RACING AGAIN."
+          game.error_msg = "LIZARD EXHAUSTED! GIVE THE POOR REPTILE A BREAK YOU ANIMAL."
           setTimeout(function() {
             game.error_msg = "";
           }, 3000);
@@ -124,7 +133,7 @@ var GamePlayScene = function(game, stage)
         game.player.rank = i;
         var fee = game.player.rank * 50;
         if (game.player.money < fee) {
-          game.error_msg = "NOT ENOUGH MONEY!";
+          game.error_msg = "NOT ENOUGH MONEY! GO RACE IN 50CC YOU NOVICE.";
           setTimeout(function() {
             game.error_msg = "";
           }, 3000);
@@ -163,7 +172,6 @@ var GamePlayScene = function(game, stage)
     moneydisp.wh = 0.06;
     toScene(moneydisp,canv);
 
-    clicker.register(rock_btn);
 
     selected_i = -1;
 
@@ -185,10 +193,18 @@ var GamePlayScene = function(game, stage)
   {
     context.drawImage(bg_img, 0, 0, canv.width, canv.height);
 
-    context.fillStyle = "rgba(0,0,0,0.8)";
-    context.fillRect(rock_btn.x,rock_btn.y,rock_btn.w,rock_btn.h);
-    context.fillStyle = "#FFFFFF";
-    context.fillText("GO LIZARDIN'",rock_btn.x+10,rock_btn.y+25);
+    // Draw rock button
+    if (!rock_btn.hovering) {
+      context.fillStyle = "rgba(0,0,0,0.8)";
+      context.fillRect(rock_btn.x,rock_btn.y,rock_btn.w,rock_btn.h);
+      context.fillStyle = "#FFFFFF";
+      context.fillText("GO LIZARDIN'",rock_btn.x+10,rock_btn.y+25);
+    } else {
+      context.fillStyle = "rgba(255,255,255,0.8)";
+      context.fillRect(rock_btn.x,rock_btn.y,rock_btn.w,rock_btn.h);
+      context.fillStyle = "#000000";
+      context.fillText("GO LIZARDIN'",rock_btn.x+10,rock_btn.y+25);
+    }
 
     context.fillStyle = "rgba(0,0,0,0.8)";
     context.fillRect(moneydisp.x,moneydisp.y,moneydisp.w,moneydisp.h);
