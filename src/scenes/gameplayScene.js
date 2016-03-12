@@ -26,8 +26,11 @@ var GamePlayScene = function(game, stage)
   var bg_img = new Image();
   bg_img.src = "assets/environmental/penforlizard2.png";
 
+  var hit_ui;
+
   self.ready = function()
   {
+    hit_ui = false;
     clicker = new Clicker({source:stage.dispCanv.canvas});
     hoverer = new Hoverer({source:stage.dispCanv.canvas});
 
@@ -76,7 +79,6 @@ var GamePlayScene = function(game, stage)
       tlizard.to_wx = tlizard.wx;
       tlizard.to_wy = tlizard.wy;
       tlizard.agitation = randIntBelow(500);
-      clicker.register(tlizard);
       toScene(tlizard,canv);
       tlizards[i] = tlizard;
     }
@@ -111,6 +113,7 @@ var GamePlayScene = function(game, stage)
       let btn = new ButtonBox(0,0,0,0, function() {
         if(selected_i == -1)
           return;
+        hit_ui = true;
         if (selected_i === game.exhausted) {
           game.error_msg = "LIZARD EXHAUSTED! MUST REST BEFORE RACING AGAIN."
           setTimeout(function() {
@@ -163,12 +166,16 @@ var GamePlayScene = function(game, stage)
     clicker.register(rock_btn);
 
     selected_i = -1;
+
+    for(var i = 0; i < tlizards.length; i++)
+      clicker.register(tlizards[i]);
   };
 
   self.tick = function()
   {
     hoverer.flush();
     clicker.flush();
+    hit_ui = false;
 
     for(var i = 0; i < tlizards.length; i++)
       tickTerrariLizard(tlizards[i]);
@@ -404,6 +411,7 @@ var GamePlayScene = function(game, stage)
 
     self.click = function()
     {
+      if(hit_ui) return;
       if(game.player.lizards.length > self.i)
       {
         if(selected_i == self.i) selected_i = -1;
