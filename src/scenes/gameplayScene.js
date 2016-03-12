@@ -409,6 +409,13 @@ var GamePlayScene = function(game, stage)
       else                      context.fillStyle = "#999999";
       context.fillRect(stats.x+stats.h+52+10*i,stats.y+46,8,8);
     }
+
+    context.fillStyle = "#999999";
+    var lines = textToLines(canv, "12px Arial", stats.w-stats.h-10, liz.description)
+    for(var i = 0; i < lines.length; i++)
+    {
+      context.fillText(lines[i],stats.x+stats.h,stats.y+stats.h/2+5+15*i);
+    }
   }
 
   var MoneyDisp = function()
