@@ -53,7 +53,7 @@ var names = [
   "Adam",
   "Cheryll",
   "Patsy",
-  "Sassy Fran",
+  "Sassy Prilla",
   "PROJECT: LAZORD",
   "Fizz",
   "Buzz",

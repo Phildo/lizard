@@ -1,3 +1,4 @@
+"use strict";
 var RaceScene = function(game, stage)
 {
   var self = this;
@@ -10,6 +11,7 @@ var RaceScene = function(game, stage)
   self.moneydisp;
 
   self.clicker;
+  self.hoverer;
   self.back_btn;
   self.race_btn;
   self.track;
@@ -21,28 +23,28 @@ var RaceScene = function(game, stage)
   {
     var opponents = [
       [ // RANK_50
-        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 0.60)),
-        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 0.60)),
-        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 0.60)),
-        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 0.60))
+        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 0.50)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 0.50)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 0.50)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 0.50))
       ],
       [ // RANK_100
-        new Lizard(LIZARD_GENDER_MALE, randR(0.30, 0.60), randR(0.40, 1.0)),
-        new Lizard(LIZARD_GENDER_MALE, randR(0.30, 0.60), randR(0.40, 1.0)),
-        new Lizard(LIZARD_GENDER_MALE, randR(0.30, 0.60), randR(0.40, 1.0)),
-        new Lizard(LIZARD_GENDER_MALE, randR(0.30, 0.60), randR(0.40, 1.0))
+        new Lizard(LIZARD_GENDER_MALE, randR(0.30, 0.60), randR(0.40, 0.60)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.30, 0.60), randR(0.40, 0.60)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.30, 0.60), randR(0.40, 0.60)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.30, 0.60), randR(0.40, 0.60))
       ],
       [ // RANK_150
-        new Lizard(LIZARD_GENDER_MALE, randR(0.50, 0.80), randR(0.60, 1.0)),
-        new Lizard(LIZARD_GENDER_MALE, randR(0.50, 0.80), randR(0.60, 1.0)),
-        new Lizard(LIZARD_GENDER_MALE, randR(0.50, 0.80), randR(0.60, 1.0)),
-        new Lizard(LIZARD_GENDER_MALE, randR(0.50, 0.80), randR(0.60, 1.0))
+        new Lizard(LIZARD_GENDER_MALE, randR(0.50, 0.80), randR(0.40, 0.70)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.50, 0.80), randR(0.40, 0.70)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.50, 0.80), randR(0.40, 0.70)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.50, 0.80), randR(0.40, 0.70))
       ],
       [ // RANK_MASTER
-        new Lizard(LIZARD_GENDER_MALE, randR(0.70, 1.0), randR(0.70, 1.0)),
-        new Lizard(LIZARD_GENDER_MALE, randR(0.70, 1.0), randR(0.70, 1.0)),
-        new Lizard(LIZARD_GENDER_MALE, randR(0.70, 1.0), randR(0.70, 1.0)),
-        new Lizard(LIZARD_GENDER_MALE, randR(0.70, 1.0), randR(0.70, 1.0))
+        new Lizard(LIZARD_GENDER_MALE, randR(0.70, 1.0), randR(0.60, 1.0)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.70, 1.0), randR(0.60, 1.0)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.70, 1.0), randR(0.60, 1.0)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.70, 1.0), randR(0.60, 1.0))
       ]
     ];
 
@@ -60,15 +62,25 @@ var RaceScene = function(game, stage)
     });
     contestants.push(new LizRunner(selectedLizard, contestants.length));
 
+    self.clicker = new Clicker({source: stage.dispCanv.canvas});
+    self.hoverer = new Hoverer({source: stage.dispCanv.canvas});
+
     // Set up button to go back to Terrarium
-    self.clicker = new Clicker({source:stage.dispCanv.canvas});
     self.back_btn = new ButtonBox(0,0,0,0,function(){ game.setScene(2); });
     self.back_btn.wx = 0.8;
     self.back_btn.wy = 0.1;
     self.back_btn.ww = 0.2;
     self.back_btn.wh = 0.1;
+    self.back_btn.hovering = false;
+    self.back_btn.hover = function() {
+      self.back_btn.hovering = true;
+    };
+    self.back_btn.unhover = function() {
+      self.back_btn.hovering = false;
+    };
     toScene(self.back_btn,canv);
     self.clicker.register(self.back_btn);
+    self.hoverer.register(self.back_btn)
 
     // Set up button to start race
     self.race_btn = new ButtonBox(0,0,0,0, function() { 
@@ -80,8 +92,16 @@ var RaceScene = function(game, stage)
     self.race_btn.wy = 0.8;
     self.race_btn.ww = 0.2;
     self.race_btn.wh = 0.1;
+    self.race_btn.hovering = false;
+    self.race_btn.hover = function() {
+      self.race_btn.hovering = true;
+    };
+    self.race_btn.unhover = function() {
+      self.race_btn.hovering = false;
+    };
     toScene(self.race_btn, canv);
     self.clicker.register(self.race_btn);
+    self.hoverer.register(self.race_btn);
 
     // Set up the stats
     self.stats = [];
@@ -116,11 +136,11 @@ var RaceScene = function(game, stage)
   {
     // Flush clicker queue and call events
     self.clicker.flush();
-
-    if (self.track.state === RACE_RUNNING) {
-      self.track.update();
-    } 
-    else if(self.track.state === RACE_FINISH) {
+    self.hoverer.flush();
+    
+    self.track.update();
+    
+    if(self.track.state === RACE_FINISH) {
       var winner = self.track.runners[self.track.winner];
       var playerLiz = game.player.lizards[game.racing_lizard_index];
       playerLiz.total_races++;
@@ -141,11 +161,17 @@ var RaceScene = function(game, stage)
     ctx.drawImage(bg_img, 0, 0, canv.width, canv.height);
 
     // Draw button to go back to Terrarium
-
-    ctx.fillStyle = "rgba(0,0,0,0.8)";
-    ctx.fillRect(self.back_btn.x,self.back_btn.y,self.back_btn.w,self.back_btn.h);
-    ctx.fillStyle = "#FFFFFF";
-    ctx.fillText("BACK TO THA PEN",self.back_btn.x+10,self.back_btn.y+25);
+    if (!self.back_btn.hovering) {
+      ctx.fillStyle = "rgba(0,0,0,0.8)";
+      ctx.fillRect(self.back_btn.x,self.back_btn.y,self.back_btn.w,self.back_btn.h);
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillText("BACK TO THA PEN",self.back_btn.x+10,self.back_btn.y+25);
+    } else {
+      ctx.fillStyle = "rgba(255,255,255,0.8)";
+      ctx.fillRect(self.back_btn.x,self.back_btn.y,self.back_btn.w,self.back_btn.h);
+      ctx.fillStyle = "#000000";
+      ctx.fillText("BACK TO THA PEN",self.back_btn.x+10,self.back_btn.y+25);
+    }
 
     // Draw money display
     self.moneydisp.draw(ctx);
@@ -160,10 +186,17 @@ var RaceScene = function(game, stage)
 
     if (self.track.state === RACE_READY) {
       // Draw the start race button
-      ctx.fillStyle = "rgba(0,0,0,0.8)";
-      ctx.fillRect(self.race_btn.x,self.race_btn.y,self.race_btn.w,self.race_btn.h);
-      ctx.fillStyle = "#FFFFFF";
-      ctx.fillText("START RACE",self.race_btn.x+10,self.race_btn.y+25);
+      if (!self.race_btn.hovering) {
+        ctx.fillStyle = "rgba(0,0,0,0.8)";
+        ctx.fillRect(self.race_btn.x,self.race_btn.y,self.race_btn.w,self.race_btn.h);
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillText("START RACE",self.race_btn.x+10,self.race_btn.y+25);
+      } else {
+        ctx.fillStyle = "rgba(255,255,255,0.8)";
+        ctx.fillRect(self.race_btn.x,self.race_btn.y,self.race_btn.w,self.race_btn.h);
+        ctx.fillStyle = "#000000";
+        ctx.fillText("START RACE",self.race_btn.x+10,self.race_btn.y+25);
+      }
     }
 
     if (self.track.state === RACE_DONE) {
@@ -197,6 +230,8 @@ var RaceScene = function(game, stage)
     // Cleanup clicker
     self.clicker.detach();
     self.clicker = undefined;
+    self.hoverer.detach();
+    self.hoverer = undefined;
     if (self.track.state !== RACE_READY) {
       game.exhausted = game.racing_lizard_index;
     }
@@ -319,7 +354,7 @@ var RaceScene = function(game, stage)
 
     self.runners = contestants;
     self.winner = null;
-    self.winnings = 100 + (100 * rank);
+    self.winnings = 100 + (500 * rank);
 
 
     self.init = function() {
@@ -340,17 +375,19 @@ var RaceScene = function(game, stage)
     };
 
     self.update = function() {
-      if (self.state !== RACE_RUNNING) {
+      if (self.state === RACE_READY) {
         return;
       }
 
-      for (var i = 0, l = self.runners.length; i < l; i++) {
-        var liz = self.runners[i];
-        tickRunner(liz);
+      for (let i = 0, l = self.runners.length; i < l; i++) {
+        let liz = self.runners[i];
         if (liz.track_pos >= self.length - 1) {
-          self.state = RACE_FINISH;
-          self.winner = i;
-          return;
+          if (self.state === RACE_RUNNING) {
+            self.state = RACE_FINISH;
+            self.winner = i;
+          }
+        } else {
+          tickRunner(liz);
         }
       }
     };
