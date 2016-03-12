@@ -47,10 +47,10 @@ var RaceScene = function(game, stage)
 
     var opponents = [
       [ // RANK_50
-        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 0.50)),
-        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 0.50)),
-        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 0.50)),
-        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 0.50))
+        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.33), randR(0.01, 0.40)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.33), randR(0.01, 0.40)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.33), randR(0.01, 0.40)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.33), randR(0.01, 0.40))
       ],
       [ // RANK_100
         new Lizard(LIZARD_GENDER_MALE, randR(0.30, 0.60), randR(0.40, 0.60)),

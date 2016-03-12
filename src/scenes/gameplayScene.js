@@ -53,10 +53,13 @@ var GamePlayScene = function(game, stage)
     1000
   ];
   var audiooo;
+  var lizard_select_sfx;
   self.ready = function()
   {
     audiooo = new Aud("assets/sounds/Pen.mp3",true);
     audiooo.play();
+
+    lizard_select_sfx = new Aud("assets/sounds/Sounds/Mushroom Gathering.wav", false);
 
     hit_ui = false;
     clicker = new Clicker({source:stage.dispCanv.canvas});
@@ -355,7 +358,10 @@ var GamePlayScene = function(game, stage)
       if(game.player.lizards.length > self.i)
       {
         if(selected_i == self.i) selected_i = -1;
-        else                     selected_i = self.i;
+        else {
+          selected_i = self.i;
+          lizard_select_sfx.play();
+        }
       }
     }
 
@@ -495,7 +501,10 @@ var GamePlayScene = function(game, stage)
       if(game.player.lizards.length > self.i)
       {
         if(selected_i == self.i) selected_i = -1;
-        else                     selected_i = self.i;
+        else {
+          lizard_select_sfx.play();
+          selected_i = self.i;
+        }                   
       }
     }
   }
