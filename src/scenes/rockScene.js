@@ -110,7 +110,7 @@ var RockScene = function(game, stage)
     clicker = new Clicker({source:stage.dispCanv.canvas});
     hoverer = new Hoverer({source:stage.dispCanv.canvas});
 
-    back_btn = new ButtonBox(0,0,0,0,function(){ if(mode == MODE_CAUGHT) return; game.setScene(2); });
+    back_btn = new ButtonBox(0,0,0,0,function(){ if(mode == MODE_CAUGHT) return; game.setScene(3); });
     back_btn.wx = 0.8;
     back_btn.wy = 0.1;
     back_btn.ww = 0.2;
@@ -351,7 +351,7 @@ var RockScene = function(game, stage)
         game.exhausted = -1;
       }
       liz_selected_i = -1;
-      game.setScene(2);
+      game.setScene(3);
     });
     keep_btn.wx = caught_stats_title.wx+caught_stats_title.ww+0.05;
     keep_btn.wy = caught_stats_title.wy;

@@ -37,9 +37,10 @@ var Game = function(init)
   var scenes = [
     /* 0 */ new NullScene(self, stage),
     /* 1 */ new LoadingScene(self, stage),
-    /* 2 */ new GamePlayScene(self, stage),
-    /* 3 */ new RockScene(self, stage),
-    /* 4 */ new RaceScene(self, stage),
+    /* 2 */ new TitleScene(self, stage),
+    /* 3 */ new GamePlayScene(self, stage),
+    /* 4 */ new RockScene(self, stage),
+    /* 5 */ new RaceScene(self, stage),
   ];
   var cur_scene = 0;
   var old_cur_scene = -1;
