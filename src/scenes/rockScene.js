@@ -111,7 +111,7 @@ var RockScene = function(game, stage)
 
   var money_juice = {
     x:0,y:0,w:0,h:0,
-    wx: 0.11, wy: 0.02, ww: 0, wh: 0,
+    wx: 0.10, wy: 0.02, ww: 0, wh: 0,
     opacity: 0, amt: -1,
     draw: function(canv) {
       if (this.amt === -1) {
@@ -269,7 +269,7 @@ var RockScene = function(game, stage)
     bait = new Bait();
     bait.name = "WORM";
     bait.description = "(ONE TIME USE) If I wasn't sure whether lizards ate flies or not (and I wasn't), I'm doubly unsure about worms. But, in this case, it appears that worms attract lizards. I never claimed they ate the worm, though. But maybe they do?";
-    bait.tldr = "Lizards will come more quickly, with greater endurance for some reason. Yeah I know this text is overflowing but there's nothing you can do.";
+    bait.tldr = "Lizards will come more quickly, with greater endurance for some reason.";
     bait.price = 200;
     bait.img = rock_good_b8_img;
     bait.wx = 0.45;
@@ -505,9 +505,27 @@ var RockScene = function(game, stage)
       ready_btn.hovering = false;
     };
 
+    keep_btn.hovering = false;
+    keep_btn.hover = function() {
+      keep_btn.hovering = true;
+    };
+    keep_btn.unhover = function() {
+      keep_btn.hovering = false;
+    };
+
+    release_btn.hovering = false;
+    release_btn.hover = function() {
+      release_btn.hovering = true;
+    };
+    release_btn.unhover = function() {
+      release_btn.hovering = false;
+    };
+
 
     hoverer.register(back_btn);
     hoverer.register(ready_btn);
+    hoverer.register(keep_btn);
+    hoverer.register(release_btn);
 
     if (game.player.owns_cactus)        rock_selected_i = 2;
     else if (game.player.owns_tinfoil)  rock_selected_i = 1;
@@ -688,21 +706,40 @@ var RockScene = function(game, stage)
         context.fillText("CAUGHT LIZARD",caught_stats_title.x+10,caught_stats_title.y+20);
         drawStatsDisp(caught_stats,catchable_lizard);
 
+        context.save();
+        context.textAlign = "center";
         if(game.player.lizards.length < MAXIMUM_CAPACITY || liz_selected_i != -1)
         {
-          context.fillStyle = "rgba(0,0,0,0.8)";
+          let rectFill, textFill;
+          if (keep_btn.hovering) {
+            rectFill = "rgba(255,255,255,0.8)";
+            textFill = "#000000";
+          } else {
+            rectFill = "rgba(0,0,0,0.8)";
+            textFill = "#ffffff";
+          }
+          context.fillStyle = rectFill;
           context.fillRect(keep_btn.x,keep_btn.y,keep_btn.w,keep_btn.h);
-          context.fillStyle = "#FFFFFF";
+          context.fillStyle = textFill;
           if(game.player.lizards.length < MAXIMUM_CAPACITY)
-            context.fillText("KEEP",keep_btn.x+10,keep_btn.y+20);
+            context.fillText("KEEP",keep_btn.x+keep_btn.w/2,keep_btn.y+18);
           else
-            context.fillText("SWAP",keep_btn.x+10,keep_btn.y+20);
+            context.fillText("SWAP",keep_btn.x+keep_btn.w/2,keep_btn.y+20);
         }
 
-        context.fillStyle = "rgba(0,0,0,0.8)";
+        let rectFill, textFill;
+        if (release_btn.hovering) {
+          rectFill = "rgba(255,255,255,0.8)";
+          textFill = "#000000";
+        } else {
+          rectFill = "rgba(0,0,0,0.8)";
+          textFill = "#ffffff";
+        }
+        context.fillStyle = rectFill;
         context.fillRect(release_btn.x,release_btn.y,release_btn.w,release_btn.h);
-        context.fillStyle = "#FFFFFF";
-        context.fillText("RELEASE",release_btn.x+10,release_btn.y+25);
+        context.fillStyle = textFill;
+        context.fillText("RELEASE",release_btn.x+release_btn.w/2,release_btn.y+18);
+        context.restore();
       }
     }
     // Draw error message
@@ -1287,7 +1324,9 @@ var RockScene = function(game, stage)
       context.fillText(lines[i],baitdisp.x+10,baitdisp.y+40+15*i);
 
     context.fillStyle = "#FFFFFF";
-    context.fillText(baits[select.i].tldr,baitdisp.x+10,baitdisp.y+baitdisp.h-10);
+    var lines = textToLines(canv, "12px Arial", baitdisp.w - 20, baits[select.i].tldr);
+    for (var i = lines.length - 1; i >= 0; i--)
+      context.fillText(lines[i],baitdisp.x+10,baitdisp.y+baitdisp.h - 10 - (12 * (lines.length - i - 1)));
   }
 
   var Title = function()

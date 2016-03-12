@@ -28,6 +28,35 @@ var RaceScene = function(game, stage)
     30
   ];
 
+  var money_juice = {
+    x:0,y:0,w:0,h:0,
+    wx: 0.10, wy: 0.02, ww: 0, wh: 0,
+    opacity: 0, amt: -1,
+    draw: function(canv) {
+      if (this.amt === -1) {
+        return;
+      }
+      if (this.opacity <= 0) {
+        this.amt = -1;
+        return;
+      }
+
+      toScene(this, canv);
+      this.y += 20;
+      let ctx = canv.context;
+      ctx.save();
+      ctx.font = "bold 24px Arial";
+      ctx.fillStyle = "rgba(0,255,0," + this.opacity + ")";
+      ctx.fillText("+$" + this.amt, this.x, this.y);
+      ctx.restore();
+      this.opacity -= 0.01;
+    },
+    juice: function(amt) {
+      this.amt = amt;
+      this.opacity = 1.0;
+    }
+  }
+
   var DELTA = 0.0001;
   self.stats;
   self.moneydisp;
@@ -184,6 +213,7 @@ var RaceScene = function(game, stage)
 
       if (winner.ref === playerLiz) {
         game.player.money += self.track.winnings;
+        money_juice.juice(self.track.winnings);
         winner.ref.wins++;
         game.player.wins++;
       }
@@ -213,6 +243,7 @@ var RaceScene = function(game, stage)
 
     // Draw money display
     self.moneydisp.draw(ctx);
+    money_juice.draw(canv);
 
     // Draw the track
     self.track.draw(ctx);

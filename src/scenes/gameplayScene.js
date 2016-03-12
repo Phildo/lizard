@@ -40,6 +40,35 @@ var GamePlayScene = function(game, stage)
     }
   };
 
+  var money_juice = {
+    x:0,y:0,w:0,h:0,
+    wx: 0.10, wy: 0.02, ww: 0, wh: 0,
+    opacity: 0, amt: -1,
+    draw: function(canv) {
+      if (this.amt === -1) {
+        return;
+      }
+      if (this.opacity <= 0) {
+        this.amt = -1;
+        return;
+      }
+
+      toScene(this, canv);
+      this.y += 20;
+      let ctx = canv.context;
+      ctx.save();
+      ctx.font = "bold 24px Arial";
+      ctx.fillStyle = "rgba(255,0,0," + this.opacity + ")";
+      ctx.fillText("-$" + this.amt, this.x, this.y);
+      ctx.restore();
+      this.opacity -= 0.01;
+    },
+    juice: function(amt) {
+      this.amt = amt;
+      this.opacity = 1.0;
+    }
+  }
+
   var selected_i;
 
   var MAXIMUM_CAPACITY = 5;
@@ -182,13 +211,17 @@ var GamePlayScene = function(game, stage)
           return;
         }
         game.player.rank = i;
-        var fee = game.player.rank * 50;
+        var fee = fees[i];
         if (game.player.money < fee) {
           game.error_msg = "NOT ENOUGH MONEY! GO RACE IN 50CC YOU NOVICE.";
           setTimeout(function() {
             game.error_msg = "";
           }, 3000);
           return;
+        }
+
+        if (fee > 0) {
+          money_juice.juice(fee);          
         }
 
         game.racing_lizard_index = selected_i;
@@ -286,6 +319,9 @@ var GamePlayScene = function(game, stage)
     context.fillRect(moneydisp.x,moneydisp.y,moneydisp.w,moneydisp.h);
     context.fillStyle = "#FFFFFF";
     context.fillText("$"+game.player.money,moneydisp.x+10,moneydisp.y+20);
+
+    money_juice.draw(canv);
+
     for(var i = 0; i < selects.length; i++)
       drawSelect(selects[i]);
 
