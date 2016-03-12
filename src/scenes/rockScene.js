@@ -493,9 +493,27 @@ var RockScene = function(game, stage)
       ready_btn.hovering = false;
     };
 
+    keep_btn.hovering = false;
+    keep_btn.hover = function() {
+      keep_btn.hovering = true;
+    };
+    keep_btn.unhover = function() {
+      keep_btn.hovering = false;
+    };
+
+    release_btn.hovering = false;
+    release_btn.hover = function() {
+      release_btn.hovering = true;
+    };
+    release_btn.unhover = function() {
+      release_btn.hovering = false;
+    };
+
 
     hoverer.register(back_btn);
     hoverer.register(ready_btn);
+    hoverer.register(keep_btn);
+    hoverer.register(release_btn);
 
     if (game.player.owns_cactus)        rock_selected_i = 2;
     else if (game.player.owns_tinfoil)  rock_selected_i = 1;
@@ -674,21 +692,40 @@ var RockScene = function(game, stage)
         context.fillText("CAUGHT LIZARD",caught_stats_title.x+10,caught_stats_title.y+20);
         drawStatsDisp(caught_stats,catchable_lizard);
 
+        context.save();
+        context.textAlign = "center";
         if(game.player.lizards.length < MAXIMUM_CAPACITY || liz_selected_i != -1)
         {
-          context.fillStyle = "rgba(0,0,0,0.8)";
+          let rectFill, textFill;
+          if (keep_btn.hovering) {
+            rectFill = "rgba(255,255,255,0.8)";
+            textFill = "#000000";
+          } else {
+            rectFill = "rgba(0,0,0,0.8)";
+            textFill = "#ffffff";
+          }
+          context.fillStyle = rectFill;
           context.fillRect(keep_btn.x,keep_btn.y,keep_btn.w,keep_btn.h);
-          context.fillStyle = "#FFFFFF";
+          context.fillStyle = textFill;
           if(game.player.lizards.length < MAXIMUM_CAPACITY)
-            context.fillText("KEEP",keep_btn.x+10,keep_btn.y+20);
+            context.fillText("KEEP",keep_btn.x+keep_btn.w/2,keep_btn.y+18);
           else
-            context.fillText("SWAP",keep_btn.x+10,keep_btn.y+20);
+            context.fillText("SWAP",keep_btn.x+keep_btn.w/2,keep_btn.y+20);
         }
 
-        context.fillStyle = "rgba(0,0,0,0.8)";
+        let rectFill, textFill;
+        if (release_btn.hovering) {
+          rectFill = "rgba(255,255,255,0.8)";
+          textFill = "#000000";
+        } else {
+          rectFill = "rgba(0,0,0,0.8)";
+          textFill = "#ffffff";
+        }
+        context.fillStyle = rectFill;
         context.fillRect(release_btn.x,release_btn.y,release_btn.w,release_btn.h);
-        context.fillStyle = "#FFFFFF";
-        context.fillText("RELEASE",release_btn.x+10,release_btn.y+25);
+        context.fillStyle = textFill;
+        context.fillText("RELEASE",release_btn.x+release_btn.w/2,release_btn.y+18);
+        context.restore();
       }
     }
     // Draw error message
