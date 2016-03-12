@@ -59,7 +59,7 @@ var GamePlayScene = function(game, stage)
     audiooo = new Aud("assets/sounds/Pen.mp3",true);
     audiooo.play();
 
-    lizard_select_sfx = new Aud("assets/sounds/Sounds/Mushroom Gathering.wav", false);
+    lizard_select_sfx = new Aud("assets/sounds/Sounds/Collect Item.wav", false);
 
     hit_ui = false;
     clicker = new Clicker({source:stage.dispCanv.canvas});
@@ -330,6 +330,10 @@ var GamePlayScene = function(game, stage)
   {
     audiooo.stop();
     audiooo = undefined;
+
+    lizard_select_sfx.stop();
+    lizard_select_sfx = undefined;
+
     clicker.detach();
     clicker = undefined;
     hoverer.detach();

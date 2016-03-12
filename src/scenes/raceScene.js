@@ -40,10 +40,13 @@ var RaceScene = function(game, stage)
   bg_img.src = "assets/environmental/racetrack3.png";
 
   var audiooo;
+  var pre_race_sfx;
   self.ready = function()
   {
-    audiooo = new Aud("assets/sounds/Race.mp3",true);
-    audiooo.play();
+    audiooo = new Aud( "assets/sounds/Race.mp3", true );
+
+    pre_race_sfx = new Aud( "assets/sounds/RacePre.mp3", true );
+    pre_race_sfx.play();
 
     var opponents = [
       [ // RANK_50
@@ -110,6 +113,8 @@ var RaceScene = function(game, stage)
     self.race_btn = new ButtonBox(0,0,0,0, function() { 
       if (self.track.state === RACE_READY) {
         self.track.state = RACE_RUNNING;
+        pre_race_sfx.stop();
+        audiooo.play();
       }
     });
     self.race_btn.wx = 0.8;
@@ -253,6 +258,9 @@ var RaceScene = function(game, stage)
   {
     audiooo.stop();
     audiooo = undefined;
+
+    pre_race_sfx.stop();
+    pre_race_sfx = undefined;
 
     // Cleanup clicker
     self.clicker.detach();

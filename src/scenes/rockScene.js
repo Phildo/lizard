@@ -687,6 +687,12 @@ var RockScene = function(game, stage)
     audiooo.stop();
     audiooo = undefined;
 
+    buy_sfx.stop();
+    buy_sfx = undefined;
+
+    catch_sfx.stop();
+    catch_sfx = undefined;
+
     clicker.detach();
     clicker = undefined;
     hoverer.detach();
