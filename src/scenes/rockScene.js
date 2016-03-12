@@ -91,11 +91,6 @@ var RockScene = function(game, stage)
     var rock_gr8_b8_img = new Image();
   rock_gr8_b8_img.src = "assets/b8/grasshopperb82.png";
 
-  var frames = [];
-  var i = 0;
-  frames[i] = new Image(); frames[i].src = "assets/lizards/darkblueiso.png"; i++;
-  frames[i] = new Image(); frames[i].src = "assets/lizards/darkblueisorun.png"; i++;
-
   self.ready = function()
   {
     clicker = new Clicker({source:stage.dispCanv.canvas});
@@ -311,6 +306,7 @@ var RockScene = function(game, stage)
       if(mode != MODE_CAUGHT || (game.player.lizards.length >= MAXIMUM_CAPACITY && liz_selected_i == -1)) return;
       var l = new Lizard();
       l.name = catchable_lizard.name;
+      l.color = catchable_lizard.color;
       l.speed = catchable_lizard.speed;
       l.endurance = catchable_lizard.endurance;
       if(game.player.lizards.length < MAXIMUM_CAPACITY)
@@ -400,6 +396,7 @@ var RockScene = function(game, stage)
         {
           var r = rocks[rock_selected_i];
           catchable_lizard = new RockLizard();
+          catchable_lizard.color = randIntBelow(6);
           catchable_lizard.speed = randR(rock_liz_speed_min[rock_selected_i],rock_liz_speed_max[rock_selected_i]);
           catchable_lizard.endurance = randR(0.1,1);
           catchable_lizard.ww = 0.07;
@@ -748,8 +745,7 @@ var RockScene = function(game, stage)
     context.fillStyle = "rgba(0,0,0,0.8)";
     context.fillRect(stats.x,stats.y,stats.w,stats.h);
 
-    context.fillStyle = "#FFFF00";
-    context.fillRect(stats.x+10,stats.y+10,stats.h-20,stats.h-20);
+    context.drawImage(game.frames[liz.color][0],stats.x+10,stats.y+10,stats.h-20,stats.h-20);
     context.fillStyle = "#FFFFFF";
     context.fillText(liz.name,stats.x+stats.h,stats.y+20);
     context.fillText("SPEED:",stats.x+stats.h,stats.y+40);
@@ -831,7 +827,7 @@ var RockScene = function(game, stage)
 
     self.to_wx;
     self.to_wy;
-    self.theta = 0;
+    self.theta = Math.random()*2*Math.PI;
 
     self.framefloat = 0;
     self.frame = 0;
@@ -849,7 +845,7 @@ var RockScene = function(game, stage)
     var newx = lerp(catchable_lizard.wx,catchable_lizard.to_wx,0.01);
     var newy = lerp(catchable_lizard.wy,catchable_lizard.to_wy,0.01);
     catchable_lizard.framefloat += (Math.abs(newx-catchable_lizard.wx)+Math.abs(newy-catchable_lizard.wy))*40;
-    while(catchable_lizard.framefloat > frames.length) catchable_lizard.framefloat -= frames.length;
+    while(catchable_lizard.framefloat > game.frames[catchable_lizard.color].length) catchable_lizard.framefloat -= game.frames[catchable_lizard.color].length;
     catchable_lizard.frame = Math.floor(catchable_lizard.framefloat)
     catchable_lizard.wx = newx;
     catchable_lizard.wy = newy;
@@ -870,7 +866,7 @@ var RockScene = function(game, stage)
     else
       context.rotate(catchable_lizard.theta-(Math.PI/6));
     context.translate(-catchable_lizard.w/2,-catchable_lizard.h/2);
-    context.drawImage(frames[catchable_lizard.frame],0,0,catchable_lizard.w,catchable_lizard.h);
+    context.drawImage(game.frames[catchable_lizard.color][catchable_lizard.frame],0,0,catchable_lizard.w,catchable_lizard.h);
     context.restore();
 
     //context.strokeStyle = "#FF00FF";

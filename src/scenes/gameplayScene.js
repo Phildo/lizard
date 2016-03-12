@@ -24,11 +24,6 @@ var GamePlayScene = function(game, stage)
   var bg_img = new Image();
   bg_img.src = "assets/environmental/penforlizard2.png";
 
-  var frames = [];
-  var i = 0;
-  frames[i] = new Image(); frames[i].src = "assets/lizards/darkblueiso.png"; i++;
-  frames[i] = new Image(); frames[i].src = "assets/lizards/darkblueisorun.png"; i++;
-
   self.ready = function()
   {
     clicker = new Clicker({source:stage.dispCanv.canvas});
@@ -105,7 +100,6 @@ var GamePlayScene = function(game, stage)
     race_btn.wh = 0.1;
     race_btn.wy = stats.wy-race_btn.wh;
     toScene(race_btn,canv);
-
 
     moneydisp = new MoneyDisp();
     moneydisp.wx = 0;
@@ -305,7 +299,7 @@ var GamePlayScene = function(game, stage)
 
     self.to_wx;
     self.to_wy;
-    self.theta = 0;
+    self.theta = Math.random()*2*Math.PI;
 
     self.i;
 
@@ -325,7 +319,10 @@ var GamePlayScene = function(game, stage)
   }
   var tickTerrariLizard = function(tliz)
   {
+    if(tliz.i >= game.player.lizards.length) return;
     tliz.agitation++;
+
+    var liz = game.player.lizards[tliz.i];
 
     if(tliz.agitation >= 500)
     {
@@ -341,7 +338,7 @@ var GamePlayScene = function(game, stage)
     var newx = lerp(tliz.wx,tliz.to_wx,0.01);
     var newy = lerp(tliz.wy,tliz.to_wy,0.01);
     tliz.framefloat += (Math.abs(newx-tliz.wx)+Math.abs(newy-tliz.wy))*40;
-    while(tliz.framefloat > frames.length) tliz.framefloat -= frames.length;
+    while(tliz.framefloat > game.frames[liz.color].length) tliz.framefloat -= game.frames[liz.color].length;
     tliz.frame = Math.floor(tliz.framefloat)
     tliz.wx = newx;
     tliz.wy = newy;
@@ -364,7 +361,8 @@ var GamePlayScene = function(game, stage)
       context.rotate(tliz.theta-(Math.PI/6));
     }
     context.translate(-tliz.w/2,-tliz.h/2);
-    context.drawImage(frames[tliz.frame],0,0,tliz.w,tliz.h);
+
+    context.drawImage(game.frames[game.player.lizards[tliz.i].color][tliz.frame],0,0,tliz.w,tliz.h);
     context.restore();
 
     //context.strokeStyle = "#FF00FF";
@@ -392,8 +390,8 @@ var GamePlayScene = function(game, stage)
     context.fillStyle = "rgba(0,0,0,0.8)";
     context.fillRect(stats.x,stats.y,stats.w,stats.h);
 
-    context.fillStyle = "#FFFF00";
-    context.fillRect(stats.x+10,stats.y+10,stats.h-20,stats.h-20);
+    context.drawImage(game.frames[liz.color][0],stats.x+10,stats.y+10,stats.h-20,stats.h-20);
+
     context.fillStyle = "#FFFFFF";
     context.fillText(liz.name,stats.x+stats.h,stats.y+20);
     context.fillText("SPEED:",stats.x+stats.h,stats.y+40);

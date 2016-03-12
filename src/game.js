@@ -20,6 +20,15 @@ var Game = function(init)
 
   self.racing_lizard_index = -1;
 
+  self.frames = [];
+  var i = 0;
+  self.frames[i] = []; for(var j = 0; j < 4; j++) { var im = new Image(); im.src = "assets/liz/blue_"   +j+ ".png"; self.frames[i][j] = im; } i++;
+  self.frames[i] = []; for(var j = 0; j < 4; j++) { var im = new Image(); im.src = "assets/liz/lblue_"  +j+ ".png"; self.frames[i][j] = im; } i++;
+  self.frames[i] = []; for(var j = 0; j < 4; j++) { var im = new Image(); im.src = "assets/liz/orange_" +j+ ".png"; self.frames[i][j] = im; } i++;
+  self.frames[i] = []; for(var j = 0; j < 4; j++) { var im = new Image(); im.src = "assets/liz/pink_"   +j+ ".png"; self.frames[i][j] = im; } i++;
+  self.frames[i] = []; for(var j = 0; j < 4; j++) { var im = new Image(); im.src = "assets/liz/purple_" +j+ ".png"; self.frames[i][j] = im; } i++;
+  self.frames[i] = []; for(var j = 0; j < 4; j++) { var im = new Image(); im.src = "assets/liz/white_"  +j+ ".png"; self.frames[i][j] = im; } i++;
+
   var stage = new Stage({width:init.width,height:init.height,container:init.container});
   var scenes = [
     /* 0 */ new NullScene(self, stage),

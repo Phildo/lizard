@@ -39,6 +39,8 @@ var Lizard = function(gender, speed, endurance)
   self.wins = 0;
   self.total_races = 0;
 
+  self.color = randIntBelow(6);
+
   self.x = 0;
   self.y = 0;
   self.w = 0;
