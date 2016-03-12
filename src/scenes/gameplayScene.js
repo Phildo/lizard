@@ -153,19 +153,6 @@ var GamePlayScene = function(game, stage)
     stats.wh = 0.3;
     toScene(stats,canv);
 
-    var race_btn_activate = function(rank) {
-      if(selected_i == -1)
-        return;
-      game.player.rank = rank;
-      var fee = fees[rank];
-      if (game.player.money < fee)
-        return;
-      game.racing_lizard_index = selected_i;
-      //race_select_sfx.play();
-      //trigger fade to black anim;
-      game.setScene(5);
-    }
-
     // Set Up Race Buttons
     var race_msg = [
       "50CC - NO FEE",

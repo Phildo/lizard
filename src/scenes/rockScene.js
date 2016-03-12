@@ -23,7 +23,7 @@ var RockScene = function(game, stage)
   var hoverer;
 
   var back_btn;
-  var buy_btn;
+  //var buy_btn;
 
   var rocks;
   var baits;
@@ -107,6 +107,8 @@ var RockScene = function(game, stage)
 
   var time_til_lizard;
   var catchable_lizard;
+
+  var bought_bait = -1;
 
   var rock_bg_img = new Image();
   rock_bg_img.src = "assets/environmental/rock2.png";
@@ -409,28 +411,28 @@ var RockScene = function(game, stage)
     rockdisp.wh = rock_selects[rock_selects.length-1].wy+rock_selects[0].wh-rockdisp.wy;
     toScene(rockdisp,canv);
 
-    buy_btn = new ButtonBox(0,0,0,0,
-      function(){
-        if(mode != MODE_CHOOSING ||
-          rocks[rock_selected_i].owned ||
-          !rocks[rock_selected_i].unlocked ||
-          rocks[rock_selected_i].price > game.player.money)
-          return;
+    // buy_btn = new ButtonBox(0,0,0,0,
+    //   function(){
+    //     if(mode != MODE_CHOOSING ||
+    //       rocks[rock_selected_i].owned ||
+    //       !rocks[rock_selected_i].unlocked ||
+    //       rocks[rock_selected_i].price > game.player.money)
+    //       return;
 
-        rocks[2].unlocked = true;
-        game.player.money -= rocks[rock_selected_i].price;
-        rocks[rock_selected_i].owned = true;
-        if(rock_selected_i == 1)      game.player.owns_tinfoil = true;
-        else if(rock_selected_i == 2) game.player.owns_cactus  = true;
+    //     rocks[2].unlocked = true;
+    //     game.player.money -= rocks[rock_selected_i].price;
+    //     rocks[rock_selected_i].owned = true;
+    //     if(rock_selected_i == 1)      game.player.owns_tinfoil = true;
+    //     else if(rock_selected_i == 2) game.player.owns_cactus  = true;
 
        
 
-      });
-    buy_btn.wx = rockdisp.wx+rockdisp.ww-0.1;
-    buy_btn.wy = rockdisp.wy-0.05;
-    buy_btn.ww = 0.1;
-    buy_btn.wh = 0.05;
-    toScene(buy_btn,canv);
+    //   });
+    // buy_btn.wx = rockdisp.wx+rockdisp.ww-0.1;
+    // buy_btn.wy = rockdisp.wy-0.05;
+    // buy_btn.ww = 0.1;
+    // buy_btn.wh = 0.05;
+    // toScene(buy_btn,canv);
 
     baitdisp = new BaitDisp();
     baitdisp.wx = bait_selects[0].ww+0.1;
@@ -439,7 +441,7 @@ var RockScene = function(game, stage)
     baitdisp.wh = bait_selects[bait_selects.length-1].wy+bait_selects[0].wh-baitdisp.wy;
     toScene(baitdisp,canv);
 
-    clicker.register(buy_btn);
+    //clicker.register(buy_btn);
     clicker.register(ready_btn);
     clicker.register(keep_btn);
     clicker.register(release_btn);
@@ -550,17 +552,17 @@ var RockScene = function(game, stage)
       for(var i = 0; i < bait_selects.length; i++)
         drawSelect(bait_selects[i]);
 
-      if(
-        !rocks[rock_selected_i].owned &&
-        rocks[rock_selected_i].unlocked &&
-        rocks[rock_selected_i].price <= game.player.money
-      )
-      {
-        context.fillStyle = "rgba(0,0,0,0.8)";
-        context.fillRect(buy_btn.x,buy_btn.y,buy_btn.w,buy_btn.h);
-        context.fillStyle = "#FFFFFF";
-        context.fillText("BUY",buy_btn.x+10,buy_btn.y+20);
-      }
+      // if(
+      //   !rocks[rock_selected_i].owned &&
+      //   rocks[rock_selected_i].unlocked &&
+      //   rocks[rock_selected_i].price <= game.player.money
+      // )
+      // {
+      //   context.fillStyle = "rgba(0,0,0,0.8)";
+      //   context.fillRect(buy_btn.x,buy_btn.y,buy_btn.w,buy_btn.h);
+      //   context.fillStyle = "#FFFFFF";
+      //   context.fillText("BUY",buy_btn.x+10,buy_btn.y+20);
+      // }
 
       // Draw ready button
       if (!ready_btn.hovering) {
@@ -682,8 +684,9 @@ var RockScene = function(game, stage)
       }
       context.restore();     
     }
-
-    help_text.draw(canv);
+    if (mode === MODE_CHOOSING) {
+      help_text.draw(canv);
+    }
     
   };
 
@@ -765,7 +768,7 @@ var RockScene = function(game, stage)
                   game.error_msg = "";
                 }, 5000);
                 selected_i = -1;
-              } else if (r.price > game.player.money) {
+              } else if (r.price > game.player.money && !r.owned) {
                 // not enough money for rock
                 game.error_msg = "THIS ROCK IS EXPENSIVE. MORE EXPENSIVE THAN WHAT YOU CAN AFFORD. GO MAKE MONEY KID.";
                 setTimeout(function() {
@@ -780,7 +783,7 @@ var RockScene = function(game, stage)
                 if (self.i === 1) {
                   game.player.owns_tinfoil = true;
                 } else if (self.i === 2) {
-                  game.player.owns_cactusv = true;
+                  game.player.owns_cactus = true;
                 }
                 selected_i = self.i;
                 buy_sfx.play();
@@ -794,7 +797,15 @@ var RockScene = function(game, stage)
             case SELECT_BAIT:
               let b = baits[self.i];
 
-              if (b.price > game.player.money) {
+              if (bought_bait !== -1) {
+                // ALREADY BOUGHT BAIT
+                game.error_msg = "YOU'VE ALREADY BOUGHT SOME BAIT. TRY CATCHING A LIZARD WITH IT.";
+                setTimeout(function() {
+                  game.error_msg = "";
+                }, 5000);
+              }
+
+              else if (b.price > game.player.money) {
                 //not enough money for bait
                 game.error_msg = "YOU DO NOT HAVE ENOUGH MONEY FOR THIS BAIT. THIS IS NOT A CHARITY CASE.";
                 setTimeout(function() {
@@ -807,6 +818,7 @@ var RockScene = function(game, stage)
                 // enough money, lets buy and select it
                 game.player.money -= b.price;
                 selected_i = self.i;
+                bought_bait = self.i;
                 buy_sfx.play();
                 game.error_msg = "YOU BOUGHT THE BAIT!";
                 setTimeout(function() {
