@@ -354,9 +354,9 @@ var RockScene = function(game, stage)
         else if(rock_selected_i == 2) game.player.owns_cactus  = true;
       });
     buy_btn.wx = rockdisp.wx+rockdisp.ww-0.1;
-    buy_btn.wy = rockdisp.wy+rockdisp.wh-0.1;
+    buy_btn.wy = rockdisp.wy-0.05;
     buy_btn.ww = 0.1;
-    buy_btn.wh = 0.1;
+    buy_btn.wh = 0.05;
     toScene(buy_btn,canv);
 
     baitdisp = new BaitDisp();
@@ -453,9 +453,10 @@ var RockScene = function(game, stage)
         rocks[rock_selected_i].price <= game.player.money
       )
       {
-        context.fillStyle = "#000000";
-        context.fillText("Buy",buy_btn.x,buy_btn.y-10);
-        buy_btn.draw(canv);
+        context.fillStyle = "rgba(0,0,0,0.8)";
+        context.fillRect(buy_btn.x,buy_btn.y,buy_btn.w,buy_btn.h);
+        context.fillStyle = "#FFFFFF";
+        context.fillText("BUY",buy_btn.x+10,buy_btn.y+20);
       }
 
       context.fillStyle = "rgba(0,0,0,0.8)";

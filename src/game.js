@@ -12,6 +12,7 @@ var Game = function(init)
 
   //Shared Game State
   self.player = new Player();
+  //self.player.money = 10000;
 
   //stub hack
   for(var i = 0; i < 1; i++) {
