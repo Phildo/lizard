@@ -305,7 +305,9 @@ var RockScene = function(game, stage)
     function(){
       if(mode != MODE_CAUGHT || (game.player.lizards.length >= MAXIMUM_CAPACITY && liz_selected_i == -1)) return;
       var l = new Lizard();
+      l.naturalName = catchable_lizard.naturalName;
       l.name = catchable_lizard.name;
+      l.description = catchable_lizard.description;
       l.color = catchable_lizard.color;
       l.speed = catchable_lizard.speed;
       l.endurance = catchable_lizard.endurance;
@@ -341,10 +343,11 @@ var RockScene = function(game, stage)
       function(){
         if(mode != MODE_CHOOSING ||
           rocks[rock_selected_i].owned ||
-          rocks[rock_selected_i].locked ||
+          !rocks[rock_selected_i].unlocked ||
           rocks[rock_selected_i].price > game.player.money)
           return;
 
+        rocks[2].unlocked = true;
         game.player.money -= rocks[rock_selected_i].price;
         rocks[rock_selected_i].owned = true;
         if(rock_selected_i == 1)      game.player.owns_tinfoil = true;
@@ -446,7 +449,7 @@ var RockScene = function(game, stage)
 
       if(
         !rocks[rock_selected_i].owned &&
-        !rocks[rock_selected_i].locked &&
+        rocks[rock_selected_i].unlocked &&
         rocks[rock_selected_i].price <= game.player.money
       )
       {
@@ -763,6 +766,13 @@ var RockScene = function(game, stage)
       else                      context.fillStyle = "#999999";
       context.fillRect(stats.x+stats.h+52+10*i,stats.y+46,8,8);
     }
+
+    context.fillStyle = "#999999";
+    var lines = textToLines(canv, "12px Arial", stats.w-stats.h-10, liz.description)
+    for(var i = 0; i < lines.length; i++)
+    {
+      context.fillText(lines[i],stats.x+stats.h,stats.y+stats.h/2+5+15*i);
+    }
   }
 
 
@@ -813,7 +823,9 @@ var RockScene = function(game, stage)
   {
     var self = this;
 
-    self.name = randName();
+    self.naturalName = randName();
+    self.name = self.naturalName.toUpperCase();
+    self.description = randDescription().replace("NAME",self.naturalName).replace("NAME",self.naturalName).replace("NAME",self.naturalName).replace("NAME",self.naturalName).replace("NAME",self.naturalName).replace("NAME",self.naturalName).replace("NAME",self.naturalName);
 
     self.x = 0;
     self.y = 0;
