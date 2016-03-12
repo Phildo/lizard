@@ -299,7 +299,7 @@ var GamePlayScene = function(game, stage)
 
     self.to_wx;
     self.to_wy;
-    self.theta = 0;
+    self.theta = Math.random()*2*Math.PI;
 
     self.i;
 
@@ -390,8 +390,8 @@ var GamePlayScene = function(game, stage)
     context.fillStyle = "rgba(0,0,0,0.8)";
     context.fillRect(stats.x,stats.y,stats.w,stats.h);
 
-    context.fillStyle = "#FFFF00";
-    context.fillRect(stats.x+10,stats.y+10,stats.h-20,stats.h-20);
+    context.drawImage(game.frames[liz.color][0],stats.x+10,stats.y+10,stats.h-20,stats.h-20);
+
     context.fillStyle = "#FFFFFF";
     context.fillText(liz.name,stats.x+stats.h,stats.y+20);
     context.fillText("SPEED:",stats.x+stats.h,stats.y+40);
