@@ -62,7 +62,7 @@ var RaceScene = function(game, stage)
 
     // Set up button to go back to Terrarium
     self.clicker = new Clicker({source:stage.dispCanv.canvas});
-    self.back_btn = new ButtonBox(0,0,0,0,function(){ game.setScene(2); });
+    self.back_btn = new ButtonBox(0,0,0,0,function(){ game.setScene(3); });
     self.back_btn.wx = 0.8;
     self.back_btn.wy = 0.1;
     self.back_btn.ww = 0.2;
