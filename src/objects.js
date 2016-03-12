@@ -36,6 +36,7 @@ var Lizard = function(gender, speed, endurance)
   self.base_endurance = endurance || Math.random();
   self.wins = 0;
   self.total_races = 0;
+  self.cannibal = 0;
 
   self.color = randIntBelow(6);
 
