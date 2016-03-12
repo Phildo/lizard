@@ -125,12 +125,16 @@ var RockScene = function(game, stage)
   var audiooo;
   var catch_sfx;
   var buy_sfx;
+  var start_to_catch_sfx;
   self.ready = function()
   {
     audiooo = new Aud("assets/sounds/Rock.mp3",true);
     audiooo.play();
     catch_sfx = new Aud("assets/sounds/DamnSon.mp3",false);
     buy_sfx = new Aud("assets/sounds/Sounds/Purchase.wav", false);
+    start_to_catch_sfx = new Aud("assets/sounds/Sounds/Character Sleep.wav", false);
+
+
 
     clicker = new Clicker({source:stage.dispCanv.canvas});
     hoverer = new Hoverer({source:stage.dispCanv.canvas});
@@ -324,6 +328,7 @@ var RockScene = function(game, stage)
         game.error_msg = "";
         var n = rock_liz_times[rock_selected_i]*bait_liz_mul[bait_selected_i];
         time_til_lizard = Math.floor(n/2+randIntBelow(n/2));
+        start_to_catch_sfx.play();
         mode = MODE_HUNTING;
       });
     ready_btn.wx = 0.8;
@@ -692,6 +697,9 @@ var RockScene = function(game, stage)
 
     catch_sfx.stop();
     catch_sfx = undefined;
+
+    start_to_catch_sfx.stop();
+    start_to_catch_sfx = undefined;
 
     clicker.detach();
     clicker = undefined;

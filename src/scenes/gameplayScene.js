@@ -54,12 +54,17 @@ var GamePlayScene = function(game, stage)
   ];
   var audiooo;
   var lizard_select_sfx;
+  var race_select_sfx;
   self.ready = function()
   {
     audiooo = new Aud("assets/sounds/Pen.mp3",true);
     audiooo.play();
 
     lizard_select_sfx = new Aud("assets/sounds/Sounds/Collect Item.wav", false);
+
+    //currently cruft/useless because no transition animation to the race screen, so sound never gets properly played.
+    race_select_sfx = new Aud("assets/sounds/Sounds/Character Sleep.wav", false);
+
 
     hit_ui = false;
     clicker = new Clicker({source:stage.dispCanv.canvas});
@@ -156,6 +161,8 @@ var GamePlayScene = function(game, stage)
       if (game.player.money < fee)
         return;
       game.racing_lizard_index = selected_i;
+      //race_select_sfx.play();
+      //trigger fade to black anim;
       game.setScene(5);
     }
 
