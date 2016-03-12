@@ -62,6 +62,19 @@ var RockScene = function(game, stage)
     0.5,
   ];
   var rock_liz_speed_max = [
+    0.4,
+    0.8,
+    1.0,
+  ];
+
+  var rock_liz_endure_min = [
+    0.1,
+    0.1,
+    0.3,
+    0.3,
+  ];
+  var rock_liz_endure_max = [
+    0.5,
     0.5,
     0.8,
     1.0,
@@ -69,9 +82,9 @@ var RockScene = function(game, stage)
 
   var bait_liz_mul = [
     1,
-    0.75,
     0.5,
-    0.2,
+    0.25,
+    0.1,
   ];
 
   var time_til_lizard;
@@ -108,7 +121,8 @@ var RockScene = function(game, stage)
 
     rock = new Rock();
     rock.name = "SIMPLE ROCK";
-    rock.description = "This is a simple rock. It attracts simple lizards.";
+    rock.description = "This is a simple rock. It attracts simple lizards. Nothing wrong with simple. Except they're slow. So if you care about racing yeah I guess there's something wrong with simple.";
+    rock.tldr = "Attracts Slow Lizards";
     rock.price = 0;
     rock.unlocked = true;
     rock.owned = true;
@@ -122,7 +136,8 @@ var RockScene = function(game, stage)
 
     rock = new Rock();
     rock.name = "TINFOIL";
-    rock.description = "Tinfoil makes a simple rock hot. Lizards like hot.";
+    rock.description = "Tinfoil makes a simple rock hot. Hot Lizards like Hot Rocks. Hot Lizards go faaaaast. (I mean really there's probably no correlation between lizard speed and temperature, but the idea is this will make you catch faster lizards).";
+    rock.tldr = "Attracts Fast Lizards";
     rock.price = 500;
     rock.unlocked = true;
     rock.owned = game.player.owns_tinfoil;
@@ -136,7 +151,8 @@ var RockScene = function(game, stage)
 
     rock = new Rock();
     rock.name = "CACTUS";
-    rock.description = "Who doesn't appreciate a good cactus. Top Tier Lizards sure do.";
+    rock.description = "Who doesn't appreciate a good cactus. Top Tier Lizards appreciate the heck outa a good cactus. They'll appreciate it so much they might swing by for a look. Then you'll kidnap them. Steal them from their families. Monster.";
+    rock.tldr = "Attracts Real Fast Lizards";
     rock.price = 10000;
     rock.unlocked = game.player.owns_tinfoil;
     rock.owned = game.player.owns_cactus;
@@ -154,6 +170,7 @@ var RockScene = function(game, stage)
     bait = new Bait();
     bait.name = "NO BAIT";
     bait.description = "No bait, no lizards. Ok a few lizards. But not many.";
+    bait.tldr = "Lizards will come slowly.";
     bait.price = 0;
     bait.img = BIcon1;
     bait.wx = 0.45;
@@ -164,8 +181,9 @@ var RockScene = function(game, stage)
     baits.push(bait);
 
     bait = new Bait();
-    bait.name = "BAD BAIT";
-    bait.description = "Some OK bait. Should get SOME lizard's attention...";
+    bait.name = "FLY";
+    bait.description = "I think lizards like to eat flies. Buy this fly and maybe lizards will come more quickly. But I'm no lizard expert. I AM a fly expert though, and as a fly expert, I know one thing for sure: that is one enormous fly.";
+    bait.tldr = "Lizards will come less slowly maybe.";
     bait.price = 100;
     bait.img = rock_poor_b8_img;
     bait.wx = 0.45;
@@ -176,8 +194,9 @@ var RockScene = function(game, stage)
     baits.push(bait);
 
     bait = new Bait();
-    bait.name = "OK BAIT";
-    bait.description = "This bait brings all the lizards to the yard.";
+    bait.name = "WORM";
+    bait.description = "If I wasn't sure whether lizards ate flies or not (and I wasn't), I'm doubly unsure about worms. But, in this case, it appears that worms attract lizards. I never claimed they ate the worm, though. But maybe they do?";
+    bait.tldr = "Lizards will come more quickly, with greater endurance for some reason. Yeah I know this text is overflowing but there's nothing you can do.";
     bait.price = 200;
     bait.img = rock_good_b8_img;
     bait.wx = 0.45;
@@ -188,8 +207,9 @@ var RockScene = function(game, stage)
     baits.push(bait);
 
     bait = new Bait();
-    bait.name = "GOOD BAIT";
-    bait.description = "8/8 gr8 b8 m8";
+    bait.name = "GRASSHOPPER";
+    bait.description = "By now it's obvious that I don't understand the diet of lizards. But a grasshopper seems like it might plausably be more delicious than a fly or a worm. I hope my ignorance of lizard diets has at least distracted from the absurd price tags though.";
+    bait.tldr = "Lizards come fast, and with profound endurance.";
     bait.price = 500;
     bait.img = rock_gr8_b8_img;
     bait.wx = 0.45;
@@ -305,10 +325,12 @@ var RockScene = function(game, stage)
     function(){
       if(mode != MODE_CAUGHT || (game.player.lizards.length >= MAXIMUM_CAPACITY && liz_selected_i == -1)) return;
       var l = new Lizard();
+      l.naturalName = catchable_lizard.naturalName;
       l.name = catchable_lizard.name;
+      l.description = catchable_lizard.description;
       l.color = catchable_lizard.color;
       l.speed = catchable_lizard.speed;
-      l.endurance = catchable_lizard.endurance;
+      l.base_endurance = catchable_lizard.base_endurance;
       if(game.player.lizards.length < MAXIMUM_CAPACITY)
         game.player.lizards.push(l);
       else
@@ -317,17 +339,22 @@ var RockScene = function(game, stage)
       liz_selected_i = -1;
       game.setScene(2);
     });
-    keep_btn.wx = 0.8;
-    keep_btn.wy = caught_stats.wy+0.025;
-    keep_btn.ww = 0.2;
-    keep_btn.wh = 0.1;
+    keep_btn.wx = caught_stats_title.wx+caught_stats_title.ww+0.05;
+    keep_btn.wy = caught_stats_title.wy;
+    keep_btn.ww = caught_stats_title.ww;
+    keep_btn.wh = caught_stats_title.wh;
     toScene(keep_btn,canv);
 
-    release_btn = new ButtonBox(0,0,0,0,function(){ if(mode != MODE_CAUGHT) return; catchable_lizard = undefined; mode = MODE_CHOOSING; });
-    release_btn.wx = 0.8;
-    release_btn.wy = caught_stats.wy+caught_stats.wh-0.125;
-    release_btn.ww = 0.2;
-    release_btn.wh = 0.1;
+    release_btn = new ButtonBox(0,0,0,0,function(){
+      if(mode != MODE_CAUGHT) return;
+      clicker.unregister(catchable_lizard);
+      catchable_lizard = undefined;
+      mode = MODE_CHOOSING;
+    });
+    release_btn.wx = keep_btn.wx+keep_btn.ww+0.05;
+    release_btn.wy = keep_btn.wy;
+    release_btn.ww = keep_btn.ww;
+    release_btn.wh = keep_btn.wh;
     toScene(release_btn,canv);
 
     rockdisp = new RockDisp();
@@ -341,19 +368,20 @@ var RockScene = function(game, stage)
       function(){
         if(mode != MODE_CHOOSING ||
           rocks[rock_selected_i].owned ||
-          rocks[rock_selected_i].locked ||
+          !rocks[rock_selected_i].unlocked ||
           rocks[rock_selected_i].price > game.player.money)
           return;
 
+        rocks[2].unlocked = true;
         game.player.money -= rocks[rock_selected_i].price;
         rocks[rock_selected_i].owned = true;
         if(rock_selected_i == 1)      game.player.owns_tinfoil = true;
         else if(rock_selected_i == 2) game.player.owns_cactus  = true;
       });
     buy_btn.wx = rockdisp.wx+rockdisp.ww-0.1;
-    buy_btn.wy = rockdisp.wy+rockdisp.wh-0.1;
+    buy_btn.wy = rockdisp.wy-0.05;
     buy_btn.ww = 0.1;
-    buy_btn.wh = 0.1;
+    buy_btn.wh = 0.05;
     toScene(buy_btn,canv);
 
     baitdisp = new BaitDisp();
@@ -384,8 +412,9 @@ var RockScene = function(game, stage)
     if(mode == MODE_HUNTING)
     {
       time_til_lizard--;
-      if(time_til_lizard <= -200)
+      if(time_til_lizard <= -100)
       {
+        clicker.unregister(catchable_lizard);
         catchable_lizard = undefined;
         var n = rock_liz_times[rock_selected_i]*bait_liz_mul[bait_selected_i];
         time_til_lizard = Math.floor(n/2+randIntBelow(n/2));
@@ -398,7 +427,7 @@ var RockScene = function(game, stage)
           catchable_lizard = new RockLizard();
           catchable_lizard.color = randIntBelow(6);
           catchable_lizard.speed = randR(rock_liz_speed_min[rock_selected_i],rock_liz_speed_max[rock_selected_i]);
-          catchable_lizard.endurance = randR(0.1,1);
+          catchable_lizard.base_endurance = randR(rock_liz_endure_min[bait_selected_i],rock_liz_endure_max[bait_selected_i]);
           catchable_lizard.ww = 0.07;
           catchable_lizard.wh = 0.07;
           var t = Math.random()*Math.PI*2;
@@ -446,13 +475,14 @@ var RockScene = function(game, stage)
 
       if(
         !rocks[rock_selected_i].owned &&
-        !rocks[rock_selected_i].locked &&
+        rocks[rock_selected_i].unlocked &&
         rocks[rock_selected_i].price <= game.player.money
       )
       {
-        context.fillStyle = "#000000";
-        context.fillText("Buy",buy_btn.x,buy_btn.y-10);
-        buy_btn.draw(canv);
+        context.fillStyle = "rgba(0,0,0,0.8)";
+        context.fillRect(buy_btn.x,buy_btn.y,buy_btn.w,buy_btn.h);
+        context.fillStyle = "#FFFFFF";
+        context.fillText("BUY",buy_btn.x+10,buy_btn.y+20);
       }
 
       context.fillStyle = "rgba(0,0,0,0.8)";
@@ -473,6 +503,17 @@ var RockScene = function(game, stage)
       if(catchable_lizard)
       {
         drawCatchableLizard();
+        context.fillStyle = "#000000";
+        context.font = "24px Arial";
+        context.fillText("OMG THERE HE GOES GET EM",canv.width/2-50,canv.height/2-50);
+        context.font = "12px Arial";
+      }
+      else
+      {
+        context.fillStyle = "#000000";
+        context.font = "24px Arial";
+        context.fillText("Shhhhh wait for the lizard...",canv.width/2-50,canv.height/2-50);
+        context.font = "12px Arial";
       }
     }
     else if(mode == MODE_CAUGHT)
@@ -517,9 +558,9 @@ var RockScene = function(game, stage)
           context.fillRect(keep_btn.x,keep_btn.y,keep_btn.w,keep_btn.h);
           context.fillStyle = "#FFFFFF";
           if(game.player.lizards.length < MAXIMUM_CAPACITY)
-            context.fillText("KEEP",keep_btn.x+10,keep_btn.y+25);
+            context.fillText("KEEP",keep_btn.x+10,keep_btn.y+20);
           else
-            context.fillText("SWAP",keep_btn.x+10,keep_btn.y+25);
+            context.fillText("SWAP",keep_btn.x+10,keep_btn.y+20);
         }
 
         context.fillStyle = "rgba(0,0,0,0.8)";
@@ -667,7 +708,7 @@ var RockScene = function(game, stage)
           context.fillText("END:",select.x+10,select.y+55);
           for(var i = 0; i < 10; i++)
           {
-            if(liz.endurance >= i/10) context.fillStyle = "#000000";
+            if(liz.base_endurance >= i/10) context.fillStyle = "#000000";
             else                      context.fillStyle = "#666666";
             context.fillRect(select.x+52+10*i,select.y+46,8,8);
           }
@@ -717,7 +758,7 @@ var RockScene = function(game, stage)
           context.fillText("END:",select.x+10,select.y+55);
           for(var i = 0; i < 10; i++)
           {
-            if(liz.endurance >= i/10) context.fillStyle = "#FFFFFF";
+            if(liz.base_endurance >= i/10) context.fillStyle = "#FFFFFF";
             else                      context.fillStyle = "#999999";
             context.fillRect(select.x+52+10*i,select.y+46,8,8);
           }
@@ -779,10 +820,15 @@ var RockScene = function(game, stage)
     context.fillText("ENDUR:",stats.x+stats.h,stats.y+55);
     for(var i = 0; i < 10; i++)
     {
-      if(liz.endurance >= i/10) context.fillStyle = "#FFFFFF";
+      if(liz.base_endurance >= i/10) context.fillStyle = "#FFFFFF";
       else                      context.fillStyle = "#999999";
       context.fillRect(stats.x+stats.h+52+10*i,stats.y+46,8,8);
     }
+
+    context.fillStyle = "#999999";
+    var lines = textToLines(canv, "12px Arial", stats.w-stats.h-10, liz.description)
+    for(var i = 0; i < lines.length; i++)
+      context.fillText(lines[i],stats.x+stats.h,stats.y+stats.h/2+5+15*i);
   }
 
 
@@ -794,6 +840,7 @@ var RockScene = function(game, stage)
     var self = this;
     self.name = "rock";
     self.description = "a rock";
+    self.tldr = "a rock";
     self.img;
 
     self.price = 0;
@@ -816,6 +863,7 @@ var RockScene = function(game, stage)
     var self = this;
     self.name = "bait";
     self.description = "some bait";
+    self.tldr = "some bait";
     self.img;
 
     self.wx;
@@ -833,7 +881,9 @@ var RockScene = function(game, stage)
   {
     var self = this;
 
-    self.name = randName();
+    self.naturalName = randName();
+    self.name = self.naturalName.toUpperCase();
+    self.description = randDescription().replace("NAME",self.naturalName).replace("NAME",self.naturalName).replace("NAME",self.naturalName).replace("NAME",self.naturalName).replace("NAME",self.naturalName).replace("NAME",self.naturalName).replace("NAME",self.naturalName);
 
     self.x = 0;
     self.y = 0;
@@ -929,7 +979,14 @@ var RockScene = function(game, stage)
     context.fillStyle = "#FFFFFF";
 
     context.fillText(rocks[rock_selected_i].name,rockdisp.x+10,rockdisp.y+20);
-    context.fillText(rocks[rock_selected_i].description,rockdisp.x+10,rockdisp.y+40);
+
+    context.fillStyle = "#999999";
+    var lines = textToLines(canv, "12px Arial", rockdisp.w-20, rocks[rock_selected_i].description)
+    for(var i = 0; i < lines.length; i++)
+      context.fillText(lines[i],rockdisp.x+10,rockdisp.y+40+15*i);
+
+    context.fillStyle = "#FFFFFF";
+    context.fillText(rocks[rock_selected_i].tldr,rockdisp.x+10,rockdisp.y+rockdisp.h-10);
   }
 
   var BaitDisp = function()
@@ -953,7 +1010,14 @@ var RockScene = function(game, stage)
     context.fillStyle = "#FFFFFF";
 
     context.fillText(baits[bait_selected_i].name,baitdisp.x+10,baitdisp.y+20);
-    context.fillText(baits[bait_selected_i].description,baitdisp.x+10,baitdisp.y+40);
+
+    context.fillStyle = "#999999";
+    var lines = textToLines(canv, "12px Arial", baitdisp.w-20, baits[bait_selected_i].description)
+    for(var i = 0; i < lines.length; i++)
+      context.fillText(lines[i],baitdisp.x+10,baitdisp.y+40+15*i);
+
+    context.fillStyle = "#FFFFFF";
+    context.fillText(baits[bait_selected_i].tldr,baitdisp.x+10,baitdisp.y+baitdisp.h-10);
   }
 
   var Title = function()

@@ -340,3 +340,32 @@ var SeededRand = function(s)
   }
 }
 
+var textToLines = function(canv, font, width, text)
+{
+  var lines = [];
+  var found = 0;
+  var searched = 0;
+  var tentative_search = 0;
+
+  canv.context.font = font;
+
+  while(found < text.length)
+  {
+    searched = text.indexOf(" ",found);
+    if(searched == -1) searched = text.length;
+    tentative_search = text.indexOf(" ",searched+1);
+    if(tentative_search == -1) tentative_search = text.length;
+    while(canv.context.measureText(text.substring(found,tentative_search)).width < width && searched != text.length)
+    {
+      searched = tentative_search;
+      tentative_search = text.indexOf(" ",searched+1);
+      if(tentative_search == -1) tentative_search = text.length;
+    }
+    if(text.substring(searched, searched+1) == " ") searched++;
+    lines.push(text.substring(found,searched));
+    found = searched;
+  }
+
+  return lines;
+}
+
