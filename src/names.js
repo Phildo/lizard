@@ -47,7 +47,6 @@ var names = [
   "Edgar",
   "OG Kushmodo",
   "Maximus Capulet",
-  "<Insert Name Here>",
   "???",
   "Ace",
   "Adam",
