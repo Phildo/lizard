@@ -6,6 +6,8 @@ var SacrificeScene = function(game, stage)
   var canvas = canv.canvas;
   var context = canv.context;
 
+  var phil_hack_transition_in;
+
   var clicker;
   var hoverer;
 
@@ -49,6 +51,8 @@ var SacrificeScene = function(game, stage)
   var lizard_select_sfx;
   self.ready = function()
   {
+    phil_hack_transition_in = 100;
+
     audiooo = new Aud("assets/sounds/Sacrifice.mp3", true);
     audiooo.play();
 
@@ -214,6 +218,9 @@ var SacrificeScene = function(game, stage)
 
     for(var i = 0; i < tlizards.length; i++)
       tickTerrariLizard(tlizards[i]);
+
+    if(phil_hack_transition_in)
+      phil_hack_transition_in--;
   };
 
   self.draw = function()
@@ -300,6 +307,9 @@ var SacrificeScene = function(game, stage)
     }
 
     help_text.draw(canv);
+
+    context.fillStyle = "rgba(0,0,0,"+(phil_hack_transition_in/100)+")";
+    context.fillRect(0,0,canv.width,canv.height);
   };
 
   self.cleanup = function()

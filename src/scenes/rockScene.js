@@ -6,6 +6,8 @@ var RockScene = function(game, stage)
   var canvas = canv.canvas;
   var context = canv.context;
 
+  var phil_hack_transition_in;
+
   var ENUM;
 
   ENUM = 0;
@@ -163,6 +165,8 @@ var RockScene = function(game, stage)
   var release_lizard_sfx;
   self.ready = function()
   {
+    phil_hack_transition_in = 100;
+
     audiooo = new Aud("assets/sounds/Rock.mp3",true);
     audiooo.play();
     catch_sfx = new Aud("assets/sounds/DamnSon.mp3",false);
@@ -556,6 +560,8 @@ var RockScene = function(game, stage)
         tickCatchableLizard();
       }
     }
+    if(phil_hack_transition_in)
+      phil_hack_transition_in--;
   };
 
   self.draw = function()
@@ -701,7 +707,6 @@ var RockScene = function(game, stage)
     }
     // Draw error message
     if (game.error_msg !== "") {
-      console.log(game.error_msg);
       var lines = textToLines(canv, "bold 48px Arial", canv.width * 0.65, game.error_msg);
       context.save();
       context.fillStyle = "#ffffff";
@@ -721,12 +726,14 @@ var RockScene = function(game, stage)
       for (var i = 0, l = lines.length; i < l; i++) {
         context.fillText(lines[i], text_pos.x, text_pos.y + (i * 48)); 
       }
-      context.restore();     
+      context.restore();
     }
     if (mode === MODE_CHOOSING) {
       help_text.draw(canv);
     }
-    
+
+    context.fillStyle = "rgba(0,0,0,"+(phil_hack_transition_in/100)+")";
+    context.fillRect(0,0,canv.width,canv.height);
   };
 
   self.cleanup = function()
