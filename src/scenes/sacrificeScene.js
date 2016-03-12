@@ -31,7 +31,7 @@ var SacrificeScene = function(game, stage)
   var audiooo;
   self.ready = function()
   {
-    audiooo = new Aud("assets/sounds/Pen.mp3");
+    audiooo = new Aud("assets/sounds/Sacrifice.mp3");
     audiooo.play();
 
     hit_ui = false;
@@ -103,71 +103,71 @@ var SacrificeScene = function(game, stage)
     stats.wh = 0.3;
     toScene(stats,canv);
 
-    var race_btn_activate = function(rank) {
-      if(selected_i == -1)
-        return;
-      game.player.rank = rank;
-      var fee = game.player.rank * 50;
-      if (game.player.money < fee)
-        return;
-      game.racing_lizard_index = selected_i;
-      game.setScene(4);
-    }
+    // var race_btn_activate = function(rank) {
+    //   if(selected_i == -1)
+    //     return;
+    //   game.player.rank = rank;
+    //   var fee = game.player.rank * 50;
+    //   if (game.player.money < fee)
+    //     return;
+    //   game.racing_lizard_index = selected_i;
+    //   game.setScene(4);
+    // }
 
-    // Set Up Race Buttons
-    var race_msg = [
-      "50CC - NO FEE",
-      "100CC - $50 FEE",
-      "150CC - $100 FEE",
-      "MASTER - $150 FEE"
-    ];
-    race_btns = [];
-    for (let i = 0; i < 4; i ++) {
-      let btn = new ButtonBox(0,0,0,0, function() {
-        if(selected_i == -1)
-          return;
-        hit_ui = true;
-        if (selected_i === game.exhausted) {
-          game.error_msg = "LIZARD EXHAUSTED! GIVE THE POOR REPTILE A BREAK YOU ANIMAL."
-          setTimeout(function() {
-            game.error_msg = "";
-          }, 3000);
-          return;
-        }
-        game.player.rank = i;
-        var fee = game.player.rank * 50;
-        if (game.player.money < fee) {
-          game.error_msg = "NOT ENOUGH MONEY! GO RACE IN 50CC YOU NOVICE.";
-          setTimeout(function() {
-            game.error_msg = "";
-          }, 3000);
-          return;
-        }
+    // // Set Up Race Buttons
+    // var race_msg = [
+    //   "50CC - NO FEE",
+    //   "100CC - $50 FEE",
+    //   "150CC - $100 FEE",
+    //   "MASTER - $150 FEE"
+    // ];
+    // race_btns = [];
+    // for (let i = 0; i < 4; i ++) {
+    //   let btn = new ButtonBox(0,0,0,0, function() {
+    //     if(selected_i == -1)
+    //       return;
+    //     hit_ui = true;
+    //     if (selected_i === game.exhausted) {
+    //       game.error_msg = "LIZARD EXHAUSTED! GIVE THE POOR REPTILE A BREAK YOU ANIMAL."
+    //       setTimeout(function() {
+    //         game.error_msg = "";
+    //       }, 3000);
+    //       return;
+    //     }
+    //     game.player.rank = i;
+    //     var fee = game.player.rank * 50;
+    //     if (game.player.money < fee) {
+    //       game.error_msg = "NOT ENOUGH MONEY! GO RACE IN 50CC YOU NOVICE.";
+    //       setTimeout(function() {
+    //         game.error_msg = "";
+    //       }, 3000);
+    //       return;
+    //     }
 
-        game.racing_lizard_index = selected_i;
-        game.setScene(4);
-      });
-      btn.ww = 0.175;
-      btn.wh = 0.1;
-      btn.wx = 0.825 - (btn.ww * (3 - i));
-      btn.wy = stats.wy - btn.wh;
-      toScene(btn, canv);
+    //     game.racing_lizard_index = selected_i;
+    //     game.setScene(4);
+    //   });
+    //   btn.ww = 0.175;
+    //   btn.wh = 0.1;
+    //   btn.wx = 0.825 - (btn.ww * (3 - i));
+    //   btn.wy = stats.wy - btn.wh;
+    //   toScene(btn, canv);
 
-      btn.hovering = false;
-      btn.hover = function() {
-        btn.hovering = true;
-      };
-      btn.unhover = function() {
-        btn.hovering = false;
-      }
+    //   btn.hovering = false;
+    //   btn.hover = function() {
+    //     btn.hovering = true;
+    //   };
+    //   btn.unhover = function() {
+    //     btn.hovering = false;
+    //   }
 
-      race_btns.push({
-        btn: btn,
-        msg: race_msg[i]
-      });
-      clicker.register(btn);
-      hoverer.register(btn);
-    }
+    //   race_btns.push({
+    //     btn: btn,
+    //     msg: race_msg[i]
+    //   });
+    //   clicker.register(btn);
+    //   hoverer.register(btn);
+    // }
 
     moneydisp = new MoneyDisp();
     moneydisp.wx = 0;
@@ -202,12 +202,12 @@ var SacrificeScene = function(game, stage)
       context.fillStyle = "rgba(0,0,0,0.8)";
       context.fillRect(pen_btn.x,pen_btn.y,pen_btn.w,pen_btn.h);
       context.fillStyle = "#FFFFFF";
-      context.fillText("BACK TO PEN",pen_btn.x+10,pen_btn.y+25);
+      context.fillText("BACK TO THA PEN",pen_btn.x+10,pen_btn.y+25);
     } else {
       context.fillStyle = "rgba(255,255,255,0.8)";
       context.fillRect(pen_btn.x,pen_btn.y,pen_btn.w,pen_btn.h);
       context.fillStyle = "#000000";
-      context.fillText("BACK TO PEN",pen_btn.x+10,pen_btn.y+25);
+      context.fillText("BACK TO THA PEN",pen_btn.x+10,pen_btn.y+25);
     }
 
     context.fillStyle = "rgba(0,0,0,0.8)";
@@ -223,20 +223,20 @@ var SacrificeScene = function(game, stage)
     if(selected_i != -1)
     {
       drawStatsDisp();
-      race_btns.forEach(function(item, index) {
-        var btn = item.btn;
-        if (btn.hovering) {
-          context.fillStyle = "rgba(255,255,255,0.8)";
-          context.fillRect(btn.x,btn.y,btn.w,btn.h);
-          context.fillStyle = "#000000";
-          context.fillText(item.msg,btn.x+10,btn.y+25);
-        } else {
-          context.fillStyle = "rgba(0,0,0,0.8)";
-          context.fillRect(btn.x,btn.y,btn.w,btn.h);
-          context.fillStyle = "#FFFFFF";
-          context.fillText(item.msg,btn.x+10,btn.y+25); 
-        }
-      });
+      // race_btns.forEach(function(item, index) {
+      //   var btn = item.btn;
+      //   if (btn.hovering) {
+      //     context.fillStyle = "rgba(255,255,255,0.8)";
+      //     context.fillRect(btn.x,btn.y,btn.w,btn.h);
+      //     context.fillStyle = "#000000";
+      //     context.fillText(item.msg,btn.x+10,btn.y+25);
+      //   } else {
+      //     context.fillStyle = "rgba(0,0,0,0.8)";
+      //     context.fillRect(btn.x,btn.y,btn.w,btn.h);
+      //     context.fillStyle = "#FFFFFF";
+      //     context.fillText(item.msg,btn.x+10,btn.y+25); 
+      //   }
+      // });
     }
 
     // Draw error message
