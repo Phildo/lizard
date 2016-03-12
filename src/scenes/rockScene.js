@@ -62,6 +62,19 @@ var RockScene = function(game, stage)
     0.5,
   ];
   var rock_liz_speed_max = [
+    0.4,
+    0.8,
+    1.0,
+  ];
+
+  var rock_liz_endure_min = [
+    0.1,
+    0.1,
+    0.3,
+    0.3,
+  ];
+  var rock_liz_endure_max = [
+    0.5,
     0.5,
     0.8,
     1.0,
@@ -69,9 +82,9 @@ var RockScene = function(game, stage)
 
   var bait_liz_mul = [
     1,
-    0.75,
     0.5,
-    0.2,
+    0.25,
+    0.1,
   ];
 
   var time_til_lizard;
@@ -394,7 +407,7 @@ var RockScene = function(game, stage)
     if(mode == MODE_HUNTING)
     {
       time_til_lizard--;
-      if(time_til_lizard <= -200)
+      if(time_til_lizard <= -100)
       {
         catchable_lizard = undefined;
         var n = rock_liz_times[rock_selected_i]*bait_liz_mul[bait_selected_i];
@@ -408,7 +421,7 @@ var RockScene = function(game, stage)
           catchable_lizard = new RockLizard();
           catchable_lizard.color = randIntBelow(6);
           catchable_lizard.speed = randR(rock_liz_speed_min[rock_selected_i],rock_liz_speed_max[rock_selected_i]);
-          catchable_lizard.endurance = randR(0.1,1);
+          catchable_lizard.endurance = randR(rock_liz_endure_min[bait_selected_i],rock_liz_endure_max[bait_selected_i]);
           catchable_lizard.ww = 0.07;
           catchable_lizard.wh = 0.07;
           var t = Math.random()*Math.PI*2;
