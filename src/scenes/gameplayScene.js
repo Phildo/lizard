@@ -38,7 +38,7 @@ var GamePlayScene = function(game, stage)
     clicker = new Clicker({source:stage.dispCanv.canvas});
     hoverer = new Hoverer({source:stage.dispCanv.canvas});
 
-    rock_btn = new ButtonBox(0,0,0,0,function(){ game.setScene(3); });
+    rock_btn = new ButtonBox(0,0,0,0,function(){ game.setScene(4); });
     rock_btn.wx = 0.8;
     rock_btn.wy = 0.1;
     rock_btn.ww = 0.2;
@@ -55,7 +55,7 @@ var GamePlayScene = function(game, stage)
     hoverer.register(rock_btn);
 
 
-    sac_btn = new ButtonBox(0,0,0,0,function(){ game.setScene(5); });
+    sac_btn = new ButtonBox(0,0,0,0,function(){ game.setScene(6); });
     sac_btn.wx = 0.8;
     sac_btn.wy = 0.25;
     sac_btn.ww = 0.2;
@@ -129,7 +129,7 @@ var GamePlayScene = function(game, stage)
       if (game.player.money < fee)
         return;
       game.racing_lizard_index = selected_i;
-      game.setScene(4);
+      game.setScene(5);
     }
 
     // Set Up Race Buttons
@@ -163,7 +163,7 @@ var GamePlayScene = function(game, stage)
         }
 
         game.racing_lizard_index = selected_i;
-        game.setScene(4);
+        game.setScene(5);
       });
       btn.ww = 0.175;
       btn.wh = 0.1;
@@ -293,7 +293,7 @@ var GamePlayScene = function(game, stage)
       for (var i = 0, l = lines.length; i < l; i++) {
         context.fillText(lines[i], text_pos.x, text_pos.y + (i * 48)); 
       }
-      context.restore();     
+      context.restore();
     }
   };
 

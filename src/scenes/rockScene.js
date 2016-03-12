@@ -1,3 +1,4 @@
+"use strict";
 var RockScene = function(game, stage)
 {
   var self = this;
@@ -71,7 +72,7 @@ var RockScene = function(game, stage)
     0.1,
     0.1,
     0.3,
-    0.3,
+    0.4,
   ];
   var rock_liz_endure_max = [
     0.5,
@@ -109,7 +110,7 @@ var RockScene = function(game, stage)
     clicker = new Clicker({source:stage.dispCanv.canvas});
     hoverer = new Hoverer({source:stage.dispCanv.canvas});
 
-    back_btn = new ButtonBox(0,0,0,0,function(){ if(mode == MODE_CAUGHT) return; game.setScene(2); });
+    back_btn = new ButtonBox(0,0,0,0,function(){ if(mode == MODE_CAUGHT) return; game.setScene(3); });
     back_btn.wx = 0.8;
     back_btn.wy = 0.1;
     back_btn.ww = 0.2;
@@ -227,10 +228,9 @@ var RockScene = function(game, stage)
     toScene(moneydisp,canv);
 
     rock_selects = [];
-    var select;
-    for(var i = 0; i < rocks.length; i++)
+    for(let i = 0; i < rocks.length; i++)
     {
-      select = new Select();
+      let select = new Select();
       select.i = i;
       select.type = SELECT_ROCK;
       select.wh = 0.1;
@@ -244,16 +244,16 @@ var RockScene = function(game, stage)
     }
 
     bait_selects = [];
-    var select;
-    for(var i = 0; i < baits.length; i++)
+    for(let i = 0; i < baits.length; i++)
     {
-      select = new Select();
+      let select = new Select();
       select.i = i;
       select.type = SELECT_BAIT;
       select.wh = 0.1;
       select.ww = 0.2;
       select.wx = 0;
       select.wy = (rock_selects[0].wh*(rock_selects.length+1))+0.1+(select.wh*i);
+      select.hover_i = -1;
       toScene(select,canv);
       clicker.register(select);
       hoverer.register(select);
@@ -261,10 +261,9 @@ var RockScene = function(game, stage)
     }
 
     liz_selects = [];
-    var select;
-    for(var i = 0; i < MAXIMUM_CAPACITY; i++)
+    for(let i = 0; i < MAXIMUM_CAPACITY; i++)
     {
-      select = new Select();
+      let select = new Select();
       select.i = i;
       select.type = SELECT_LIZ;
       select.wh = 0.16;
@@ -348,8 +347,11 @@ var RockScene = function(game, stage)
       else
         game.player.lizards[liz_selected_i] = l;
       catchable_lizard = undefined;
+      if (liz_selected_i === game.exhausted) {
+        game.exhausted = -1;
+      }
       liz_selected_i = -1;
-      game.setScene(2);
+      game.setScene(3);
     });
     keep_btn.wx = caught_stats_title.wx+caught_stats_title.ww+0.05;
     keep_btn.wy = caught_stats_title.wy;
@@ -427,6 +429,10 @@ var RockScene = function(game, stage)
 
     hoverer.register(back_btn);
     hoverer.register(ready_btn);
+
+    if (game.player.owns_cactus)        rock_selected_i = 2;
+    else if (game.player.owns_tinfoil)  rock_selected_i = 1;
+    else                                rock_selected_i = 0;
 
     rock_selected_i = 0;
     bait_selected_i = 0;
@@ -782,12 +788,18 @@ var RockScene = function(game, stage)
             context.fillStyle = "#000000";
             context.fillText("$"+r.price,select.x+10,select.y+35);
           }
+          if (select.hovering) {
+            drawRockDisp(select);
+          }
         }
         if(select.type == SELECT_BAIT)
         {
           var b = baits[select.i];
           context.fillStyle = "#000000";
           context.fillText("$"+b.price,select.x+10,select.y+35);
+          if (select.hovering) {
+            drawBaitDisp(select);
+          }
         }
       }
       else
@@ -832,12 +844,20 @@ var RockScene = function(game, stage)
             context.fillStyle = "#FFFFFF";
             context.fillText("$"+r.price,select.x+10,select.y+35);
           }
+
+          if (select.hovering) {
+            drawRockDisp(select);
+          }
         }
         if(select.type == SELECT_BAIT)
         {
           var b = baits[select.i];
           context.fillStyle = "#FFFFFF";
           context.fillText("$"+b.price,select.x+10,select.y+35);
+
+          if (select.hovering) {
+            drawBaitDisp(select);
+          }
         }
       }
     }
@@ -1028,21 +1048,21 @@ var RockScene = function(game, stage)
     self.ww = 0.;
     self.wh = 0.;
   }
-  var drawRockDisp = function()
+  var drawRockDisp = function(select)
   {
     context.fillStyle = "rgba(0,0,0,0.8)";
     context.fillRect(rockdisp.x,rockdisp.y,rockdisp.w,rockdisp.h);
     context.fillStyle = "#FFFFFF";
 
-    context.fillText(rocks[rock_selected_i].name,rockdisp.x+10,rockdisp.y+20);
+    context.fillText(rocks[select.i].name,rockdisp.x+10,rockdisp.y+20);
 
     context.fillStyle = "#999999";
-    var lines = textToLines(canv, "12px Arial", rockdisp.w-20, rocks[rock_selected_i].description)
+    var lines = textToLines(canv, "12px Arial", rockdisp.w-20, rocks[select.i].description)
     for(var i = 0; i < lines.length; i++)
       context.fillText(lines[i],rockdisp.x+10,rockdisp.y+40+15*i);
 
     context.fillStyle = "#FFFFFF";
-    context.fillText(rocks[rock_selected_i].tldr,rockdisp.x+10,rockdisp.y+rockdisp.h-10);
+    context.fillText(rocks[select.i].tldr,rockdisp.x+10,rockdisp.y+rockdisp.h-10);
   }
 
   var BaitDisp = function()
@@ -1059,21 +1079,21 @@ var RockScene = function(game, stage)
     self.ww = 0.;
     self.wh = 0.;
   }
-  var drawBaitDisp = function()
+  var drawBaitDisp = function(select)
   {
     context.fillStyle = "rgba(0,0,0,0.8)";
     context.fillRect(baitdisp.x,baitdisp.y,baitdisp.w,baitdisp.h);
     context.fillStyle = "#FFFFFF";
 
-    context.fillText(baits[bait_selected_i].name,baitdisp.x+10,baitdisp.y+20);
+    context.fillText(baits[select.i].name,baitdisp.x+10,baitdisp.y+20);
 
     context.fillStyle = "#999999";
-    var lines = textToLines(canv, "12px Arial", baitdisp.w-20, baits[bait_selected_i].description)
+    var lines = textToLines(canv, "12px Arial", baitdisp.w-20, baits[select.i].description)
     for(var i = 0; i < lines.length; i++)
       context.fillText(lines[i],baitdisp.x+10,baitdisp.y+40+15*i);
 
     context.fillStyle = "#FFFFFF";
-    context.fillText(baits[bait_selected_i].tldr,baitdisp.x+10,baitdisp.y+baitdisp.h-10);
+    context.fillText(baits[select.i].tldr,baitdisp.x+10,baitdisp.y+baitdisp.h-10);
   }
 
   var Title = function()
