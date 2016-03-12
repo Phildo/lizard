@@ -19,6 +19,33 @@ var RaceScene = function(game, stage)
 
   self.ready = function()
   {
+    var opponents = [
+      [ // RANK_50
+        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 1.0)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 1.0)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 1.0)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 1.0))
+      ],
+      [ // RANK_100
+        new Lizard(LIZARD_GENDER_MALE, randR(0.30, 0.60), randR(0.40, 1.0)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.30, 0.60), randR(0.40, 1.0)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.30, 0.60), randR(0.40, 1.0)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.30, 0.60), randR(0.40, 1.0))
+      ],
+      [ // RANK_150
+        new Lizard(LIZARD_GENDER_MALE, randR(0.50, 0.80), randR(0.60, 1.0)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.50, 0.80), randR(0.60, 1.0)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.50, 0.80), randR(0.60, 1.0)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.50, 0.80), randR(0.60, 1.0))
+      ],
+      [ // RANK_MASTER
+        new Lizard(LIZARD_GENDER_MALE, randR(0.70, 1.0), randR(0.70, 1.0)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.70, 1.0), randR(0.70, 1.0)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.70, 1.0), randR(0.70, 1.0)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.70, 1.0), randR(0.70, 1.0))
+      ]
+    ];
+
     var selectedLizard = game.player.lizards[game.racing_lizard_index];
     var rank = game.player.rank;
     // var rank = RANK_CHALLENGER;
@@ -157,7 +184,9 @@ var RaceScene = function(game, stage)
     // Cleanup clicker
     self.clicker.detach();
     self.clicker = undefined;
-    game.exhausted = game.racing_lizard_index;
+    if (self.track.state !== RACE_READY) {
+      game.exhausted = game.racing_lizard_index;
+    }
   };
 
   var tickRunner = function(liz) {
@@ -390,31 +419,4 @@ var RaceScene = function(game, stage)
     }
     
   }
-
-  var opponents = [
-    [ // RANK_50
-      new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 1.0)),
-      new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 1.0)),
-      new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 1.0)),
-      new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 1.0))
-    ],
-    [ // RANK_100
-      new Lizard(LIZARD_GENDER_MALE, randR(0.30, 0.60), randR(0.40, 1.0)),
-      new Lizard(LIZARD_GENDER_MALE, randR(0.30, 0.60), randR(0.40, 1.0)),
-      new Lizard(LIZARD_GENDER_MALE, randR(0.30, 0.60), randR(0.40, 1.0)),
-      new Lizard(LIZARD_GENDER_MALE, randR(0.30, 0.60), randR(0.40, 1.0))
-    ],
-    [ // RANK_150
-      new Lizard(LIZARD_GENDER_MALE, randR(0.50, 0.80), randR(0.60, 1.0)),
-      new Lizard(LIZARD_GENDER_MALE, randR(0.50, 0.80), randR(0.60, 1.0)),
-      new Lizard(LIZARD_GENDER_MALE, randR(0.50, 0.80), randR(0.60, 1.0)),
-      new Lizard(LIZARD_GENDER_MALE, randR(0.50, 0.80), randR(0.60, 1.0))
-    ],
-    [ // RANK_MASTER
-      new Lizard(LIZARD_GENDER_MALE, randR(0.70, 1.0), randR(0.70, 1.0)),
-      new Lizard(LIZARD_GENDER_MALE, randR(0.70, 1.0), randR(0.70, 1.0)),
-      new Lizard(LIZARD_GENDER_MALE, randR(0.70, 1.0), randR(0.70, 1.0)),
-      new Lizard(LIZARD_GENDER_MALE, randR(0.70, 1.0), randR(0.70, 1.0))
-    ]
-  ];
 };
