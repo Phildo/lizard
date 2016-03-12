@@ -16,6 +16,7 @@ var GamePlayScene = function(game, stage)
   var race_btns;
 
   var phil_hack_dark_transition_tick = 0;
+  var phil_hack_transition_to_scene;
 
   var terrarium;
   var selects;
@@ -72,7 +73,7 @@ var GamePlayScene = function(game, stage)
     clicker = new Clicker({source:stage.dispCanv.canvas});
     hoverer = new Hoverer({source:stage.dispCanv.canvas});
 
-    rock_btn = new ButtonBox(0,0,0,0,function(){ if(phil_hack_dark_transition_tick) return; game.setScene(4); });
+    rock_btn = new ButtonBox(0,0,0,0,function(){ if(phil_hack_dark_transition_tick) return; phil_hack_transition_to_scene = 4; phil_hack_dark_transition_tick++; });
     rock_btn.wx = 0.8;
     rock_btn.wy = 0.1;
     rock_btn.ww = 0.2;
@@ -89,7 +90,7 @@ var GamePlayScene = function(game, stage)
     hoverer.register(rock_btn);
 
 
-    sac_btn = new ButtonBox(0,0,0,0,function(){ if(phil_hack_dark_transition_tick) return; game.setScene(6); });
+    sac_btn = new ButtonBox(0,0,0,0,function(){ if(phil_hack_dark_transition_tick) return; phil_hack_transition_to_scene = 6; phil_hack_dark_transition_tick++; });
     sac_btn.wx = 0.8;
     sac_btn.wy = 0.25;
     sac_btn.ww = 0.2;
@@ -188,6 +189,7 @@ var GamePlayScene = function(game, stage)
 
         game.racing_lizard_index = selected_i;
         phil_hack_dark_transition_tick++;
+        phil_hack_transition_to_scene = 5;
       });
       btn.ww = 0.175;
       btn.wh = 0.1;
@@ -240,7 +242,7 @@ var GamePlayScene = function(game, stage)
     {
       phil_hack_dark_transition_tick++;
       if(phil_hack_dark_transition_tick >= 100)
-        game.setScene(5);
+        game.setScene(phil_hack_transition_to_scene);
     }
   };
 
