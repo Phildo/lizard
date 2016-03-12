@@ -108,6 +108,8 @@ var RockScene = function(game, stage)
   var time_til_lizard;
   var catchable_lizard;
 
+  var bought_bait = -1;
+
   var rock_bg_img = new Image();
   rock_bg_img.src = "assets/environmental/rock2.png";
   var rock_tin_bg_img = new Image();
@@ -125,12 +127,16 @@ var RockScene = function(game, stage)
   var audiooo;
   var catch_sfx;
   var buy_sfx;
+  var start_to_catch_sfx;
   self.ready = function()
   {
     audiooo = new Aud("assets/sounds/Rock.mp3",true);
     audiooo.play();
     catch_sfx = new Aud("assets/sounds/DamnSon.mp3",false);
     buy_sfx = new Aud("assets/sounds/Sounds/Purchase.wav", false);
+    start_to_catch_sfx = new Aud("assets/sounds/Sounds/Character Sleep.wav", false);
+
+
 
     clicker = new Clicker({source:stage.dispCanv.canvas});
     hoverer = new Hoverer({source:stage.dispCanv.canvas});
@@ -324,6 +330,7 @@ var RockScene = function(game, stage)
         game.error_msg = "";
         var n = rock_liz_times[rock_selected_i]*bait_liz_mul[bait_selected_i];
         time_til_lizard = Math.floor(n/2+randIntBelow(n/2));
+        start_to_catch_sfx.play();
         mode = MODE_HUNTING;
       });
     ready_btn.wx = 0.8;
@@ -677,8 +684,9 @@ var RockScene = function(game, stage)
       }
       context.restore();     
     }
-
-    help_text.draw(canv);
+    if (mode === MODE_CHOOSING) {
+      help_text.draw(canv);
+    }
     
   };
 
@@ -686,6 +694,15 @@ var RockScene = function(game, stage)
   {
     audiooo.stop();
     audiooo = undefined;
+
+    buy_sfx.stop();
+    buy_sfx = undefined;
+
+    catch_sfx.stop();
+    catch_sfx = undefined;
+
+    start_to_catch_sfx.stop();
+    start_to_catch_sfx = undefined;
 
     clicker.detach();
     clicker = undefined;
@@ -780,7 +797,15 @@ var RockScene = function(game, stage)
             case SELECT_BAIT:
               let b = baits[self.i];
 
-              if (b.price > game.player.money) {
+              if (bought_bait !== -1) {
+                // ALREADY BOUGHT BAIT
+                game.error_msg = "YOU'VE ALREADY BOUGHT SOME BAIT. TRY CATCHING A LIZARD WITH IT.";
+                setTimeout(function() {
+                  game.error_msg = "";
+                }, 5000);
+              }
+
+              else if (b.price > game.player.money) {
                 //not enough money for bait
                 game.error_msg = "YOU DO NOT HAVE ENOUGH MONEY FOR THIS BAIT. THIS IS NOT A CHARITY CASE.";
                 setTimeout(function() {
@@ -793,6 +818,7 @@ var RockScene = function(game, stage)
                 // enough money, lets buy and select it
                 game.player.money -= b.price;
                 selected_i = self.i;
+                bought_bait = self.i;
                 buy_sfx.play();
                 game.error_msg = "YOU BOUGHT THE BAIT!";
                 setTimeout(function() {

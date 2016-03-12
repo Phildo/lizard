@@ -46,10 +46,13 @@ var SacrificeScene = function(game, stage)
   };
 
   var audiooo;
+  var lizard_select_sfx;
   self.ready = function()
   {
     audiooo = new Aud("assets/sounds/Sacrifice.mp3", true);
     audiooo.play();
+
+    lizard_select_sfx = new Aud("assets/sounds/Sounds/Collect Item.wav", false);
 
     hit_ui = false;
     clicker = new Clicker({source:stage.dispCanv.canvas});
@@ -304,6 +307,9 @@ var SacrificeScene = function(game, stage)
     audiooo.stop();
     audiooo = undefined;
 
+    lizard_select_sfx.stop();
+    lizard_select_sfx = undefined;
+
     clicker.detach();
     clicker = undefined;
     hoverer.detach();
@@ -332,7 +338,10 @@ var SacrificeScene = function(game, stage)
       if(game.player.lizards.length > self.i)
       {
         if(selected_i == self.i) selected_i = -1;
-        else                     selected_i = self.i;
+        else                     {
+          lizard_select_sfx.play();
+          selected_i = self.i;
+        }
       }
     }
 
@@ -472,7 +481,10 @@ var SacrificeScene = function(game, stage)
       if(game.player.lizards.length > self.i)
       {
         if(selected_i == self.i) selected_i = -1;
-        else                     selected_i = self.i;
+        else                     {
+              lizard_select_sfx.play();
+          selected_i = self.i;
+        }
       }
     }
   }
