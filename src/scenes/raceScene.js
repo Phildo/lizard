@@ -153,7 +153,7 @@ var RaceScene = function(game, stage)
     self.moneydisp = new MoneyDisp();
     self.moneydisp.wx = 0;
     self.moneydisp.wy = 0.02;
-    self.moneydisp.ww = 0.1;
+    self.moneydisp.ww = 0.2;
     self.moneydisp.wh = 0.06;
 
     // Initialize the track

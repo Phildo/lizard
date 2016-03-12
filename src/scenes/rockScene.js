@@ -105,6 +105,37 @@ var RockScene = function(game, stage)
     }
   };
 
+
+
+  var money_juice = {
+    x:0,y:0,w:0,h:0,
+    wx: 0.11, wy: 0.02, ww: 0, wh: 0,
+    opacity: 0, amt: -1,
+    draw: function(canv) {
+      if (this.amt === -1) {
+        return;
+      }
+      if (this.opacity <= 0) {
+        this.amt = -1;
+        return;
+      }
+
+      toScene(this, canv);
+      this.y += 20;
+      let ctx = canv.context;
+      ctx.save();
+      ctx.font = "bold 24px Arial";
+      ctx.fillStyle = "rgba(255,0,0," + this.opacity + ")";
+      ctx.fillText("-$" + this.amt, this.x, this.y);
+      ctx.restore();
+      this.opacity -= 0.01;
+    },
+    juice: function(amt) {
+      this.amt = amt;
+      this.opacity = 1.0;
+    }
+  }
+
   var time_til_lizard;
   var catchable_lizard;
 
@@ -254,7 +285,7 @@ var RockScene = function(game, stage)
     moneydisp = new MoneyDisp();
     moneydisp.wx = 0;
     moneydisp.wy = 0.02;
-    moneydisp.ww = 0.1;
+    moneydisp.ww = 0.2;
     moneydisp.wh = 0.06;
     toScene(moneydisp,canv);
 
@@ -543,9 +574,9 @@ var RockScene = function(game, stage)
       context.fillStyle = "rgba(0,0,0,0.8)";
       context.fillRect(moneydisp.x,moneydisp.y,moneydisp.w,moneydisp.h);
       context.fillStyle = "#FFFFFF";
-      context.fillText("$"+game.player.money,moneydisp.x+10,moneydisp.y+20);
+      context.fillText("$"+game.player.money,moneydisp.x+10,moneydisp.y+18);
 
-      
+      money_juice.draw(canv);
 
       for(var i = 0; i < rock_selects.length; i++)
         drawSelect(rock_selects[i]);
@@ -663,7 +694,7 @@ var RockScene = function(game, stage)
     // Draw error message
     if (game.error_msg !== "") {
       console.log(game.error_msg);
-      var lines = textToLines(canv, "bold 48px Arial", canv.width * 0.75, game.error_msg);
+      var lines = textToLines(canv, "bold 48px Arial", canv.width * 0.65, game.error_msg);
       context.save();
       context.fillStyle = "#ffffff";
       context.font = "bold 48px Arial";
@@ -779,6 +810,8 @@ var RockScene = function(game, stage)
                 // rock not owned, lets buy it
                 rocks[2].unlocked = true;
                 game.player.money -= rocks[self.i].price;
+                money_juice.juice(rocks[self.i].price);
+
                 rocks[self.i].owned = true;
                 if (self.i === 1) {
                   game.player.owns_tinfoil = true;
@@ -817,6 +850,7 @@ var RockScene = function(game, stage)
               } else {
                 // enough money, lets buy and select it
                 game.player.money -= b.price;
+                money_juice.juice(b.price);
                 selected_i = self.i;
                 bought_bait = self.i;
                 buy_sfx.play();

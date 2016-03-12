@@ -211,7 +211,7 @@ var GamePlayScene = function(game, stage)
     moneydisp = new MoneyDisp();
     moneydisp.wx = 0;
     moneydisp.wy = 0.02;
-    moneydisp.ww = 0.1;
+    moneydisp.ww = 0.2;
     moneydisp.wh = 0.06;
     toScene(moneydisp,canv);
 
