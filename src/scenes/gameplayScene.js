@@ -11,6 +11,8 @@ var GamePlayScene = function(game, stage)
 
   var rock_btn;
 
+  var sac_btn;
+
   var race_btns;
 
   var terrarium;
@@ -50,9 +52,12 @@ var GamePlayScene = function(game, stage)
     200,
     1000
   ];
-
+  var audiooo;
   self.ready = function()
   {
+    audiooo = new Aud("assets/sounds/Pen.mp3",true);
+    audiooo.play();
+
     hit_ui = false;
     clicker = new Clicker({source:stage.dispCanv.canvas});
     hoverer = new Hoverer({source:stage.dispCanv.canvas});
@@ -72,6 +77,24 @@ var GamePlayScene = function(game, stage)
     toScene(rock_btn,canv);
     clicker.register(rock_btn);
     hoverer.register(rock_btn);
+
+
+    sac_btn = new ButtonBox(0,0,0,0,function(){ game.setScene(6); });
+    sac_btn.wx = 0.8;
+    sac_btn.wy = 0.25;
+    sac_btn.ww = 0.2;
+    sac_btn.wh = 0.1;
+    sac_btn.hovering = false;
+    sac_btn.hover = function() {
+      sac_btn.hovering = true;
+    }
+    sac_btn.unhover = function() {
+      sac_btn.hovering = false;
+    }
+    toScene(sac_btn,canv);
+    clicker.register(sac_btn);
+    hoverer.register(sac_btn);
+
 
     terrarium = new Terrarium();
     terrarium.wx = 0.25;
@@ -229,6 +252,20 @@ var GamePlayScene = function(game, stage)
       context.fillText("GO LIZARDIN'",rock_btn.x+10,rock_btn.y+25);
     }
 
+    // Draw sacrifice button
+    if (!sac_btn.hovering) {
+      context.fillStyle = "rgba(0,0,0,0.8)";
+      context.fillRect(sac_btn.x,sac_btn.y,sac_btn.w,sac_btn.h);
+      context.fillStyle = "#FFFFFF";
+      context.fillText("IMPROVE LIZARDS",sac_btn.x+10,sac_btn.y+25);
+    } else {
+      context.fillStyle = "rgba(255,255,255,0.8)";
+      context.fillRect(sac_btn.x,sac_btn.y,sac_btn.w,sac_btn.h);
+      context.fillStyle = "#000000";
+      context.fillText("SACRIFICE THEM",sac_btn.x+10,sac_btn.y+25);
+    }
+
+
     context.fillStyle = "rgba(0,0,0,0.8)";
     context.fillRect(moneydisp.x,moneydisp.y,moneydisp.w,moneydisp.h);
     context.fillStyle = "#FFFFFF";
@@ -288,6 +325,8 @@ var GamePlayScene = function(game, stage)
 
   self.cleanup = function()
   {
+    audiooo.stop();
+    audiooo = undefined;
     clicker.detach();
     clicker = undefined;
     hoverer.detach();

@@ -41,6 +41,8 @@ var Game = function(init)
     /* 3 */ new GamePlayScene(self, stage),
     /* 4 */ new RockScene(self, stage),
     /* 5 */ new RaceScene(self, stage),
+    /* 6 */ new SacrificeScene(self, stage),
+
   ];
   var cur_scene = 0;
   var old_cur_scene = -1;

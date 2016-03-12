@@ -122,8 +122,14 @@ var RockScene = function(game, stage)
     var rock_gr8_b8_img = new Image();
   rock_gr8_b8_img.src = "assets/b8/grasshopperb82.png";
 
+  var audiooo;
+  var sfx;
   self.ready = function()
   {
+    audiooo = new Aud("assets/sounds/Rock.mp3",true);
+    audiooo.play();
+    sfx = new Aud("assets/sounds/DamnSon.mp3",false);
+
     clicker = new Clicker({source:stage.dispCanv.canvas});
     hoverer = new Hoverer({source:stage.dispCanv.canvas});
 
@@ -672,6 +678,9 @@ var RockScene = function(game, stage)
 
   self.cleanup = function()
   {
+    audiooo.stop();
+    audiooo = undefined;
+
     clicker.detach();
     clicker = undefined;
     hoverer.detach();
@@ -1072,6 +1081,7 @@ var RockScene = function(game, stage)
     self.click = function()
     {
       mode = MODE_CAUGHT;
+      sfx.play();
     }
   }
   var tickCatchableLizard = function()
