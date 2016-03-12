@@ -38,7 +38,7 @@ var SacrificeScene = function(game, stage)
     clicker = new Clicker({source:stage.dispCanv.canvas});
     hoverer = new Hoverer({source:stage.dispCanv.canvas});
 
-    pen_btn = new ButtonBox(0,0,0,0,function(){ game.setScene(1); });//does this go back to pen?
+    pen_btn = new ButtonBox(0,0,0,0,function(){ game.setScene(3); });//does this go back to pen?
     pen_btn.wx = 0.8;
     pen_btn.wy = 0.1;
     pen_btn.ww = 0.2;
@@ -197,7 +197,7 @@ var SacrificeScene = function(game, stage)
   {
     context.drawImage(bg_img, 0, 0, canv.width, canv.height);
 
-    // Draw rock button
+    // Draw pen button
     if (!pen_btn.hovering) {
       context.fillStyle = "rgba(0,0,0,0.8)";
       context.fillRect(pen_btn.x,pen_btn.y,pen_btn.w,pen_btn.h);
