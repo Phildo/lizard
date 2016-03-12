@@ -129,6 +129,7 @@ var RockScene = function(game, stage)
   var buy_sfx;
   var start_to_catch_sfx;
   var keep_lizard_sfx;
+  var release_lizard_sfx;
   self.ready = function()
   {
     audiooo = new Aud("assets/sounds/Rock.mp3",true);
@@ -139,6 +140,7 @@ var RockScene = function(game, stage)
 
     //will only really work with fade to black transition;
     keep_lizard_sfx = new Aud("assets/sounds/Sounds/New Villager.wav", false);
+    release_lizard_sfx = new Aud("assets/sounds/Sounds/Monster Defeat.wav", false);
 
 
 
@@ -402,6 +404,7 @@ var RockScene = function(game, stage)
       clicker.unregister(catchable_lizard);
       catchable_lizard = undefined;
       mode = MODE_CHOOSING;
+      release_lizard_sfx.play();
     });
     release_btn.wx = keep_btn.wx+keep_btn.ww+0.05;
     release_btn.wy = keep_btn.wy;
@@ -709,8 +712,11 @@ var RockScene = function(game, stage)
     start_to_catch_sfx.stop();
     start_to_catch_sfx = undefined;
 
-    keep_lizard_sfx.stop()
+    keep_lizard_sfx.stop();
     keep_lizard_sfx = undefined;
+
+    release_lizard_sfx.stop();
+    release_lizard_sfx = undefined;
 
     clicker.detach();
     clicker = undefined;
