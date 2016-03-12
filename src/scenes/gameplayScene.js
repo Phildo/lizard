@@ -213,23 +213,29 @@ var GamePlayScene = function(game, stage)
     }
 
     // Draw error message
-    context.save();
-    context.fillStyle = "#ffffff";
-    context.font = "bold 48px Arial";
-    context.textAlign = "center";
-    var text_pos = {
-      ww: 0,
-      wh: 0,
-      wx: 0.5,
-      wy: 0.1,
-      x: 0,
-      y: 0,
-      h: 0,
-      w: 0
-    };
-    toScene(text_pos, canv);
-    context.fillText(game.error_msg, text_pos.x, text_pos.y);
-    context.restore();
+    if (game.error_msg !== "") {
+      console.log(game.error_msg);
+      var lines = textToLines(canv, "bold 48px Arial", canv.width * 0.75, game.error_msg);
+      context.save();
+      context.fillStyle = "#ffffff";
+      context.font = "bold 48px Arial";
+      context.textAlign = "center";
+      var text_pos = {
+        ww: 0,
+        wh: 0,
+        wx: 0.5,
+        wy: 0.1,
+        x: 0,
+        y: 0,
+        h: 0,
+        w: 0
+      };
+      toScene(text_pos, canv);
+      for (var i = 0, l = lines.length; i < l; i++) {
+        context.fillText(lines[i], text_pos.x, text_pos.y + (i * 48)); 
+      }
+      context.restore();     
+    }
   };
 
   self.cleanup = function()

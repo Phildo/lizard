@@ -347,6 +347,8 @@ var textToLines = function(canv, font, width, text)
   var searched = 0;
   var tentative_search = 0;
 
+  canv.context.save();
+
   canv.context.font = font;
 
   while(found < text.length)
@@ -365,6 +367,8 @@ var textToLines = function(canv, font, width, text)
     lines.push(text.substring(found,searched));
     found = searched;
   }
+
+  canv.context.restore();
 
   return lines;
 }
