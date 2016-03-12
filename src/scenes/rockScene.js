@@ -345,7 +345,12 @@ var RockScene = function(game, stage)
     keep_btn.wh = caught_stats_title.wh;
     toScene(keep_btn,canv);
 
-    release_btn = new ButtonBox(0,0,0,0,function(){ if(mode != MODE_CAUGHT) return; catchable_lizard = undefined; mode = MODE_CHOOSING; });
+    release_btn = new ButtonBox(0,0,0,0,function(){
+      if(mode != MODE_CAUGHT) return;
+      clicker.unregister(catchable_lizard);
+      catchable_lizard = undefined;
+      mode = MODE_CHOOSING;
+    });
     release_btn.wx = keep_btn.wx+keep_btn.ww+0.05;
     release_btn.wy = keep_btn.wy;
     release_btn.ww = keep_btn.ww;
@@ -409,6 +414,7 @@ var RockScene = function(game, stage)
       time_til_lizard--;
       if(time_til_lizard <= -100)
       {
+        clicker.unregister(catchable_lizard);
         catchable_lizard = undefined;
         var n = rock_liz_times[rock_selected_i]*bait_liz_mul[bait_selected_i];
         time_til_lizard = Math.floor(n/2+randIntBelow(n/2));
@@ -497,6 +503,17 @@ var RockScene = function(game, stage)
       if(catchable_lizard)
       {
         drawCatchableLizard();
+        context.fillStyle = "#000000";
+        context.font = "24px Arial";
+        context.fillText("OMG THERE HE GOES GET EM",canv.width/2-50,canv.height/2-50);
+        context.font = "12px Arial";
+      }
+      else
+      {
+        context.fillStyle = "#000000";
+        context.font = "24px Arial";
+        context.fillText("Shhhhh wait for the lizard...",canv.width/2-50,canv.height/2-50);
+        context.font = "12px Arial";
       }
     }
     else if(mode == MODE_CAUGHT)
