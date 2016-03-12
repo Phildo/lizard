@@ -109,7 +109,7 @@ var RockScene = function(game, stage)
 
   var money_juice = {
     x:0,y:0,w:0,h:0,
-    wx: 0.11, wy: 0.02, ww: 0, wh: 0,
+    wx: 0.10, wy: 0.02, ww: 0, wh: 0,
     opacity: 0, amt: -1,
     draw: function(canv) {
       if (this.amt === -1) {
@@ -259,7 +259,7 @@ var RockScene = function(game, stage)
     bait = new Bait();
     bait.name = "WORM";
     bait.description = "(ONE TIME USE) If I wasn't sure whether lizards ate flies or not (and I wasn't), I'm doubly unsure about worms. But, in this case, it appears that worms attract lizards. I never claimed they ate the worm, though. But maybe they do?";
-    bait.tldr = "Lizards will come more quickly, with greater endurance for some reason. Yeah I know this text is overflowing but there's nothing you can do.";
+    bait.tldr = "Lizards will come more quickly, with greater endurance for some reason.";
     bait.price = 200;
     bait.img = rock_good_b8_img;
     bait.wx = 0.45;
@@ -1266,7 +1266,9 @@ var RockScene = function(game, stage)
       context.fillText(lines[i],baitdisp.x+10,baitdisp.y+40+15*i);
 
     context.fillStyle = "#FFFFFF";
-    context.fillText(baits[select.i].tldr,baitdisp.x+10,baitdisp.y+baitdisp.h-10);
+    var lines = textToLines(canv, "12px Arial", baitdisp.w - 20, baits[select.i].tldr);
+    for (var i = lines.length - 1; i >= 0; i--)
+      context.fillText(lines[i],baitdisp.x+10,baitdisp.y+baitdisp.h - 10 - (12 * (lines.length - i - 1)));
   }
 
   var Title = function()
