@@ -11,7 +11,7 @@ var SacrificeScene = function(game, stage)
 
   var pen_btn;
 
-  var race_btns;
+  var sacrifice_btns;
 
   var terrarium;
   var selects;
@@ -27,6 +27,23 @@ var SacrificeScene = function(game, stage)
   bg_img.src = "assets/environmental/penforlizard.png";
 
   var hit_ui;
+
+  var help_text = {
+    msg: "SELECT A LIZARD TO OFFER AS TRIBUTE.",
+    x:0,y:0,w:0,h:0,
+    wx:0, wy: 1, ww:0, wh: 0,
+    draw: function(canv) {
+      toScene(this, canv);
+      this.x += 5;
+      this.y -= 15;
+      let ctx = canv.context;
+      ctx.save();
+      ctx.font = "bold 16px Arial";
+      ctx.fillStyle = "#ffffff";
+      ctx.fillText(this.msg, this.x, this.y);
+      ctx.restore();
+    }
+  };
 
   var audiooo;
   self.ready = function()
@@ -103,71 +120,65 @@ var SacrificeScene = function(game, stage)
     stats.wh = 0.3;
     toScene(stats,canv);
 
-    // var race_btn_activate = function(rank) {
-    //   if(selected_i == -1)
-    //     return;
-    //   game.player.rank = rank;
-    //   var fee = game.player.rank * 50;
-    //   if (game.player.money < fee)
-    //     return;
-    //   game.racing_lizard_index = selected_i;
-    //   game.setScene(4);
-    // }
+    var sacrificeLiz = function(victim_i, receiver_i) {
+      // Sacrifice logic goes here
+      // sacrifice victim to receiver
+      alert("test");
+    }
 
-    // // Set Up Race Buttons
-    // var race_msg = [
-    //   "50CC - NO FEE",
-    //   "100CC - $50 FEE",
-    //   "150CC - $100 FEE",
-    //   "MASTER - $150 FEE"
-    // ];
-    // race_btns = [];
-    // for (let i = 0; i < 4; i ++) {
-    //   let btn = new ButtonBox(0,0,0,0, function() {
-    //     if(selected_i == -1)
-    //       return;
-    //     hit_ui = true;
-    //     if (selected_i === game.exhausted) {
-    //       game.error_msg = "LIZARD EXHAUSTED! GIVE THE POOR REPTILE A BREAK YOU ANIMAL."
-    //       setTimeout(function() {
-    //         game.error_msg = "";
-    //       }, 3000);
-    //       return;
-    //     }
-    //     game.player.rank = i;
-    //     var fee = game.player.rank * 50;
-    //     if (game.player.money < fee) {
-    //       game.error_msg = "NOT ENOUGH MONEY! GO RACE IN 50CC YOU NOVICE.";
-    //       setTimeout(function() {
-    //         game.error_msg = "";
-    //       }, 3000);
-    //       return;
-    //     }
+    // Set Up Sacrifice buttons
+    
+    sacrifice_btns = [];
+    for (let i = 0; i < 4; i ++) {
+      let btn = new ButtonBox(0,0,0,0, function() {
+        if(selected_i == -1)
+          return;
+        hit_ui = true;
 
-    //     game.racing_lizard_index = selected_i;
-    //     game.setScene(4);
-    //   });
-    //   btn.ww = 0.175;
-    //   btn.wh = 0.1;
-    //   btn.wx = 0.825 - (btn.ww * (3 - i));
-    //   btn.wy = stats.wy - btn.wh;
-    //   toScene(btn, canv);
+        let receiver_i;
+        if (selected_i <= i) {
+          receiver_i = i + 1;
+        } else {
+          receiver_i = i;
+        }
 
-    //   btn.hovering = false;
-    //   btn.hover = function() {
-    //     btn.hovering = true;
-    //   };
-    //   btn.unhover = function() {
-    //     btn.hovering = false;
-    //   }
+        if (receiver_i >= game.player.lizards.length) {
+          game.error_msg = "YOU DON'T OWN A LIZARD IN THAT SLOT."
+          setTimeout(function() {
+            game.error_msg = "";
+          }, 3000);
+          return;
+        }
 
-    //   race_btns.push({
-    //     btn: btn,
-    //     msg: race_msg[i]
-    //   });
-    //   clicker.register(btn);
-    //   hoverer.register(btn);
-    // }
+        sacrificeLiz(selected_i, receiver_i);
+
+        // Remove sacrificed lizard from list
+        game.player.lizards = game.player.lizards.filter(function(liz, index) {
+          return index !== selected_i;
+        });
+        game.setScene(3);
+      });
+      btn.ww = 0.175;
+      btn.wh = 0.1;
+      btn.wx = 0.825 - (btn.ww * (3 - i));
+      btn.wy = stats.wy - btn.wh;
+      toScene(btn, canv);
+
+      btn.hovering = false;
+      btn.hover = function() {
+        btn.hovering = true;
+      };
+      btn.unhover = function() {
+        btn.hovering = false;
+      }
+
+      sacrifice_btns.push({
+        btn: btn,
+        msg: "OFFER TO "
+      });
+      clicker.register(btn);
+      hoverer.register(btn);
+    }
 
     moneydisp = new MoneyDisp();
     moneydisp.wx = 0;
@@ -223,26 +234,38 @@ var SacrificeScene = function(game, stage)
     if(selected_i != -1)
     {
       drawStatsDisp();
-      // race_btns.forEach(function(item, index) {
-      //   var btn = item.btn;
-      //   if (btn.hovering) {
-      //     context.fillStyle = "rgba(255,255,255,0.8)";
-      //     context.fillRect(btn.x,btn.y,btn.w,btn.h);
-      //     context.fillStyle = "#000000";
-      //     context.fillText(item.msg,btn.x+10,btn.y+25);
-      //   } else {
-      //     context.fillStyle = "rgba(0,0,0,0.8)";
-      //     context.fillRect(btn.x,btn.y,btn.w,btn.h);
-      //     context.fillStyle = "#FFFFFF";
-      //     context.fillText(item.msg,btn.x+10,btn.y+25); 
-      //   }
-      // });
+      sacrifice_btns.forEach(function(item, index) {
+        let receiver_i;
+        if (selected_i <= index) {
+          receiver_i = index + 1;
+        } else {
+          receiver_i = index;
+        }
+        let msg;
+        if (receiver_i >= game.player.lizards.length) {
+          msg = "NO LIZARD";
+        } else {
+          msg = item.msg + (receiver_i + 1);
+        }
+        var btn = item.btn;
+        if (btn.hovering) {
+          context.fillStyle = "rgba(255,255,255,0.8)";
+          context.fillRect(btn.x,btn.y,btn.w,btn.h);
+          context.fillStyle = "#000000";
+          context.fillText(msg,btn.x+10,btn.y+25);
+        } else {
+          context.fillStyle = "rgba(0,0,0,0.8)";
+          context.fillRect(btn.x,btn.y,btn.w,btn.h);
+          context.fillStyle = "#FFFFFF";
+          context.fillText(msg,btn.x+10,btn.y+25); 
+        }
+      });
     }
 
     // Draw error message
     if (game.error_msg !== "") {
       console.log(game.error_msg);
-      var lines = textToLines(canv, "bold 48px Arial", canv.width * 0.75, game.error_msg);
+      var lines = textToLines(canv, "bold 48px Arial", canv.width * 0.60, game.error_msg);
       context.save();
       context.fillStyle = "#ffffff";
       context.font = "bold 48px Arial";
@@ -263,6 +286,8 @@ var SacrificeScene = function(game, stage)
       }
       context.restore();     
     }
+
+    help_text.draw(canv);
   };
 
   self.cleanup = function()
@@ -324,7 +349,7 @@ var SacrificeScene = function(game, stage)
         else                context.fillStyle = "rgba(255,255,255,0.8)";
         context.fillRect(select.x,select.y,select.w,select.h);
         context.fillStyle = "#000000";
-        context.fillText(liz.name,select.x+10,select.y+20);
+        context.fillText((select.i + 1) + ": " + liz.name,select.x+10,select.y+20);
 
         context.fillStyle = "#000000";
         context.fillText("SPD:",select.x+10,select.y+40);
@@ -349,7 +374,7 @@ var SacrificeScene = function(game, stage)
         else                context.fillStyle = "rgba(0,0,0,0.8)";
         context.fillRect(select.x,select.y,select.w,select.h);
         context.fillStyle = "#FFFFFF";
-        context.fillText(liz.name,select.x+10,select.y+20);
+        context.fillText((select.i + 1) + ": " + liz.name,select.x+10,select.y+20);
 
         context.fillStyle = "#FFFFFF";
         context.fillText("SPD:",select.x+10,select.y+40);
