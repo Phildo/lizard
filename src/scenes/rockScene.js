@@ -128,6 +128,7 @@ var RockScene = function(game, stage)
   var catch_sfx;
   var buy_sfx;
   var start_to_catch_sfx;
+  var keep_lizard_sfx;
   self.ready = function()
   {
     audiooo = new Aud("assets/sounds/Rock.mp3",true);
@@ -135,6 +136,9 @@ var RockScene = function(game, stage)
     catch_sfx = new Aud("assets/sounds/DamnSon.mp3",false);
     buy_sfx = new Aud("assets/sounds/Sounds/Purchase.wav", false);
     start_to_catch_sfx = new Aud("assets/sounds/Sounds/Character Sleep.wav", false);
+
+    //will only really work with fade to black transition;
+    keep_lizard_sfx = new Aud("assets/sounds/Sounds/New Villager.wav", false);
 
 
 
@@ -384,6 +388,7 @@ var RockScene = function(game, stage)
         game.exhausted = -1;
       }
       liz_selected_i = -1;
+      keep_lizard_sfx.play();
       game.setScene(3);
     });
     keep_btn.wx = caught_stats_title.wx+caught_stats_title.ww+0.05;
@@ -703,6 +708,9 @@ var RockScene = function(game, stage)
 
     start_to_catch_sfx.stop();
     start_to_catch_sfx = undefined;
+
+    keep_lizard_sfx.stop()
+    keep_lizard_sfx = undefined;
 
     clicker.detach();
     clicker = undefined;
