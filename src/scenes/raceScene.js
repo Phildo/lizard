@@ -6,6 +6,8 @@ var RaceScene = function(game, stage)
   var canvas = canv.canvas;
   var ctx = canv.context;
 
+  var phil_hack_transition_in;
+
   var fees = [
     0,
     50,
@@ -43,6 +45,8 @@ var RaceScene = function(game, stage)
   var pre_race_sfx;
   self.ready = function()
   {
+    phil_hack_transition_in = 100;
+
     audiooo = new Aud( "assets/sounds/Race.mp3", true );
 
     pre_race_sfx = new Aud( "assets/sounds/RacePre.mp3", true );
@@ -153,7 +157,7 @@ var RaceScene = function(game, stage)
     self.moneydisp = new MoneyDisp();
     self.moneydisp.wx = 0;
     self.moneydisp.wy = 0.02;
-    self.moneydisp.ww = 0.1;
+    self.moneydisp.ww = 0.2;
     self.moneydisp.wh = 0.06;
 
     // Initialize the track
@@ -183,6 +187,8 @@ var RaceScene = function(game, stage)
 
       self.track.state = RACE_DONE;
     }
+    if(phil_hack_transition_in)
+      phil_hack_transition_in--;
   };
 
   self.draw = function()
@@ -252,6 +258,9 @@ var RaceScene = function(game, stage)
       })
       ctx.restore();
     }
+
+    ctx.fillStyle = "rgba(0,0,0,"+(phil_hack_transition_in/100)+")";
+    ctx.fillRect(0,0,canv.width,canv.height);
   };
 
   self.cleanup = function()

@@ -63,6 +63,13 @@ var Game = function(init)
       scenes[cur_scene].draw();
       stage.draw(); //blits from offscreen canvas to on screen one
     }
+    else
+    {
+      var dc = stage.drawCanv;
+      dc.context.fillStyle = "#000000";
+      dc.context.fillRect(0,0,dc.width,dc.height);
+      stage.draw(); //blits from offscreen canvas to on screen one
+    }
     old_cur_scene = cur_scene;
   };
 
