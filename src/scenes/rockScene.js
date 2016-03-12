@@ -504,15 +504,19 @@ var RockScene = function(game, stage)
       {
         drawCatchableLizard();
         context.fillStyle = "#000000";
-        context.font = "24px Arial";
+        context.save();
+        context.font = "bold 24px Arial";
         context.fillText("OMG THERE HE GOES GET EM",canv.width/2-50,canv.height/2-50);
+        context.restore();
         context.font = "12px Arial";
       }
       else
       {
         context.fillStyle = "#000000";
-        context.font = "24px Arial";
+        context.save();
+        context.font = "bold 24px Arial";
         context.fillText("Shhhhh wait for the lizard...",canv.width/2-50,canv.height/2-50);
+        context.restore();
         context.font = "12px Arial";
       }
     }

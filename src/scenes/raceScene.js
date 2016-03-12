@@ -21,10 +21,10 @@ var RaceScene = function(game, stage)
   {
     var opponents = [
       [ // RANK_50
-        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 1.0)),
-        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 1.0)),
-        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 1.0)),
-        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 1.0))
+        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 0.7)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 0.7)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 0.7)),
+        new Lizard(LIZARD_GENDER_MALE, randR(0.01, 0.40), randR(0.01, 0.7))
       ],
       [ // RANK_100
         new Lizard(LIZARD_GENDER_MALE, randR(0.30, 0.60), randR(0.40, 1.0)),
@@ -169,13 +169,26 @@ var RaceScene = function(game, stage)
     if (self.track.state === RACE_DONE) {
       var winner = self.track.runners[self.track.winner];
       var playerLiz = game.player.lizards[game.racing_lizard_index];
+      ctx.save();
       ctx.fillStyle = "#000";
+      ctx.font = "bold 24px Arial";
       // TODO: Create a win text obj for world positioning.
+      var msg;
       if (winner.ref === playerLiz) {
-        ctx.fillText(winner.ref.name + " won! You won $" + self.track.winnings + "!", 300, 50);
+        msg = winner.ref.name + " won! You won $" + self.track.winnings + "!";
+        //ctx.fillText(winner.ref.name + " won! You won $" + self.track.winnings + "!", 300, 50);
       } else {
-        ctx.fillText("Sorry! You lost this race. Better luck next time!", 300, 50);
+        msg = winner.ref.name + " won! Sorry, better luck next time!";
+        //ctx.fillText(winner.ref.name + "Sorry! You lost this race. Better luck next time!", 300, 50);
       }
+      msg = msg.toUpperCase();
+      ctx.textAlign = "center";
+
+      var lines = textToLines(canv, "bold 24px Arial", canv.width * 0.6, msg);
+      lines.forEach(function(line, index) {
+        ctx.fillText(line, canv.width * 0.5, (canv.width * 0.1) + (index * 24));
+      })
+      ctx.restore();
     }
   };
 
