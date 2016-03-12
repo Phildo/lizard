@@ -13,7 +13,9 @@ var descriptions = [
   "There comes a day in every young lizard's life when they must step upon the rock and become an adult. Every lizard prepares for this day through their entire childhood. Today was NAME's day. You took that from her. You don't care though, do you?",
   "äžNWkçG'›7¿åg‹Ú;úQ5ØCÛQ$FéƒxÌøéŽ[ÔoR Ž²íH0E*GŽ™óÅ/~ñ/xà«W®ÛÚ2Øq Y´hsÓM7ÝM'›7¿ågž‹(2·##—ÍôWSO*ûž|Ä4íÕéƒxÌøéŽ[ÔoR †a¶yžŸ& êííEPÙä<X4ß‚y}ë™1íÙgŸ‚¡ácÉ¤¡£K",
   "You know what they say about NAME...",
-  "My advice... Go out to desert... find a hot rock... strike up some good body warmth and then after you get her hot... pull out your tin foil and say warm this up basanite lol. Only messin"
+  "My advice... Go out to desert... find a hot rock... strike up some good body warmth and then after you get her hot... pull out your tin foil and say warm this up basanite lol. Only messin",
+  "NAME loves to play fetch. Yes, NAME thinks he is a dog. Don't judge.",
+  "We all have a little NAME in us."
 ];
 var randDescription = function()
 {

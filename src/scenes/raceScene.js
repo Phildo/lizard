@@ -6,6 +6,26 @@ var RaceScene = function(game, stage)
   var canvas = canv.canvas;
   var ctx = canv.context;
 
+  var fees = [
+    0,
+    50,
+    200,
+    1000
+  ];
+  var winnings = [
+    100,
+    600,
+    1100,
+    420000
+  ];
+
+  var track_lengths = [
+    5,
+    10,
+    20,
+    30
+  ];
+
   var DELTA = 0.0001;
   self.stats;
   self.moneydisp;
@@ -54,7 +74,7 @@ var RaceScene = function(game, stage)
     // rank = 6;
     var contestants = [];
 
-    var fee = rank * 50;
+    var fee = fees[rank];
     game.player.money -= fee;
 
     opponents[rank].forEach(function(lizard, index) {
@@ -350,11 +370,11 @@ var RaceScene = function(game, stage)
     ];
 
     self.state = RACE_READY;
-    self.length = 5 + (rank);
+    self.length = track_lengths[rank];
 
     self.runners = contestants;
     self.winner = null;
-    self.winnings = 100 + (500 * rank);
+    self.winnings = winnings[rank];
 
 
     self.init = function() {
