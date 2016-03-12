@@ -47,6 +47,9 @@ var GamePlayScene = function(game, stage)
   var bg_img = new Image();
   bg_img.src = "assets/environmental/penforlizard2.png";
 
+  var shadow_img = new Image();
+  shadow_img.src = "assets/liz/shadow.png";
+
   var hit_ui;
 
   var fees = [
@@ -147,6 +150,7 @@ var GamePlayScene = function(game, stage)
       tlizard.agitation = randIntBelow(500);
       toScene(tlizard,canv);
       tlizards[i] = tlizard;
+      tlizard.isSelected = 0;
     }
 
     stats = new StatsDisp();
@@ -570,6 +574,12 @@ var GamePlayScene = function(game, stage)
       context.rotate(tliz.theta-(Math.PI/6));
     }
     context.translate(-tliz.w/2,-tliz.h/2);
+
+    if (tliz.i == selected_i)
+    {
+              context.drawImage(shadow_img, 0, 0, tliz.w, tliz.h);
+    }
+
 
     context.drawImage(game.frames[game.player.lizards[tliz.i].color][tliz.frame],0,0,tliz.w,tliz.h);
     context.restore();
